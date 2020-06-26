@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "420659786396",
+    "firebase_url": "https://safarnama-452a3.firebaseio.com",
+    "project_id": "safarnama-452a3",
+    "storage_bucket": "safarnama-452a3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:420659786396:android:849a763394031aea72b359",
+        "android_client_info": {
+          "package_name": "com.strongties.safarnama"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "420659786396-5d01blkno87iepq2lfahdu7gibspnbt7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.strongties.safarnama",
+            "certificate_hash": "efe66620818db603601e7d430092345b433241b4"
+          }
+        },
+        {
+          "client_id": "420659786396-e8c1tdodvrvb7mgve8cu6k8idtksjs4r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxUWC0OKSaAHbWbTMgKcXN5yqpFNxEv0A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "420659786396-e8c1tdodvrvb7mgve8cu6k8idtksjs4r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

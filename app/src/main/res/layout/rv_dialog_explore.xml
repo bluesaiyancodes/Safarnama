@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="350dp"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    >
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:background="@drawable/dialog_bg"
+        android:layout_marginTop="120dp">
+
+        <TextView
+            android:id="@+id/dialog_explore_place_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="@string/placename"
+            android:textColor="@color/textItemMenu"
+            android:textStyle="bold"
+            android:textSize="23sp"
+            android:layout_marginTop="75dp"
+            />
+
+        <TextView
+            android:id="@+id/dialog_explore_type"
+            android:padding="5dp"
+            android:textAlignment="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textStyle="italic"
+            android:text="@string/type"
+            android:textColor="@color/textItemMenu"
+            android:layout_marginTop="5dp"
+            />
+
+        <TextView
+            android:id="@+id/dialog_explore_description"
+            android:padding="5dp"
+            android:textAlignment="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textStyle="italic"
+            android:text="@string/description"
+            android:textColor="@color/textItemMenu"
+            android:layout_marginTop="5dp"
+            />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="1">
+            <Button
+                android:id="@+id/dialog_explore_addtowishlist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:layout_marginTop="20dp"
+                android:layout_weight="0.5"
+                android:drawableTop="@drawable/ic_heart_add_blue"/>
+
+            <Button
+                android:id="@+id/dialog_explore_addtocompletelist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:layout_marginTop="20dp"
+                android:layout_weight="0.5"
+                android:drawableTop="@drawable/ic_heart_add_green"/>
+
+        </LinearLayout>
+
+
+
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/dialog_explore_img"
+        android:layout_width="240dp"
+        android:layout_height="180dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"/>
+
+</RelativeLayout>

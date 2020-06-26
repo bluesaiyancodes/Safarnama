@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:background="@drawable/dialog_bg"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:id="@+id/dialog_marker_image"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:scaleType="centerCrop"
+        />
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/dialog_progress"
+        android:layout_marginTop="70dp"
+        android:layout_marginLeft="70dp"
+        android:visibility="visible"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/dialog_marker_label_name"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@+id/dialog_marker_image"
+        android:layout_marginLeft="20dp"
+        android:text="@string/menu1_dialoge_name"
+        android:textColor="@color/textItemMenu"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/dialog_marker_name"
+        android:layout_below="@id/dialog_marker_label_name"
+        android:layout_toRightOf="@id/dialog_marker_image"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:text="Name Placeholder"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:id="@+id/dialog_marker_label_type"
+        android:layout_toRightOf="@+id/dialog_marker_image"
+        android:layout_marginLeft="20dp"
+        android:layout_below="@+id/dialog_marker_name"
+        android:layout_marginTop="20dp"
+        android:text="@string/menu1_dialoge_type"
+        android:textColor="@color/textItemMenu"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/dialog_marker_type"
+        android:layout_below="@id/dialog_marker_label_type"
+        android:layout_toRightOf="@id/dialog_marker_image"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:text="Type Placeholder"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:id="@+id/dialog_marker_label_lat"
+        android:layout_toRightOf="@+id/dialog_marker_image"
+        android:layout_marginLeft="20dp"
+        android:layout_below="@+id/dialog_marker_type"
+        android:layout_marginTop="10dp"
+        android:text="@string/menu1_dialoge_lat"
+        android:textColor="@color/textItemMenu"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/dialog_marker_lat"
+        android:layout_below="@id/dialog_marker_type"
+        android:layout_toRightOf="@id/dialog_marker_label_lat"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="10dp"
+        android:text="Lat Placeholder"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:id="@+id/dialog_marker_label_lon"
+        android:layout_toRightOf="@+id/dialog_marker_image"
+        android:layout_marginLeft="20dp"
+        android:layout_below="@+id/dialog_marker_lat"
+        android:layout_marginTop="10dp"
+        android:text="@string/menu1_dialoge_lon"
+        android:textColor="@color/textItemMenu"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/dialog_marker_lon"
+        android:layout_below="@id/dialog_marker_lat"
+        android:layout_toRightOf="@id/dialog_marker_label_lon"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="10dp"
+        android:text="Lon Placeholder"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/dialog_marker_label_desc"
+        android:layout_below="@+id/dialog_marker_image"
+        android:text="@string/menu1_dialoge_desc"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:textColor="@color/textItemMenu" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/dialog_marker_desc"
+        android:layout_below="@+id/dialog_marker_label_desc"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:text="Description Placeholder"
+        android:layout_marginBottom="20dp"
+        />
+
+
+</RelativeLayout>

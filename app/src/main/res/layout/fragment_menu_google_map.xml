@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:weightSum="1"
+    android:orientation="vertical">
+
+
+    <fragment
+        android:id="@+id/gmapview"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_weight=".7"
+        android:layout_height="match_parent"
+        tools:context=".fragment_menu_googleMap" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_weight=".3"
+        android:weightSum="1"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/menu1_mixed"
+            android:layout_weight=".25"
+            android:drawableTop="@drawable/ic_heart_all"
+            android:background="?android:attr/selectableItemBackground"
+            />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/menu1_explore"
+            android:layout_weight=".25"
+            android:drawableTop="@drawable/ic_heart_full"
+            android:background="?android:attr/selectableItemBackground"
+            />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/menu1_wish"
+            android:layout_weight=".25"
+            android:drawableTop="@drawable/ic_heart_full_blue"
+            android:background="?android:attr/selectableItemBackground"
+            />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/menu1_accomplish"
+            android:layout_weight=".25"
+            android:drawableTop="@drawable/ic_heart_full_green"
+            android:background="?android:attr/selectableItemBackground"
+            />
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

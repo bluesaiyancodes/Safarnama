@@ -1,0 +1,64 @@
+<resources>
+    <string name="app_name">Safarnama</string>
+    <string name="menu_1">Wander</string>
+
+
+    <string name="get_loc_check">Location Check</string>
+    <string name="get_loc_msg">Application Needs location access. Kindly enable it.</string>
+
+
+    <string name="menu1_dialoge_name">Name :</string>
+    <string name="menu1_dialoge_type">Type :</string>
+    <string name="menu1_dialoge_lat">Latitude:</string>
+    <string name="menu1_dialoge_lon">Longitude:</string>
+    <string name="menu1_dialoge_desc">Description :</string>
+
+
+
+
+    <string name="BucketList">Bucket List</string>
+    <string name="Explore">Explore</string>
+    <string name="Accomplished">Accomplished</string>
+
+
+
+    <string name="give_permission">Grant Permission</string>
+    <string name="placename">Place Name</string>
+    <string name="location">Location</string>
+    <string name="district">District</string>
+    <string name="description">Description</string>
+    <string name="type">Type</string>
+    <string name="dateadded">Added On</string>
+    <string name="wishlist">Bucketlist</string>
+    <string name="accomplished">Accomplished</string>
+    <string name="confirm">Confirmation</string>
+    <string name="leave_msg">Do you want to exit the application ?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <string name="wishlistadd">Added to Wishlist</string>
+    <string name="wishlistreadd">Already in Wishlist</string>
+    <string name="wishlistremove">Removed from Wishlist</string>
+    <string name="wishlistreremove">Not in Wishlist</string>
+    <string name="accomplishlistadd">Added to Accomplished</string>
+    <string name="accomplishlistreadd">Already in Accomplished</string>
+    <string name="accomplishlistremove">Removed from Wishlist</string>
+    <string name="accomplishlistreremove">Not in Wishlist</string>
+
+    <string name="show_all">Showing all Places</string>
+    <string name="show_all_void">There are no places</string>
+    <string name="show_new">Showing New Places to Visit</string>
+    <string name="show_new_void">There are no new places to visit</string>
+    <string name="show_bucket">Showing Places in Bucket List</string>
+    <string name="show_bucket_void">Add some places in Bucket List</string>
+    <string name="show_accomplished">Showing Visited Places</string>
+    <string name="show_accomplished_void">Add some places in Accomplished List</string>
+
+
+
+    <string name="collection_users">Users</string>
+    <string name="collection_user_locations">User Locations</string>
+
+
+
+</resources>

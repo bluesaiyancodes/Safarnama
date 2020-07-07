@@ -82,7 +82,7 @@ public class RecyclerViewAdapter_bucketlist extends RecyclerView.Adapter<Recycle
                 dialog_date_tv.setText(mData.get(vHolder.getAdapterPosition()).getDatecreated());
                 Glide.with(mContext)
                         .load(mData.get(vHolder.getAdapterPosition()).getPhotoUrl())
-                        .placeholder(R.drawable.ic_launcher_background)
+                        .placeholder(R.drawable.loading_image)
                         .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
                         .into(dialog_img);
 
@@ -163,7 +163,7 @@ public class RecyclerViewAdapter_bucketlist extends RecyclerView.Adapter<Recycle
 
         Glide.with(mContext)
                 .load(mData.get(holder.getAdapterPosition()).getPhotoUrl())
-                .placeholder(R.drawable.ic_launcher_background)
+                .placeholder(R.drawable.loading_image)
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(holder.img);
 

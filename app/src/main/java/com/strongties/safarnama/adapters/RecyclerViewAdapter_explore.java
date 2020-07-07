@@ -82,7 +82,7 @@ public class RecyclerViewAdapter_explore extends RecyclerView.Adapter<RecyclerVi
 
                 Glide.with(mContext)
                         .load(mData.get(vHolder.getAdapterPosition()).getPhotoUrl())
-                        .placeholder(R.drawable.ic_launcher_background)
+                        .placeholder(R.drawable.loading_image)
                         .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
                         .into(dialog_img);
 
@@ -106,7 +106,7 @@ public class RecyclerViewAdapter_explore extends RecyclerView.Adapter<RecyclerVi
                         }
                         if (!cursor.getString(0).equals("tovisit")) {
                             database.update("LANDMARKS", values, " id = ?", new String[]{Integer.toString(mData.get(vHolder.getAdapterPosition()).getId())});
-                            vHolder.img_heart.setImageResource(R.drawable.ic_heart_full_blue);
+                            vHolder.img_heart.setImageResource(R.drawable.bucketlist);
                             Toast.makeText(mContext, mContext.getResources().getString(R.string.wishlistadd), Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(mContext, mContext.getResources().getString(R.string.wishlistreadd), Toast.LENGTH_SHORT).show();
@@ -132,7 +132,7 @@ public class RecyclerViewAdapter_explore extends RecyclerView.Adapter<RecyclerVi
                         }
                         if (!cursor.getString(0).equals("visited")) {
                             database.update("LANDMARKS", values, " id = ?", new String[]{Integer.toString(mData.get(vHolder.getAdapterPosition()).getId())});
-                            vHolder.img_heart.setImageResource(R.drawable.ic_heart_full_green);
+                            vHolder.img_heart.setImageResource(R.drawable.accomplished_add);
                             Toast.makeText(mContext, mContext.getResources().getString(R.string.accomplishlistadd), Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(mContext, mContext.getResources().getString(R.string.accomplishlistreadd), Toast.LENGTH_SHORT).show();
@@ -159,16 +159,16 @@ public class RecyclerViewAdapter_explore extends RecyclerView.Adapter<RecyclerVi
 
         Glide.with(mContext)
                 .load(mData.get(holder.getAdapterPosition()).getPhotoUrl())
-                .placeholder(R.drawable.ic_launcher_background)
+                .placeholder(R.drawable.loading_image)
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(holder.img);
 
         if (mData.get(position).getVisit().equals("tovisit")){
-            holder.img_heart.setImageResource(R.drawable.ic_heart_full_blue);
+            holder.img_heart.setImageResource(R.drawable.bucketlist);
         }else if(mData.get(position).getVisit().equals("visited")){
-            holder.img_heart.setImageResource(R.drawable.ic_heart_full_green);
+            holder.img_heart.setImageResource(R.drawable.accomplished);
         }else{
-            holder.img_heart.setImageResource(R.drawable.ic_heart_empty);
+            holder.img_heart.setImageResource(R.drawable.add_icon);
         }
 
     }

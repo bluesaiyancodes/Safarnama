@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="350dp"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    >
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:background="@drawable/dialog_bg"
+        android:layout_marginTop="120dp">
+
+        <TextView
+            android:id="@+id/menu3_findbuddy_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="@string/name"
+            android:textColor="@color/textItemMenu"
+            android:textStyle="bold"
+            android:textSize="23sp"
+            android:layout_marginTop="75dp"
+            />
+
+
+        <TextView
+            android:id="@+id/menu3_findbuddy_email"
+            android:padding="5dp"
+            android:textAlignment="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textStyle="italic"
+            android:text="@string/email"
+            android:textColor="@color/textItemMenu"
+            android:layout_marginTop="5dp"
+            />
+
+            <Button
+                android:id="@+id/menu3_findbuddy_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/dialog_bg"
+                android:layout_marginTop="20dp"
+                android:layout_weight="0.5"
+                android:text="@string/friend_request_send"
+                android:drawablePadding="10dp"
+                android:drawableTop="@drawable/buddy_add"/>
+
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/menu3_findbuddy_img"
+        android:layout_width="240dp"
+        android:layout_height="180dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"/>
+
+</RelativeLayout>

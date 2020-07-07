@@ -44,7 +44,7 @@ public class RV_BucketlistFragment extends Fragment {
         DatabaseHelper dbhelper = new DatabaseHelper(getContext());
         SQLiteDatabase database = dbhelper.getReadableDatabase();
 
-        Cursor cursor = database.rawQuery("SELECT id, name, city, district, description, type, url, date, visit FROM LANDMARKS", new String[]{});
+        Cursor cursor = database.rawQuery("SELECT id, name, city, district, description, type, url, date, visit FROM LANDMARKS ORDER BY name ASC", new String[]{});
 
         list_Bucketlist = new ArrayList<>();
 

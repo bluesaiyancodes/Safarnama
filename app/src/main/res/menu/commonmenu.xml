@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/add_new_places"
+        android:icon="@drawable/location"
+        android:title="Wishlist"
+        app:showAsAction="always"
+        />
+
     <item
         android:id="@+id/wishlist"
         android:icon="@drawable/explore"
@@ -8,15 +16,22 @@
         app:showAsAction="always"
        />
 
+
+    <item
+        android:id="@+id/app_mode"
+        android:title="@string/mode_dark"
+        app:showAsAction="never"
+        />
+
     <item
         android:id="@+id/contactus"
-        android:title="Contact Us"
+        android:title="@string/contact_us"
         app:showAsAction="never"
         />
 
     <item
         android:id="@+id/logout"
-        android:title="Logout"
+        android:title="@string/logout"
         app:showAsAction="never"
         />
 

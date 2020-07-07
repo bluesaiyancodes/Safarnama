@@ -1,6 +1,21 @@
 <resources>
     <string name="app_name">Safarnama</string>
     <string name="menu_1">Wander</string>
+    <string name="menu_2">Nearby</string>
+    <string name="menu_3">Travel Buddies</string>
+    <string name="menu_4">Journeys</string>
+
+    <string name="support_email">strongtieschannel@gmail.com</string>
+    <string name="support_sub">Support Email from Safarnama - </string>
+    <string name="support_title">Contacting Support</string>
+
+    <string name="contact_us">Contact Us</string>
+    <string name="mode_light">Light Mode</string>
+    <string name="mode_dark">Dark Mode</string>
+    <string name="contact_title">Contact Us - Submit through Email</string>
+    <string name="contact_msg">Type Suggestions, Feedbacks or Errors</string>
+    <string name="contact_submit">Submit</string>
+    <string name="logout">Log Out</string>
 
 
     <string name="get_loc_check">Location Check</string>
@@ -12,6 +27,7 @@
     <string name="menu1_dialoge_lat">Latitude:</string>
     <string name="menu1_dialoge_lon">Longitude:</string>
     <string name="menu1_dialoge_desc">Description :</string>
+    <string name="menu1_dialoge_info">Information</string>
 
 
 
@@ -28,22 +44,59 @@
     <string name="district">District</string>
     <string name="description">Description</string>
     <string name="type">Type</string>
-    <string name="dateadded">Added On</string>
+    <string name="dateadded">Added On </string>
+    <string name="daterequested">Requested On </string>
     <string name="wishlist">Bucketlist</string>
     <string name="accomplished">Accomplished</string>
     <string name="confirm">Confirmation</string>
     <string name="leave_msg">Do you want to exit the application ?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="requested">Requested</string>
+    <string name="friend">Friend</string>
+    <string name="list">list</string>
+    <string name="search">Search</string>
+    <string name="error_fetching">Error Fetching Data</string>
+    <string name="okay">Okay</string>
+    <string name="badge">Badge</string>
+    <string name="done">Done</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="upload_profile_img">Upload Profile Image</string>
 
-    <string name="wishlistadd">Added to Wishlist</string>
-    <string name="wishlistreadd">Already in Wishlist</string>
-    <string name="wishlistremove">Removed from Wishlist</string>
-    <string name="wishlistreremove">Not in Wishlist</string>
+
+    <string name="provide_email">Enter Email Address</string>
+    <string name="friend_search">Find Your Buddies</string>
+    <string name="friend_requests">Buddy Requests</string>
+    <string name="friend_list">My Buddies</string>
+    <string name="friend_request_send">Send Buddy Request</string>
+    <string name="friend_request_success">Buddy Request Sent</string>
+    <string name="friend_request_pending">Buddy Request is Pending</string>
+    <string name="friend_request_fail">Failed to send Buddy Request</string>
+    <string name="friend_request_approve">Be Buddies</string>
+    <string name="friends_placeholder">Add some buddies to show them here and on Map</string>
+    <string name="friend_request_already_accepted">You are already Buddies</string>
+    <string name="friend_request_self">You cannot be your own Buddy</string>
+    <string name="friend_request_dismiss">Not Interested</string>
+    <string name="friend_accepted">Great! You\'ve added a new buddy</string>
+    <string name="friend_failed">Buddy Registration failed.</string>
+    <string name="friend_rejected">Buddy Request Rejected</string>
+    <string name="friend_unfriend">Remove Buddy</string>
+    <string name="friend_add">Add Buddies</string>
+    <string name="friend_unfriend_msg">Removed from Buddies</string>
+    <string name="friend_reunfriend_msg">Already Removed from Buddies</string>
+    <string name="friend_map">Buddies Locations</string>
+
+
+    <string name="wishlistadd">Added to Bucket List</string>
+    <string name="wishlistreadd">Already in Bucket List</string>
+    <string name="wishlistremove">Removed from Bucket List</string>
+    <string name="wishlistreremove">Not in Bucket List</string>
     <string name="accomplishlistadd">Added to Accomplished</string>
     <string name="accomplishlistreadd">Already in Accomplished</string>
-    <string name="accomplishlistremove">Removed from Wishlist</string>
-    <string name="accomplishlistreremove">Not in Wishlist</string>
+    <string name="accomplishlistremove">Removed from Accomplished</string>
+    <string name="accomplishlistreremove">Not in Accomplished</string>
 
     <string name="show_all">Showing all Places</string>
     <string name="show_all_void">There are no places</string>
@@ -58,7 +111,23 @@
 
     <string name="collection_users">Users</string>
     <string name="collection_user_locations">User Locations</string>
+    <string name="collection_relations">User Relations</string>
+    <string name="collection_friendlist">Friend list</string>
+    <string name="collection_requestlist">Request list</string>
+    <string name="collection_requestedlist">Requested list</string>
+    <string name="collection_landmarks">Landmarks</string>
 
+    <string name="i_circle">\u24D8</string>
+
+
+    <string name="inside_1">Inside 1 KM</string>
+    <string name="inside_5">Inside 5 KM</string>
+    <string name="inside_10">Inside 10 KM</string>
+    <string name="inside_50">Inside 50 KM</string>
+    <string name="inside_100">Inside 100 KM</string>
+    <string name="inside_200">Inside 200 KM</string>
+    <string name="above_200">Above 200 KM</string>
+    <string name="profile">Your Profile</string>
 
 
 </resources>

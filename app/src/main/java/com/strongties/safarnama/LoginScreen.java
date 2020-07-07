@@ -1,6 +1,8 @@
 package com.strongties.safarnama;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,6 +26,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -51,6 +54,7 @@ public class LoginScreen extends AppCompatActivity {
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_login_screen);
+
 
             progressBar = findViewById(R.id.login_progressbar);
             imageView = findViewById(R.id.login_img);
@@ -203,6 +207,16 @@ public class LoginScreen extends AppCompatActivity {
                     }
                 }
             });
+
+            //to be reused
+
+            CollectionReference usercollectionRef = db.collection(getString(R.string.collection_relations))
+                    .document(user.getUid())
+                    .collection(getString(R.string.collection_friendlist));
+
+            usercollectionRef = db.collection(getString(R.string.collection_relations))
+                    .document(user.getUid())
+                    .collection(getString(R.string.collection_requestlist));
 
 
             //to load image into an image view

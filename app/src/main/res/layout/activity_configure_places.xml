@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_marginTop="20dp"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/config_places_layout1">
+            <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:text="Insert into Firebase"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:background="@drawable/dialog_bg_colored"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:text="** Only for Developers **"
+                android:gravity="center" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="50dp"
+                android:gravity="center"
+                android:hint="Enter Place Name"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/dialog_bg_colored"
+                android:id="@+id/config_places_name"/>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:weightSum="1"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:orientation="horizontal">
+
+            <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+                android:id="@+id/config_places_state"
+                android:layout_marginRight="10dp"
+                android:textColor="@color/white"
+                android:hint="Enter State"
+                android:textSize="20dp"
+                android:gravity="center"
+            android:background="@drawable/dialog_bg_colored"
+            android:layout_weight="0.5"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/config_places_district"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/white"
+                android:hint="Enter District"
+                android:textSize="20dp"
+                android:gravity="center"
+                android:background="@drawable/dialog_bg_colored"
+                android:layout_weight="0.5"/>
+
+        </LinearLayout>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/config_places_city"
+                android:layout_marginRight="30dp"
+                android:textColor="@color/white"
+                android:hint="Enter city"
+                android:textSize="20dp"
+                android:gravity="center"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/dialog_bg_colored"
+                android:layout_weight="0.5"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:weightSum="1"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/config_places_lat"
+                    android:layout_marginRight="10dp"
+                    android:textColor="@color/white"
+                    android:hint="Enter Latitude"
+                    android:textSize="20dp"
+                    android:gravity="center"
+                    android:background="@drawable/dialog_bg_colored"
+                    android:layout_weight="0.5"/>
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/config_places_lon"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="@color/white"
+                    android:hint="Enter Longitude"
+                    android:textSize="20dp"
+                    android:gravity="center"
+                    android:background="@drawable/dialog_bg_colored"
+                    android:layout_weight="0.5"/>
+
+            </LinearLayout>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/config_places_type"
+                android:layout_marginRight="30dp"
+                android:textColor="@color/white"
+                android:hint="Enter Type"
+                android:textSize="20dp"
+                android:gravity="center"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/dialog_bg_colored" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:id="@+id/config_places_short_desc"
+                android:layout_marginRight="30dp"
+                android:textColor="@color/white"
+                android:hint="Short Description"
+                android:textSize="20dp"
+                android:gravity="center"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/dialog_bg_colored" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:id="@+id/config_places_long_desc"
+                android:layout_marginRight="30dp"
+                android:textColor="@color/white"
+                android:hint="Long Description"
+                android:textSize="20dp"
+                android:gravity="center"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/dialog_bg_colored" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:id="@+id/config_places_history"
+                android:layout_marginRight="30dp"
+                android:textColor="@color/white"
+                android:hint="Enter History"
+                android:textSize="20dp"
+                android:gravity="center"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/dialog_bg_colored" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/config_places_img"
+                android:layout_marginRight="30dp"
+                android:textColor="@color/white"
+                android:hint="Enter Image URL"
+                android:textSize="20dp"
+                android:gravity="center"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/dialog_bg_colored" />
+
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:id="@+id/config_places_img_all"
+                android:layout_marginRight="30dp"
+                android:textColor="@color/white"
+                android:hint="Enter All Image URLs"
+                android:textSize="20dp"
+                android:gravity="center"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/dialog_bg_colored" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:id="@+id/config_places_submit"
+                android:background="@drawable/dialog_bg_colored"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="50dp"
+                android:layout_marginLeft="60dp"
+                android:layout_marginRight="60dp"
+                android:text="Submit"
+                android:textColor="@color/white"/>
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+
+</LinearLayout>

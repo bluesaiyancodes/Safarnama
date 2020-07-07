@@ -24,7 +24,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:layout_marginLeft="10dp"
-                android:src="@mipmap/ic_launcher_round"
+                android:src="@drawable/loading_image"
                 android:id="@+id/img_accomplished" />
 
             <TextView
@@ -69,7 +69,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_heart_full_green"
+                android:src="@drawable/accomplished"
                 android:layout_alignParentRight="true"
                 android:layout_centerInParent="true"
                 android:layout_marginRight="10dp"/>

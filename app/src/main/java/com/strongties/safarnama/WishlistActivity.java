@@ -8,6 +8,8 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
 
+import java.util.Objects;
+
 public class WishlistActivity extends AppCompatActivity {
 
     private TabLayout tabLayout;
@@ -40,6 +42,10 @@ public class WishlistActivity extends AppCompatActivity {
         //Remove Shadow from the action bar
         ActionBar actionBar = getSupportActionBar();
         actionBar.setElevation(0);
+
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
+        Objects.requireNonNull(getSupportActionBar()).setHomeAsUpIndicator(R.drawable.ic_app_name);// set drawable icon
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
 

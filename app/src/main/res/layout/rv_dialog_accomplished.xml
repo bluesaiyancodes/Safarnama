@@ -97,19 +97,19 @@
                 android:id="@+id/dialog_accomplished_addtowishlist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
+                android:background="@color/dialog_bg"
                 android:layout_marginTop="20dp"
                 android:layout_weight="0.5"
-                android:drawableTop="@drawable/ic_heart_add_blue"/>
+                android:drawableTop="@drawable/bucketlistadd"/>
 
             <Button
                 android:id="@+id/dialog_accomplished_removecompletelist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
+                android:background="@color/dialog_bg"
                 android:layout_marginTop="20dp"
                 android:layout_weight="0.5"
-                android:drawableTop="@drawable/ic_heart_empty"/>
+                android:drawableTop="@drawable/accomplished_remove"/>
 
         </LinearLayout>
 
@@ -122,6 +122,7 @@
         android:id="@+id/dialog_accomplished_img"
         android:layout_width="240dp"
         android:layout_height="180dp"
+        android:src="@drawable/loading_image"
         android:layout_centerHorizontal="true"
         android:layout_alignParentTop="true"/>
 

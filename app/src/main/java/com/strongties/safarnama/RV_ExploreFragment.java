@@ -55,7 +55,7 @@ public class RV_ExploreFragment extends Fragment {
         dbhelper = new DatabaseHelper(getContext());
         SQLiteDatabase database = dbhelper.getReadableDatabase();
 
-        Cursor cursor = database.rawQuery("SELECT id, name, city, district, description, type, url, visit FROM LANDMARKS", new String[]{});
+        Cursor cursor = database.rawQuery("SELECT id, name, city, district, description, type, url, visit FROM LANDMARKS ORDER BY name ASC", new String[]{});
 
         lstExplore = new ArrayList<>();
 

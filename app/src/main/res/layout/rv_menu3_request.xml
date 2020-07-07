@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:id="@+id/menu3_request_item_id">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="10dp"
+        app:cardMaxElevation="6dp"
+        app:cardElevation="4dp"
+        android:layout_centerInParent="true">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/loading_image"
+                android:id="@+id/menu3_request_img" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="italic"
+                android:textSize="20sp"
+                android:textColor="@color/textItemMenu"
+                android:text="@string/email"
+                android:id="@+id/menu3_request_email"
+                android:layout_toRightOf="@+id/menu3_request_img"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="@color/textItemMenu"
+                android:textSize="15sp"
+                android:text="@string/name"
+                android:id="@+id/menu3_request_name"
+                android:layout_below="@id/menu3_request_email"
+                android:layout_toRightOf="@id/menu3_request_img"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/textItemMenu"
+                android:textSize="15sp"
+                android:textStyle="italic"
+                android:text="@string/daterequested"
+                android:id="@+id/menu3_request_added_label"
+                android:layout_toRightOf="@+id/menu3_request_img"
+                android:layout_below="@id/menu3_request_name"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/textItemMenu"
+                android:textSize="15sp"
+                android:textStyle="italic"
+                android:text="@string/daterequested"
+                android:id="@+id/menu3_request_added_on"
+                android:layout_toRightOf="@+id/menu3_request_added_label"
+                android:layout_below="@id/menu3_request_name"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"/>
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/buddy_remove"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:id="@+id/menu3_img_reject"
+                android:layout_marginRight="10dp"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/buddy_add"
+                android:id="@+id/menu_3_img_accept"
+                android:layout_toLeftOf="@+id/menu3_img_reject"
+                android:layout_centerInParent="true"
+                android:layout_marginRight="20dp"/>
+
+        </RelativeLayout>
+
+
+    </androidx.cardview.widget.CardView>
+
+
+
+
+</LinearLayout>

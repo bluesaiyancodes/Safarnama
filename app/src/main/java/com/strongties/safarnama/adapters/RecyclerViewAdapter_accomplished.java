@@ -160,7 +160,7 @@ public class RecyclerViewAdapter_accomplished extends RecyclerView.Adapter<Recyc
 
         Glide.with(mContext)
                 .load(mData.get(holder.getAdapterPosition()).getPhotoUrl())
-                .placeholder(R.drawable.ic_launcher_background)
+                .placeholder(R.drawable.loading_image)
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(holder.img);
 

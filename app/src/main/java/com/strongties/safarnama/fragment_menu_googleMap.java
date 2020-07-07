@@ -1,12 +1,20 @@
 package com.strongties.safarnama;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,6 +26,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,6 +38,11 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -38,15 +54,18 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
+import com.strongties.safarnama.services.LocationService;
 import com.strongties.safarnama.user_classes.User;
 import com.strongties.safarnama.user_classes.UserLocation;
 
@@ -105,14 +124,13 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
         mapFragment.getMapAsync(this);
 
 
-        getUserDetails();
-
         Button btn_all = root.findViewById(R.id.menu1_mixed);
         Button btn_new = root.findViewById(R.id.menu1_explore);
         Button btn_wish = root.findViewById(R.id.menu1_wish);
         Button btn_accomplish = root.findViewById(R.id.menu1_accomplish);
 
         checkLocationPermission();
+
 
         btn_all.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,6 +173,7 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
         return root;
     }
 
+
     //Is Called When Map is Ready Show
     @Override
     public void onMapReady(GoogleMap mMap) {
@@ -162,7 +181,16 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
         googleMap = mMap;
         //googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
-        addMarkers();
+        switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK){
+            case Configuration.UI_MODE_NIGHT_YES:
+                MapStyleOptions style = MapStyleOptions.loadRawResourceStyle(mcontext, R.raw.mapstyle_night);
+                mMap.setMapStyle(style);
+                break;
+            case Configuration.UI_MODE_NIGHT_NO:
+                break;
+        }
+
+
         mLocationRequest = new LocationRequest();
 
         mLocationRequest.setInterval(300000); // Five min interval
@@ -170,11 +198,11 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(getContext(),
+            if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getContext()),
                     Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
                 //Location Permission already granted
-                mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+                mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
                 googleMap.setMyLocationEnabled(true);
             } else {
                 //Request Location Permission
@@ -182,14 +210,18 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
             }
         }
         else {
-            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
             googleMap.setMyLocationEnabled(true);
         }
 
+
+
+        addMarkers();
+        googleMap.setMyLocationEnabled(true);
         googleMap.setOnInfoWindowClickListener(this);
+        startLocationService();
     }
 
-    //Called on Location Update specified in timer in previous section
     LocationCallback mLocationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(@org.jetbrains.annotations.NotNull LocationResult locationResult) {
@@ -213,9 +245,14 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
 
                 //move map camera
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+                if(isLocationEnabled(getContext())){
+                    getUserDetails();
+                }
             }
         }
     };
+
+
 
 
     //Check for Location Permission
@@ -272,8 +309,21 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
                             Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
 
-                        mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+
+                        mFusedLocationClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Location> task) {
+                                if (task.isSuccessful()) {
+                                    Location location = task.getResult();
+                                    assert location != null;
+                                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+                                }
+                            }
+                        });
+
                         googleMap.setMyLocationEnabled(true);
+
                     }
 
                 } else {
@@ -318,16 +368,16 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
                 LatLng place = new LatLng(lat, lon);
                 if(cursor.getString(4).equals("notvisited")){
                     googleMap.addMarker(new MarkerOptions().position(place).title(name)
-                            .snippet(type)
+                            .snippet(type + "  "+ getString(R.string.i_circle))
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
                 }else if(cursor.getString(4).equals("tovisit")){
                     googleMap.addMarker(new MarkerOptions().position(place).title(name)
-                            .snippet(type)
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+                            .snippet(type + "  "+ getString(R.string.i_circle))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                 }else{
                     googleMap.addMarker(new MarkerOptions().position(place).title(name)
-                            .snippet(type)
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                            .snippet(type + "  "+ getString(R.string.i_circle))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
                 }
 
             }while (cursor.moveToNext());
@@ -354,7 +404,7 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
 
                     LatLng place = new LatLng(lat, lon);
                     googleMap.addMarker(new MarkerOptions().position(place).title(name)
-                            .snippet(type)
+                            .snippet(type + "  "+ getString(R.string.i_circle))
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
                 }while (cursor.moveToNext());
 
@@ -386,8 +436,8 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
 
                     LatLng place = new LatLng(lat, lon);
                     googleMap.addMarker(new MarkerOptions().position(place).title(name)
-                            .snippet(type)
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+                            .snippet(type + "  "+ getString(R.string.i_circle))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                 }while (cursor.moveToNext());
 
             }else{
@@ -417,8 +467,8 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
 
                     LatLng place = new LatLng(lat, lon);
                     googleMap.addMarker(new MarkerOptions().position(place).title(name)
-                            .snippet(type)
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                            .snippet(type + "  "+ getString(R.string.i_circle))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
                 }while (cursor.moveToNext());
 
             }else {
@@ -433,31 +483,76 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        Dialogue_Gmap dialogue_gmap = new Dialogue_Gmap();
-        Bundle args = new Bundle();
 
-        args.putString("lat", Double.toString(marker.getPosition().latitude));
-        args.putString("lon", Double.toString(marker.getPosition().longitude));
-        args.putString("type", marker.getSnippet());
+        String lat =  Double.toString(marker.getPosition().latitude);
+        String lon = Double.toString(marker.getPosition().longitude);
 
         //Get Name and Desc from DB
         dbhelper = new DatabaseHelper(getContext());
         SQLiteDatabase database = dbhelper.getReadableDatabase();
 
-        Cursor cursor = database.rawQuery("SELECT name, descshort, url, visit FROM LANDMARKS where lat = ? and lon = ?",
+        Cursor cursor = database.rawQuery("SELECT name, descshort, url, visit, type FROM LANDMARKS where lat = ? and lon = ?",
                 new String[]{Double.toString(marker.getPosition().latitude), Double.toString(marker.getPosition().longitude)});
 
         if(cursor != null){
             cursor.moveToFirst();
         }
 
-        args.putString("name", cursor.getString(0));
-        args.putString("desc", cursor.getString(1));
-        args.putString("url", cursor.getString(2));
-        args.putString("visit", cursor.getString(3));
-        dialogue_gmap.setArguments(args);
+        assert cursor != null;
+        String name =  cursor.getString(0);
+        String desc = cursor.getString(1);
+        String url = cursor.getString(2);
+        String visit = cursor.getString(3);
+        String type = cursor.getString(4);
 
-        dialogue_gmap.show(getChildFragmentManager(), "Marker Clicked");
+
+
+
+        Dialog myDialog = new Dialog(mcontext);
+        myDialog.setContentView(R.layout.menu1_dialogue_map_marker);
+        Objects.requireNonNull(myDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        ImageView imageView = myDialog.findViewById(R.id.dialog_marker_image);
+        final ProgressBar progressBar = myDialog.findViewById(R.id.dialog_progress);
+
+        TextView tv_name = myDialog.findViewById(R.id.dialog_marker_name);
+        TextView tv_type = myDialog.findViewById(R.id.dialog_marker_type);
+        TextView tv_desc = myDialog.findViewById(R.id.dialog_marker_desc);
+
+        Button btn = myDialog.findViewById(R.id.dialog_btn);
+
+
+        tv_name.setText(name);
+        tv_type.setText(type);
+        tv_desc.setText(desc);
+
+
+        Glide.with(this).load(url)
+                .listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
+                })
+                .into(imageView);
+
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myDialog.dismiss();
+            }
+        });
+
+
+        myDialog.show();
+
     }
 
 
@@ -544,6 +639,34 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
                 }
             });
         }
+    }
+
+
+
+    private void startLocationService(){
+        if(!isLocationServiceRunning()){
+            Intent serviceIntent = new Intent(mcontext, LocationService.class);
+//        this.startService(serviceIntent);
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O){
+
+                Objects.requireNonNull(getContext()).startForegroundService(serviceIntent);
+            }else{
+                mcontext.startService(serviceIntent);
+            }
+        }
+    }
+
+    private boolean isLocationServiceRunning() {
+        ActivityManager manager = (ActivityManager) mcontext.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)){
+            if("com.strongties.safarnama.services.LocationService".equals(service.service.getClassName())) {
+                Log.d(TAG, "isLocationServiceRunning: location service is already running.");
+                return true;
+            }
+        }
+        Log.d(TAG, "isLocationServiceRunning: location service is not running.");
+        return false;
     }
 
 }

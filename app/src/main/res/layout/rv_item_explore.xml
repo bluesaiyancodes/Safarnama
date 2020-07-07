@@ -24,7 +24,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:layout_marginLeft="10dp"
-                android:src="@mipmap/ic_launcher_round"
+                android:src="@drawable/loading_image"
                 android:id="@+id/img_explore" />
 
             <TextView
@@ -70,7 +70,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/explore_heart"
-                android:src="@drawable/ic_heart_empty"
+                android:src="@drawable/add_icon"
                 android:layout_alignParentRight="true"
                 android:layout_centerInParent="true"
                 android:layout_marginRight="10dp"/>

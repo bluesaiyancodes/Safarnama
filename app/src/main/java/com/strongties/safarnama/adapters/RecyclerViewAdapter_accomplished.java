@@ -1,12 +1,12 @@
 package com.strongties.safarnama.adapters;
 
+import android.app.Activity;
 import android.app.Dialog;
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,24 +23,32 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
-import com.strongties.safarnama.DatabaseHelper;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.strongties.safarnama.LandmarkActivity;
 import com.strongties.safarnama.R;
+import com.strongties.safarnama.user_classes.LandmarkList;
 import com.strongties.safarnama.user_classes.RV_Accomplished;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
-public class RecyclerViewAdapter_accomplished extends RecyclerView.Adapter<RecyclerViewAdapter_accomplished.MyViewHolder> {
+public class RecyclerViewAdapter_accomplished extends FirestoreRecyclerAdapter<LandmarkList, RecyclerViewAdapter_accomplished.MyViewHolder> {
 
 
     Context mContext;
     List<RV_Accomplished> mData;
     Dialog myDialog;
 
-    public RecyclerViewAdapter_accomplished(Context mContext, List<RV_Accomplished> mData) {
-        this.mContext = mContext;
-        this.mData = mData;
+    public RecyclerViewAdapter_accomplished(@NonNull FirestoreRecyclerOptions<LandmarkList> options) {
+        super(options);
     }
 
     @NonNull
@@ -48,21 +56,43 @@ public class RecyclerViewAdapter_accomplished extends RecyclerView.Adapter<Recyc
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View v;
-        v = LayoutInflater.from(mContext).inflate(R.layout.rv_item_accomplished,parent,false);
+        v = LayoutInflater.from(parent.getContext()).inflate(R.layout.rv_item_accomplished,parent,false);
         final MyViewHolder vHolder = new MyViewHolder(v);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-        final String currentDate = sdf.format(new Date());
+        mContext = parent.getContext();
 
-        //Dialog Initiation
+        return vHolder;
+
+    }
+
+
+    @Override
+    protected void onBindViewHolder(@NonNull MyViewHolder holder, int position, @NonNull LandmarkList model) {
+
+        holder.tv_placename.setText(model.getLandmarkMeta().getLandmark().getName());
+        holder.tv_location.setText(model.getLandmarkMeta().getLandmark().getCity());
+        holder.tv_district.setText(model.getLandmarkMeta().getLandmark().getState());
+
+        Glide.with(mContext)
+                .load(model.getLandmarkMeta().getLandmark().getImg_url())
+                .placeholder(R.drawable.loading_image)
+                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                .into(holder.img);
+
+
+
+
+
+         //Dialog Initiation
         myDialog = new Dialog(mContext);
         myDialog.setContentView(R.layout.rv_dialog_accomplished);
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        myDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
 
 
 
 
-        vHolder.item_explore.setOnClickListener(new View.OnClickListener() {
+        holder.item_explore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v1) {
                 TextView dialog_placename_tv = myDialog.findViewById(R.id.dialog_accomplished_place_name);
@@ -73,42 +103,69 @@ public class RecyclerViewAdapter_accomplished extends RecyclerView.Adapter<Recyc
 
                 Button btn_wish = myDialog.findViewById(R.id.dialog_accomplished_addtowishlist);
                 Button btn_cmpl = myDialog.findViewById(R.id.dialog_accomplished_removecompletelist);
+                Button btn_details = myDialog.findViewById(R.id.dialog_accomplished_btn_details);
 
-                dialog_placename_tv.setText(mData.get(vHolder.getAdapterPosition()).getPlacename());
-                dialog_description_tv.setText(mData.get(vHolder.getAdapterPosition()).getDescription());
-                dialog_type_tv.setText(mData.get(vHolder.getAdapterPosition()).getType());
-                dialog_date_tv.setText(mData.get(vHolder.getAdapterPosition()).getDatecreated());
+                dialog_placename_tv.setText(model.getLandmarkMeta().getLandmark().getName());
+                dialog_description_tv.setText(model.getLandmarkMeta().getLandmark().getLong_desc());
+                dialog_type_tv.setText(model.getLandmarkMeta().getLandmark().getCategory());
+
+                String pattern = "dd-MM-YYYY";
+                DateFormat df = new SimpleDateFormat(pattern);
+                String dateasstring;
+                try {
+                    dateasstring = df.format(model.getTimestamp());
+                }catch (NullPointerException e){
+                    dateasstring = "";
+                }
+
+                dialog_date_tv.setText(dateasstring);
                 Glide.with(mContext)
-                        .load(mData.get(vHolder.getAdapterPosition()).getPhotoUrl())
+                        .load(model.getLandmarkMeta().getLandmark().getImg_url())
                         .placeholder(R.drawable.ic_launcher_background)
                         .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
                         .into(dialog_img);
 
-                //dialog_img.setImageResource(mData.get(vHolder.getAdapterPosition()).getPhoto());
 
 
                 btn_wish.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        DatabaseHelper dbhelper = new DatabaseHelper(mContext);
-                        SQLiteDatabase database = dbhelper.getWritableDatabase();
 
-                        ContentValues values = new ContentValues();
-                        values.put("visit", "tovisit");
-                        values.put("date", currentDate);
 
-                        Cursor cursor = database.rawQuery("SELECT visit FROM LANDMARKS WHERE id = ?", new String[]{Integer.toString(mData.get(vHolder.getAdapterPosition()).getId())});
+                        DocumentReference bucketRef = FirebaseFirestore.getInstance()
+                                .collection(mContext.getString(R.string.collection_users))
+                                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                                .collection(mContext.getString(R.string.collection_bucket_list))
+                                .document(model.getLandmarkMeta().getId());
 
-                        if (cursor != null) {
-                            cursor.moveToFirst();
-                        }
-                        if (!cursor.getString(0).equals("tovisit")) {
-                            database.update("LANDMARKS", values, " id = ?", new String[]{Integer.toString(mData.get(vHolder.getAdapterPosition()).getId())});
-                            Toast.makeText(mContext, mContext.getResources().getString(R.string.wishlistadd), Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(mContext, mContext.getResources().getString(R.string.wishlistreadd), Toast.LENGTH_SHORT).show();
-                        }
-                        cursor.close();
+                        LandmarkList landmarkList = new LandmarkList();
+                        landmarkList.setLandmarkMeta(model.getLandmarkMeta());
+
+                        bucketRef.set(landmarkList).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    Toast.makeText(mContext, mContext.getString(R.string.wishlistadd), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+
+
+                        bucketRef = FirebaseFirestore.getInstance()
+                                .collection(mContext.getString(R.string.collection_users))
+                                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                                .collection(mContext.getString(R.string.collection_accomplished_list))
+                                .document(model.getLandmarkMeta().getId());
+
+                        bucketRef.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    myDialog.cancel();
+                                }
+                            }
+                        });
+
 
 
                     }
@@ -117,26 +174,38 @@ public class RecyclerViewAdapter_accomplished extends RecyclerView.Adapter<Recyc
                 btn_cmpl.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        DatabaseHelper dbhelper = new DatabaseHelper(mContext);
-                        SQLiteDatabase database = dbhelper.getWritableDatabase();
-
-                        ContentValues values = new ContentValues();
-                        values.put("visit", "notvisited");
-                        values.put("date", currentDate);
-
-                        Cursor cursor = database.rawQuery("SELECT visit FROM LANDMARKS WHERE id = ?", new String[]{Integer.toString(mData.get(vHolder.getAdapterPosition()).getId())});
-
-                        if (cursor != null) {
-                            cursor.moveToFirst();
-                        }
-                        if (!cursor.getString(0).equals("notvisited")) {
-                            database.update("LANDMARKS", values, " id = ?", new String[]{Integer.toString(mData.get(vHolder.getAdapterPosition()).getId())});
-                            Toast.makeText(mContext, mContext.getResources().getString(R.string.accomplishlistremove), Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(mContext, mContext.getResources().getString(R.string.accomplishlistreremove), Toast.LENGTH_SHORT).show();
-                        }
 
 
+                        DocumentReference bucketRef = FirebaseFirestore.getInstance()
+                                .collection(mContext.getString(R.string.collection_users))
+                                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                                .collection(mContext.getString(R.string.collection_accomplished_list))
+                                .document(model.getLandmarkMeta().getId());
+
+                        bucketRef.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    myDialog.cancel();
+                                    Toast.makeText(mContext, mContext.getString(R.string.accomplishlistremove), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+
+                    }
+                });
+
+                btn_details.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(mContext, LandmarkActivity.class);
+                        Bundle args = new Bundle();
+                        args.putString("state", model.getLandmarkMeta().getState());
+                        args.putString("city", model.getLandmarkMeta().getCity());
+                        args.putString("id", model.getLandmarkMeta().getId());
+                        intent.putExtras(args);
+                        mContext.startActivity(intent);
+                        ((Activity) mContext).overridePendingTransition(R.anim.enter_from_top, R.anim.exit_to_bottom);
                     }
                 });
 
@@ -147,29 +216,10 @@ public class RecyclerViewAdapter_accomplished extends RecyclerView.Adapter<Recyc
 
 
 
-        return vHolder;
-    }
 
-    @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-
-        holder.tv_placename.setText(mData.get(position).getPlacename());
-        holder.tv_location.setText(mData.get(position).getLocation());
-        holder.tv_district.setText(mData.get(position).getState());
-       // holder.img.setImageResource(mData.get(position).getPhoto());
-
-        Glide.with(mContext)
-                .load(mData.get(holder.getAdapterPosition()).getPhotoUrl())
-                .placeholder(R.drawable.loading_image)
-                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                .into(holder.img);
 
     }
 
-    @Override
-    public int getItemCount() {
-        return mData.size();
-    }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
 

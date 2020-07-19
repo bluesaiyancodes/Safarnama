@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -32,7 +34,10 @@ import com.google.firebase.firestore.GeoPoint;
 import com.google.maps.GeoApiContext;
 import com.strongties.safarnama.adapters.RecyclerViewAdaptor_distance_places;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public class fragment_menu_distance extends Fragment {
@@ -45,13 +50,13 @@ public class fragment_menu_distance extends Fragment {
     FusedLocationProviderClient mFusedLocationClient;
 
     private GeoApiContext geoApiContext = null;
-    ArrayList <String> inside_1, img_inside_1, type_inside_1;
-    ArrayList <String> inside_5, img_inside_5, type_inside_5;
-    ArrayList <String> inside_10, img_inside_10, type_inside_10;
-    ArrayList <String> inside_50, img_inside_50, type_inside_50;
-    ArrayList <String> inside_100, img_inside_100, type_inside_100;
-    ArrayList <String> inside_200, img_inside_200, type_inside_200;
-    ArrayList <String> above_200, img_above_200, type_above_200;
+    ArrayList <String> inside_1, img_inside_1, type_inside_1, id_inside_1;
+    ArrayList <String> inside_5, img_inside_5, type_inside_5, id_inside_5;
+    ArrayList <String> inside_10, img_inside_10, type_inside_10, id_inside_10;
+    ArrayList <String> inside_40, img_inside_40, type_inside_40, id_inside_40;
+    ArrayList <String> inside_100, img_inside_100, type_inside_100, id_inside_100;
+    ArrayList <String> inside_200, img_inside_200, type_inside_200, id_inside_200;
+    ArrayList <String> above_200, img_above_200, type_above_200, id_above_200;
 
     RecyclerView rV_1;
     RecyclerView rV_2;
@@ -60,6 +65,8 @@ public class fragment_menu_distance extends Fragment {
     RecyclerView rV_5;
     RecyclerView rV_6;
     RecyclerView rV_7;
+
+    String address;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -85,7 +92,7 @@ public class fragment_menu_distance extends Fragment {
         inside_1 = new ArrayList<>();
         inside_5 = new ArrayList<>();
         inside_10 = new ArrayList<>();
-        inside_50 = new ArrayList<>();
+        inside_40 = new ArrayList<>();
         inside_100 = new ArrayList<>();
         inside_200 = new ArrayList<>();
         above_200 = new ArrayList<>();
@@ -93,7 +100,7 @@ public class fragment_menu_distance extends Fragment {
         img_inside_1 = new ArrayList<>();
         img_inside_5 = new ArrayList<>();
         img_inside_10 = new ArrayList<>();
-        img_inside_50 = new ArrayList<>();
+        img_inside_40 = new ArrayList<>();
         img_inside_100 = new ArrayList<>();
         img_inside_200 = new ArrayList<>();
         img_above_200 = new ArrayList<>();
@@ -102,16 +109,26 @@ public class fragment_menu_distance extends Fragment {
         type_inside_1 = new ArrayList<>();
         type_inside_5 = new ArrayList<>();
         type_inside_10 = new ArrayList<>();
-        type_inside_50 = new ArrayList<>();
+        type_inside_40 = new ArrayList<>();
         type_inside_100 = new ArrayList<>();
         type_inside_200 = new ArrayList<>();
         type_above_200 = new ArrayList<>();
 
 
+        id_inside_1 = new ArrayList<>();
+        id_inside_5 = new ArrayList<>();
+        id_inside_10 = new ArrayList<>();
+        id_inside_40 = new ArrayList<>();
+        id_inside_100 = new ArrayList<>();
+        id_inside_200 = new ArrayList<>();
+        id_above_200 = new ArrayList<>();
 
-        rV_1 = root.findViewById(R.id.rv_dist_1);
+
+
+
+        //  rV_1 = root.findViewById(R.id.rv_dist_1);
         rV_2 = root.findViewById(R.id.rv_dist_2);
-        rV_3 = root.findViewById(R.id.rv_dist_3);
+      //  rV_3 = root.findViewById(R.id.rv_dist_3);
         rV_4 = root.findViewById(R.id.rv_dist_4);
         rV_5 = root.findViewById(R.id.rv_dist_5);
         rV_6 = root.findViewById(R.id.rv_dist_6);
@@ -119,6 +136,7 @@ public class fragment_menu_distance extends Fragment {
 
 
        // calculateDirections(place);
+
 
 
 
@@ -162,6 +180,7 @@ public class fragment_menu_distance extends Fragment {
                     assert location != null;
                     GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
                     LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                    address = getaddres(location);
                     //currentUserLocation.setGeo_point(geoPoint);
 
                    // LatLng place = new LatLng(20.233721,85.838676);
@@ -178,12 +197,13 @@ public class fragment_menu_distance extends Fragment {
 
     private void addtoLists(LatLng current_loc) {
 
+
         dbhelper = new DatabaseHelper(getContext());
         SQLiteDatabase database = dbhelper.getReadableDatabase();
 
         Cursor cursor;
 
-        cursor = database.rawQuery("SELECT name, lat, lon, url, type FROM LANDMARKS", new String[]{});
+        cursor = database.rawQuery("SELECT name, lat, lon, url, type, place_id FROM LANDMARKS", new String[]{});
 
         if(cursor != null){
             cursor.moveToFirst();
@@ -198,38 +218,48 @@ public class fragment_menu_distance extends Fragment {
             double place_lon = cursor.getDouble(2);
             String img_url = cursor.getString(3);
             String type = cursor.getString(4);
+            String place_id = cursor.getString(5);
 
             double dist = distance(current_loc.latitude, current_loc.longitude, place_lat, place_lon, 0, 0);
             if(dist <= 1000){
                 inside_1.add(name);
                 img_inside_1.add(img_url);
                 type_inside_1.add(type);
+                id_inside_1.add(place_id);
             }else if(dist >100 && dist <= 5000){
                 inside_5.add(name);
                 img_inside_5.add(img_url);
                 type_inside_5.add(type);
+                id_inside_5.add(place_id);
             }else if(dist > 5000 && dist <= 10000){
                 inside_10.add(name);
                 img_inside_10.add(img_url);
                 type_inside_10.add(type);
+                id_inside_10.add(place_id);
             }else if(dist >10000 && dist <= 50000){
-                inside_50.add(name);
-                img_inside_50.add(img_url);
-                type_inside_50.add(type);
+                inside_40.add(name);
+                img_inside_40.add(img_url);
+                type_inside_40.add(type);
+                id_inside_40.add(place_id);
             }else if(dist > 50000 && dist <= 100000){
                 inside_100.add(name);
                 img_inside_100.add(img_url);
                 type_inside_100.add(type);
+                id_inside_100.add(place_id);
             }else if(dist > 100000 && dist <= 200000){
                 inside_200.add(name);
                 img_inside_200.add(img_url);
                 type_inside_200.add(type);
+                id_inside_200.add(place_id);
             }else {
                 above_200.add(name);
                 img_above_200.add(img_url);
                 type_above_200.add(type);
+                id_above_200.add(place_id);
             }
         }while (cursor.moveToNext());
+
+
 
         initRecyclerView();
 
@@ -257,44 +287,58 @@ public class fragment_menu_distance extends Fragment {
     }
 
 
+    public String getaddres(Location loc){
+
+        StringBuffer address = new StringBuffer();
+        Geocoder gcd = new Geocoder(mContext, Locale.getDefault());
+        List<Address> addresses;
+        try {
+            addresses = gcd.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
+
+            if (addresses.size() > 0)
+                System.out.println(addresses.get(0).getLocality());
+            address.append(addresses.get(0).getAddressLine(0)).append("\n");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String[] tokens = address.toString().split(",");
+        Log.d(TAG, "Address -> " + address.toString());
+        Log.d(TAG, "Address Local -> " + tokens[1]);
+        Log.d(TAG, "Address City -> " + tokens[2]);
+        Log.d(TAG, "Address State -> " + tokens[3]);
+
+        return address.toString();
+    }
 
     private void initRecyclerView(){
         Log.d(TAG, "initRecyclerView: init recyclerview");
 
 
-        LinearLayoutManager layoutManager1 = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
-        rV_1.setLayoutManager(layoutManager1);
-        RecyclerViewAdaptor_distance_places adapter1 = new RecyclerViewAdaptor_distance_places(mContext, inside_1, img_inside_1, type_inside_1);
-        rV_1.setAdapter(adapter1);
-
         LinearLayoutManager layoutManager2 = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
         rV_2.setLayoutManager(layoutManager2);
-        RecyclerViewAdaptor_distance_places adapter2 = new RecyclerViewAdaptor_distance_places(mContext, inside_5, img_inside_5, type_inside_5);
+        RecyclerViewAdaptor_distance_places adapter2 = new RecyclerViewAdaptor_distance_places(mContext, inside_5, img_inside_5, type_inside_5, id_inside_5);
         rV_2.setAdapter(adapter2);
-
-        LinearLayoutManager layoutManager3 = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
-        rV_3.setLayoutManager(layoutManager3);
-        RecyclerViewAdaptor_distance_places adapter3 = new RecyclerViewAdaptor_distance_places(mContext, inside_10, img_inside_10, type_inside_10);
-        rV_3.setAdapter(adapter3);
 
         LinearLayoutManager layoutManager4 = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
         rV_4.setLayoutManager(layoutManager4);
-        RecyclerViewAdaptor_distance_places adapter4 = new RecyclerViewAdaptor_distance_places(mContext, inside_50, img_inside_50, type_inside_50);
+        RecyclerViewAdaptor_distance_places adapter4 = new RecyclerViewAdaptor_distance_places(mContext, inside_40, img_inside_40, type_inside_40, id_inside_40);
         rV_4.setAdapter(adapter4);
 
         LinearLayoutManager layoutManager5 = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
         rV_5.setLayoutManager(layoutManager5);
-        RecyclerViewAdaptor_distance_places adapter5 = new RecyclerViewAdaptor_distance_places(mContext, inside_100, img_inside_100, type_inside_100);
+        RecyclerViewAdaptor_distance_places adapter5 = new RecyclerViewAdaptor_distance_places(mContext, inside_100, img_inside_100, type_inside_100, id_inside_100);
         rV_5.setAdapter(adapter5);
 
         LinearLayoutManager layoutManager6 = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
         rV_6.setLayoutManager(layoutManager6);
-        RecyclerViewAdaptor_distance_places adapter6 = new RecyclerViewAdaptor_distance_places(mContext, inside_200, img_inside_200, type_inside_200);
+        RecyclerViewAdaptor_distance_places adapter6 = new RecyclerViewAdaptor_distance_places(mContext, inside_200, img_inside_200, type_inside_200, id_inside_200);
         rV_6.setAdapter(adapter6);
 
         LinearLayoutManager layoutManager7 = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
         rV_7.setLayoutManager(layoutManager7);
-        RecyclerViewAdaptor_distance_places adapter7 = new RecyclerViewAdaptor_distance_places(mContext, above_200, img_above_200, type_above_200);
+        RecyclerViewAdaptor_distance_places adapter7 = new RecyclerViewAdaptor_distance_places(mContext, above_200, img_above_200, type_above_200, id_above_200);
         rV_7.setAdapter(adapter7);
 
     }

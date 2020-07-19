@@ -7,24 +7,24 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Looper;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -58,18 +58,27 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.strongties.safarnama.services.LocationService;
+import com.strongties.safarnama.user_classes.Landmark;
+import com.strongties.safarnama.user_classes.LandmarkMeta;
+import com.strongties.safarnama.user_classes.MapBackgroundTask;
 import com.strongties.safarnama.user_classes.User;
 import com.strongties.safarnama.user_classes.UserLocation;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
@@ -87,21 +96,75 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
     Context mcontext;
 
     String req;     //Type of request
+    //Check for Location Permission
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    String address;
 
     private static final String TAG = "Map Fragment";
+    ProgressBar loading;    //Set the progress bar
 
     public fragment_menu_googleMap() {
         this.req = "all";
     }
+
     public fragment_menu_googleMap(String req) {
         this.req = req;
+    }
+    MapBackgroundTask backgroundTask;
+    LocationCallback mLocationCallback = new LocationCallback() {
+        @Override
+        public void onLocationResult(@org.jetbrains.annotations.NotNull LocationResult locationResult) {
+            List<Location> locationList = locationResult.getLocations();
+            if (locationList.size() > 0) {
+                //The last location in the list is the newest
+                Location location = locationList.get(locationList.size() - 1);
+                Log.i("MapsActivity", "Location: " + location.getLatitude() + " " + location.getLongitude());
+                mLastLocation = location;
+                if (mCurrLocationMarker != null) {
+                    mCurrLocationMarker.remove();
+                }
+
+                //Place current location marker
+                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                // MarkerOptions markerOptions = new MarkerOptions();
+                // markerOptions.position(latLng);
+                // markerOptions.title("Current Position");
+                // markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+                // mCurrLocationMarker = googleMap.addMarker(markerOptions);
+
+                //move map camera
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+                if (isLocationEnabled(getContext())) {
+                    getUserDetails();
+                }
+            }
+        }
+    };
+
+    public static boolean isLocationEnabled(Context context) {
+        int locationMode = 0;
+        String locationProviders;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            try {
+                if (context != null) {
+                    locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
+                }
+            } catch (Settings.SettingNotFoundException e) {
+                e.printStackTrace();
+            }
+            return locationMode != Settings.Secure.LOCATION_MODE_OFF;
+        } else {
+            locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
+            return !TextUtils.isEmpty(locationProviders);
+        }
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_menu_google_map, container, false);
 
         mcontext = getContext();
-        if(!isLocationEnabled(getContext())){
+        if (!isLocationEnabled(getContext())) {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
             alertDialogBuilder.setTitle(getString(R.string.get_loc_check));
             alertDialogBuilder.setMessage(getString(R.string.get_loc_msg));
@@ -115,12 +178,17 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
             alertDialogBuilder.show();
         }
 
+        loading = root.findViewById(R.id.map_view_progress);
+        loading.setVisibility(View.VISIBLE);
+
 
         mDb = FirebaseFirestore.getInstance();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
+        checkLocationPermission();
 
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.gmapview);
+        assert mapFragment != null;
         mapFragment.getMapAsync(this);
 
 
@@ -129,12 +197,12 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
         Button btn_wish = root.findViewById(R.id.menu1_wish);
         Button btn_accomplish = root.findViewById(R.id.menu1_accomplish);
 
-        checkLocationPermission();
-
+        getallfriends();
 
         btn_all.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+              //  backgroundTask.cancel(true);
                 getFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new fragment_menu_googleMap("all"), "Google Map Fragment").commit();
 
@@ -145,8 +213,11 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
         btn_new.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+              //  backgroundTask.cancel(true);
                 getFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new fragment_menu_googleMap("new"), "Google Map Fragment").commit();
+
+                Toast.makeText(getContext(), getString(R.string.show_new), Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -154,8 +225,11 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
         btn_wish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                backgroundTask.cancel(true);
                 getFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new fragment_menu_googleMap("wish"), "Google Map Fragment").commit();
+
+                Toast.makeText(getContext(), getString(R.string.show_bucket), Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -163,8 +237,11 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
         btn_accomplish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                backgroundTask.cancel(true);
                 getFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new fragment_menu_googleMap("accomplish"), "Google Map Fragment").commit();
+
+                Toast.makeText(getContext(), getString(R.string.show_accomplished), Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -173,6 +250,30 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
         return root;
     }
 
+    private void getallfriends() {
+
+        CollectionReference collRef = FirebaseFirestore.getInstance()
+                .collection(getString(R.string.collection_relations))
+                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                .collection(getString(R.string.collection_friendlist));
+
+        collRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                        String user_id = document.getId();
+                        if (!MainActivity.FriendList.contains(user_id)) {
+                            MainActivity.FriendList.add(user_id);
+                        }
+                    }
+                }
+            }
+        });
+
+        Log.d(TAG, "FriendList" + MainActivity.FriendList);
+
+    }
 
     //Is Called When Map is Ready Show
     @Override
@@ -180,8 +281,9 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
 
         googleMap = mMap;
         //googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        googleMap.getUiSettings().setZoomControlsEnabled(true);
 
-        switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK){
+        switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
             case Configuration.UI_MODE_NIGHT_YES:
                 MapStyleOptions style = MapStyleOptions.loadRawResourceStyle(mcontext, R.raw.mapstyle_night);
                 mMap.setMapStyle(style);
@@ -208,55 +310,36 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
                 //Request Location Permission
                 checkLocationPermission();
             }
-        }
-        else {
+        } else {
             mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
             googleMap.setMyLocationEnabled(true);
         }
 
 
+        //Add Markers
+     //   addMarkers();
+        backgroundTask = new MapBackgroundTask(mcontext, googleMap, req);
+        backgroundTask.execute();
 
-        addMarkers();
-        googleMap.setMyLocationEnabled(true);
-        googleMap.setOnInfoWindowClickListener(this);
-        startLocationService();
+
+
+
+
+        if (ContextCompat.checkSelfPermission(mcontext, android.Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(mcontext, android.Manifest.permission.ACCESS_COARSE_LOCATION) ==
+                        PackageManager.PERMISSION_GRANTED) {
+            googleMap.setMyLocationEnabled(true);
+            googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+            googleMap.setOnInfoWindowClickListener(this);
+            startLocationService();
+        } else {
+            Toast.makeText(mcontext, R.string.error_permission_map, Toast.LENGTH_LONG).show();
+        }
+
+
     }
 
-    LocationCallback mLocationCallback = new LocationCallback() {
-        @Override
-        public void onLocationResult(@org.jetbrains.annotations.NotNull LocationResult locationResult) {
-            List<Location> locationList = locationResult.getLocations();
-            if (locationList.size() > 0) {
-                //The last location in the list is the newest
-                Location location = locationList.get(locationList.size() - 1);
-                Log.i("MapsActivity", "Location: " + location.getLatitude() + " " + location.getLongitude());
-                mLastLocation = location;
-                if (mCurrLocationMarker != null) {
-                    mCurrLocationMarker.remove();
-                }
-
-                //Place current location marker
-                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                // MarkerOptions markerOptions = new MarkerOptions();
-                // markerOptions.position(latLng);
-                // markerOptions.title("Current Position");
-                // markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-                // mCurrLocationMarker = googleMap.addMarker(markerOptions);
-
-                //move map camera
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
-                if(isLocationEnabled(getContext())){
-                    getUserDetails();
-                }
-            }
-        }
-    };
-
-
-
-
-    //Check for Location Permission
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -277,7 +360,7 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
                                 //Prompt the user once explanation has been shown
                                 ActivityCompat.requestPermissions(getActivity(),
                                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                        MY_PERMISSIONS_REQUEST_LOCATION );
+                                        MY_PERMISSIONS_REQUEST_LOCATION);
                             }
                         })
                         .create()
@@ -288,7 +371,7 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(getActivity(),
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION );
+                        MY_PERMISSIONS_REQUEST_LOCATION);
             }
         }
     }
@@ -296,7 +379,7 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
     //Permission Dialog Result
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+                                           String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
@@ -340,18 +423,128 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
         }
     }
 
-
     private void addMarkers() {
 
-        dbhelper = new DatabaseHelper(getContext());
-        SQLiteDatabase database = dbhelper.getReadableDatabase();
+        loading.setVisibility(View.VISIBLE);
+        Objects.requireNonNull(getActivity()).getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+
+      //  dbhelper = new DatabaseHelper(getContext());
+      //  SQLiteDatabase database = dbhelper.getReadableDatabase();
 
         Cursor cursor;
 
-        if(req.equals("all")){
+        if (req.equals("all")) {
 
             // For all requests
 
+
+            CollectionReference landmarkColl = mDb
+                    .collection(getString(R.string.collection_landmarks))
+                    .document(getString(R.string.document_meta))
+                    .collection(getString(R.string.collection_all));
+
+
+            landmarkColl.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                    if (e != null) {
+                        Log.e(TAG, "onEvent: Listen failed.", e);
+                    }
+
+                    if (queryDocumentSnapshots != null) {
+                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                            LandmarkMeta landmarkMeta = doc.toObject(LandmarkMeta.class);
+
+                            CollectionReference collRef = mDb
+                                    .collection(getString(R.string.collection_landmarks))
+                                    .document(landmarkMeta.getState())
+                                    .collection(landmarkMeta.getCity());
+
+                            collRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                @Override
+                                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                                    if (e != null) {
+                                        Log.e(TAG, "onEvent: Listen failed.", e);
+                                    }
+
+                                    if (queryDocumentSnapshots != null) {
+                                        for (QueryDocumentSnapshot places : queryDocumentSnapshots) {
+                                            Landmark landmark = places.toObject(Landmark.class);
+
+                                            DocumentReference bucketRef = mDb
+                                                    .collection(getString(R.string.collection_users))
+                                                    .document(getString(R.string.document_lists))
+                                                    .collection(getString(R.string.collection_bucket_list))
+                                                    .document(landmark.getId());
+
+                                            bucketRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                    if (task.isSuccessful()) {
+                                                        DocumentSnapshot document = task.getResult();
+                                                        if (document.exists()) {
+                                                            Log.d(TAG, "Landmark exists in Bucket List");
+                                                            LatLng place = new LatLng(landmark.getGeo_point().getLatitude(), landmark.getGeo_point().getLongitude());
+                                                            googleMap.addMarker(new MarkerOptions().position(place).title(landmark.getName())
+                                                                    .snippet(landmark.getCategory() + "  " + getString(R.string.i_circle))
+                                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                                                        } else {
+                                                            Log.d(TAG, "Landmark does not exist in BL");
+                                                            DocumentReference accomplishedRef = mDb
+                                                                    .collection(getString(R.string.collection_users))
+                                                                    .document(getString(R.string.document_lists))
+                                                                    .collection(getString(R.string.collection_accomplished_list))
+                                                                    .document(landmark.getId());
+
+                                                            accomplishedRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                                    if (task.isSuccessful()) {
+                                                                        DocumentSnapshot documentSnapshot = task.getResult();
+                                                                        if (document.exists()) {
+                                                                            Log.d(TAG, "Landmark exists in Accomplished List");
+                                                                            LatLng place = new LatLng(landmark.getGeo_point().getLatitude(), landmark.getGeo_point().getLongitude());
+                                                                            googleMap.addMarker(new MarkerOptions().position(place).title(landmark.getName())
+                                                                                    .snippet(landmark.getCategory() + "  " + getString(R.string.i_circle))
+                                                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+                                                                        } else {
+                                                                            Log.d(TAG, "Landmark does not exist in Accomplished List");
+                                                                            LatLng place = new LatLng(landmark.getGeo_point().getLatitude(), landmark.getGeo_point().getLongitude());
+                                                                            googleMap.addMarker(new MarkerOptions().position(place).title(landmark.getName())
+                                                                                    .snippet(landmark.getCategory() + "  " + getString(R.string.i_circle))
+                                                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                                                                        }
+                                                                    }
+                                                                }
+                                                            });
+
+
+                                                        }
+                                                    }
+                                                }
+                                            });
+
+
+                                        }
+                                    }
+                                }
+                            });
+
+                        }
+                    }
+                }
+            });
+
+
+
+
+
+            /*
+            *
+            * Old Code -> Fetching details using sqlite
+            *
             cursor = database.rawQuery("SELECT name, lat, lon, type, visit FROM LANDMARKS", new String[]{});
             if(cursor != null){
                 cursor.moveToFirst();
@@ -381,10 +574,108 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
                 }
 
             }while (cursor.moveToNext());
-        }else if(req.equals("new")){
+             */
+        } else if (req.equals("new")) {
 
             // For all new requests
 
+            Toast.makeText(getContext(), getString(R.string.show_new), Toast.LENGTH_SHORT).show();
+
+            CollectionReference landmarkColl = mDb
+                    .collection(getString(R.string.collection_landmarks))
+                    .document(getString(R.string.document_meta))
+                    .collection(getString(R.string.collection_all));
+
+
+            landmarkColl.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                    if (e != null) {
+                        Log.e(TAG, "onEvent: Listen failed.", e);
+                    }
+
+                    if (queryDocumentSnapshots != null) {
+                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                            LandmarkMeta landmarkMeta = doc.toObject(LandmarkMeta.class);
+
+                            CollectionReference collRef = mDb
+                                    .collection(getString(R.string.collection_landmarks))
+                                    .document(landmarkMeta.getState())
+                                    .collection(landmarkMeta.getCity());
+
+                            collRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                @Override
+                                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                                    if (e != null) {
+                                        Log.e(TAG, "onEvent: Listen failed.", e);
+                                    }
+
+                                    if (queryDocumentSnapshots != null) {
+                                        for (QueryDocumentSnapshot places : queryDocumentSnapshots) {
+                                            Landmark landmark = places.toObject(Landmark.class);
+
+                                            DocumentReference bucketRef = mDb
+                                                    .collection(getString(R.string.collection_users))
+                                                    .document(getString(R.string.document_lists))
+                                                    .collection(getString(R.string.collection_bucket_list))
+                                                    .document(landmark.getId());
+
+                                            bucketRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                    if (task.isSuccessful()) {
+                                                        DocumentSnapshot document = task.getResult();
+                                                        if (document.exists()) {
+                                                            Log.d(TAG, "Landmark exists in Bucket List");
+                                                        } else {
+                                                            Log.d(TAG, "Landmark does not exist in Bucket List");
+                                                            DocumentReference accomplishedRef = mDb
+                                                                    .collection(getString(R.string.collection_users))
+                                                                    .document(getString(R.string.document_lists))
+                                                                    .collection(getString(R.string.collection_accomplished_list))
+                                                                    .document(landmark.getId());
+
+                                                            accomplishedRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                                    if (task.isSuccessful()) {
+                                                                        DocumentSnapshot documentSnapshot = task.getResult();
+                                                                        if (document.exists()) {
+                                                                            Log.d(TAG, "Landmark exists in Accomplished List");
+                                                                        } else {
+                                                                            Log.d(TAG, "Landmark does not exist in Accomplished List");
+                                                                            LatLng place = new LatLng(landmark.getGeo_point().getLatitude(), landmark.getGeo_point().getLongitude());
+                                                                            googleMap.addMarker(new MarkerOptions().position(place).title(landmark.getName())
+                                                                                    .snippet(landmark.getCategory() + "  " + getString(R.string.i_circle))
+                                                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                                                                        }
+                                                                    }
+                                                                }
+                                                            });
+
+
+                                                        }
+                                                    }
+                                                }
+                                            });
+
+
+                                        }
+                                    }
+                                }
+                            });
+
+                        }
+                    }
+                }
+            });
+
+
+
+            /*
+            *
+            * Old Code -> Fetching details using sqlite
+            *
             cursor = database.rawQuery("SELECT name, lat, lon, type FROM LANDMARKS WHERE visit = ?", new String[]{"notvisited"});
             if(cursor != null){
                 cursor.moveToFirst();
@@ -411,12 +702,88 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
             }else {
                 Toast.makeText(getContext(), getString(R.string.show_new_void), Toast.LENGTH_SHORT).show();
             }
+             */
 
 
-        }else if(req.equals("wish")){
+        } else if (req.equals("wish")) {
 
             //for wishlist
 
+            Toast.makeText(getContext(), getString(R.string.show_bucket), Toast.LENGTH_SHORT).show();
+
+            CollectionReference landmarkColl = mDb
+                    .collection(getString(R.string.collection_landmarks))
+                    .document(getString(R.string.document_meta))
+                    .collection(getString(R.string.collection_all));
+
+
+            landmarkColl.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                    if (e != null) {
+                        Log.e(TAG, "onEvent: Listen failed.", e);
+                    }
+
+                    if (queryDocumentSnapshots != null) {
+                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                            LandmarkMeta landmarkMeta = doc.toObject(LandmarkMeta.class);
+
+                            CollectionReference collRef = mDb
+                                    .collection(getString(R.string.collection_landmarks))
+                                    .document(landmarkMeta.getState())
+                                    .collection(landmarkMeta.getCity());
+
+                            collRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                @Override
+                                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                                    if (e != null) {
+                                        Log.e(TAG, "onEvent: Listen failed.", e);
+                                    }
+
+                                    if (queryDocumentSnapshots != null) {
+                                        for (QueryDocumentSnapshot places : queryDocumentSnapshots) {
+                                            Landmark landmark = places.toObject(Landmark.class);
+
+                                            DocumentReference bucketRef = mDb
+                                                    .collection(getString(R.string.collection_users))
+                                                    .document(getString(R.string.document_lists))
+                                                    .collection(getString(R.string.collection_bucket_list))
+                                                    .document(landmark.getId());
+
+                                            bucketRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                    if (task.isSuccessful()) {
+                                                        DocumentSnapshot document = task.getResult();
+                                                        if (document.exists()) {
+                                                            Log.d(TAG, "Landmark exists in Bucket List");
+                                                            LatLng place = new LatLng(landmark.getGeo_point().getLatitude(), landmark.getGeo_point().getLongitude());
+                                                            googleMap.addMarker(new MarkerOptions().position(place).title(landmark.getName())
+                                                                    .snippet(landmark.getCategory() + "  " + getString(R.string.i_circle))
+                                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                                                        } else {
+                                                            Log.d(TAG, "Landmark does not exist in BL");
+                                                        }
+                                                    }
+                                                }
+                                            });
+
+
+                                        }
+                                    }
+                                }
+                            });
+
+                        }
+                    }
+                }
+            });
+
+
+            /*
+            *
+            * Old Code -> Fetching details using sqlite
+            *
             cursor = database.rawQuery("SELECT name, lat, lon, type FROM LANDMARKS WHERE visit = ?", new String[]{"tovisit"});
             if(cursor != null){
                 cursor.moveToFirst();
@@ -443,12 +810,112 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
             }else{
                 Toast.makeText(getContext(), getString(R.string.show_bucket_void), Toast.LENGTH_SHORT).show();
             }
+             */
 
-
-        }else{
+        } else {
 
             //For accomplished
+            Toast.makeText(getContext(), getString(R.string.show_accomplished), Toast.LENGTH_SHORT).show();
 
+            CollectionReference landmarkColl = mDb
+                    .collection(getString(R.string.collection_landmarks))
+                    .document(getString(R.string.document_meta))
+                    .collection(getString(R.string.collection_all));
+
+
+            landmarkColl.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                    if (e != null) {
+                        Log.e(TAG, "onEvent: Listen failed.", e);
+                    }
+
+                    if (queryDocumentSnapshots != null) {
+                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                            LandmarkMeta landmarkMeta = doc.toObject(LandmarkMeta.class);
+
+                            CollectionReference collRef = mDb
+                                    .collection(getString(R.string.collection_landmarks))
+                                    .document(landmarkMeta.getState())
+                                    .collection(landmarkMeta.getCity());
+
+                            collRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                @Override
+                                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                                    if (e != null) {
+                                        Log.e(TAG, "onEvent: Listen failed.", e);
+                                    }
+
+                                    if (queryDocumentSnapshots != null) {
+                                        for (QueryDocumentSnapshot places : queryDocumentSnapshots) {
+                                            Landmark landmark = places.toObject(Landmark.class);
+
+                                            DocumentReference bucketRef = mDb
+                                                    .collection(getString(R.string.collection_users))
+                                                    .document(getString(R.string.document_lists))
+                                                    .collection(getString(R.string.collection_bucket_list))
+                                                    .document(landmark.getId());
+
+                                            bucketRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                    if (task.isSuccessful()) {
+                                                        DocumentSnapshot document = task.getResult();
+                                                        if (document.exists()) {
+                                                            Log.d(TAG, "Landmark exists in Bucket List");
+                                                            LatLng place = new LatLng(landmark.getGeo_point().getLatitude(), landmark.getGeo_point().getLongitude());
+                                                            googleMap.addMarker(new MarkerOptions().position(place).title(landmark.getName())
+                                                                    .snippet(landmark.getCategory() + "  " + getString(R.string.i_circle))
+                                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                                                        } else {
+                                                            Log.d(TAG, "Landmark does not exist in BL");
+                                                            DocumentReference accomplishedRef = mDb
+                                                                    .collection(getString(R.string.collection_users))
+                                                                    .document(getString(R.string.document_lists))
+                                                                    .collection(getString(R.string.collection_accomplished_list))
+                                                                    .document(landmark.getId());
+
+                                                            accomplishedRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                                    if (task.isSuccessful()) {
+                                                                        DocumentSnapshot documentSnapshot = task.getResult();
+                                                                        if (document.exists()) {
+                                                                            Log.d(TAG, "Landmark exists in Accomplished List");
+                                                                            LatLng place = new LatLng(landmark.getGeo_point().getLatitude(), landmark.getGeo_point().getLongitude());
+                                                                            googleMap.addMarker(new MarkerOptions().position(place).title(landmark.getName())
+                                                                                    .snippet(landmark.getCategory() + "  " + getString(R.string.i_circle))
+                                                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+                                                                        } else {
+                                                                            Log.d(TAG, "Landmark does not exist in Accomplished List");
+                                                                        }
+                                                                    }
+                                                                }
+                                                            });
+
+
+                                                        }
+                                                    }
+                                                }
+                                            });
+
+
+                                        }
+                                    }
+                                }
+                            });
+
+                        }
+                    }
+                }
+            });
+
+
+
+            /*
+            *
+            * Old Code -> Fetching details using sqlite
+            *
             cursor = database.rawQuery("SELECT name, lat, lon, type FROM LANDMARKS WHERE visit = ?", new String[]{"visited"});
             if(cursor != null){
                 cursor.moveToFirst();
@@ -474,15 +941,134 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
             }else {
                 Toast.makeText(getContext(), getString(R.string.show_accomplished_void), Toast.LENGTH_SHORT).show();
             }
+             */
         }
-
 
 
     }
 
-
     @Override
     public void onInfoWindowClick(Marker marker) {
+
+
+        GeoPoint Landmark_geoPoint = new GeoPoint(marker.getPosition().latitude, marker.getPosition().longitude);
+        Log.d(TAG, "Landmark Geopoint -> " + Landmark_geoPoint);
+
+        CollectionReference CollRef = mDb
+                .collection(getString(R.string.collection_landmarks))
+                .document(getString(R.string.document_meta))
+                .collection(getString(R.string.collection_all));
+
+        CollRef.whereEqualTo("geoPoint", Landmark_geoPoint).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    LandmarkMeta landmarkMeta = doc.toObject(LandmarkMeta.class);
+                    CollectionReference placeRef = mDb
+                            .collection(getString(R.string.collection_landmarks))
+                            .document(landmarkMeta.getState())
+                            .collection(landmarkMeta.getCity());
+
+
+                    placeRef.whereEqualTo("geo_point", Landmark_geoPoint).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                            for (QueryDocumentSnapshot doc1 : queryDocumentSnapshots) {
+                                Landmark landmark = doc1.toObject(Landmark.class);
+                                Log.d(TAG, "Fetched Geopoint -> " + landmark.getGeo_point());
+                                    String name = landmark.getName();
+                                    String desc = landmark.getShort_desc();
+                                    String url = landmark.getImg_url();
+                                    String type = landmark.getCategory();
+
+
+                                    Log.d(TAG, "Landmark -> " + name);
+
+
+
+                                Dialog myDialog = new Dialog(mcontext);
+                                myDialog.setContentView(R.layout.menu1_dialogue_map_marker);
+                                Objects.requireNonNull(myDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                myDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+
+                                ImageView imageView = myDialog.findViewById(R.id.dialog_marker_image);
+                                final ProgressBar progressBar = myDialog.findViewById(R.id.dialog_progress);
+
+                                TextView tv_name = myDialog.findViewById(R.id.dialog_marker_name);
+                                TextView tv_type = myDialog.findViewById(R.id.dialog_marker_type);
+                                TextView tv_desc = myDialog.findViewById(R.id.dialog_marker_desc);
+
+                                Button btn = myDialog.findViewById(R.id.dialog_btn);
+                                Button details = myDialog.findViewById(R.id.dialog_btn_details);
+
+
+                                tv_name.setText(name);
+                                tv_type.setText(type);
+                                tv_desc.setText(desc);
+
+
+                                Glide.with(mcontext).load(url)
+                                        .listener(new RequestListener<Drawable>() {
+                                            @Override
+                                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                                progressBar.setVisibility(View.GONE);
+                                                return false;
+                                            }
+
+                                            @Override
+                                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                                progressBar.setVisibility(View.GONE);
+                                                return false;
+                                            }
+                                        })
+                                        .into(imageView);
+
+                                btn.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        myDialog.dismiss();
+                                    }
+                                });
+
+                                details.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Intent intent = new Intent(mcontext, LandmarkActivity.class);
+                                        Bundle args = new Bundle();
+                                        args.putString("state", landmark.getState());
+                                        args.putString("city", landmark.getCity());
+                                        args.putString("id", landmark.getId());
+                                        intent.putExtras(args);
+                                        startActivity(intent);
+                                        ((Activity) mcontext).overridePendingTransition(R.anim.enter_from_top, R.anim.exit_to_bottom);
+                                    }
+                                });
+
+
+
+
+                                myDialog.show();
+
+
+
+
+                            }
+                        }
+                    });
+
+
+                }
+
+            }
+        });
+
+
+
+        /*
+        *
+        * Old Code -> Fetching details using sqlite
+        *
 
         String lat =  Double.toString(marker.getPosition().latitude);
         String lon = Double.toString(marker.getPosition().longitude);
@@ -511,6 +1097,7 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
         Dialog myDialog = new Dialog(mcontext);
         myDialog.setContentView(R.layout.menu1_dialogue_map_marker);
         Objects.requireNonNull(myDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        myDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
 
         ImageView imageView = myDialog.findViewById(R.id.dialog_marker_image);
         final ProgressBar progressBar = myDialog.findViewById(R.id.dialog_progress);
@@ -553,29 +1140,12 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
 
         myDialog.show();
 
+         */
+
     }
 
-
-    public static boolean isLocationEnabled(Context context) {
-        int locationMode = 0;
-        String locationProviders;
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            try {
-                locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
-            } catch (Settings.SettingNotFoundException e) {
-                e.printStackTrace();
-            }
-            return locationMode != Settings.Secure.LOCATION_MODE_OFF;
-        } else {
-            locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
-            return !TextUtils.isEmpty(locationProviders);
-        }
-    }
-
-
-    private void getUserDetails(){
-        if(mUserLocation == null){
+    private void getUserDetails() {
+        if (mUserLocation == null) {
             mUserLocation = new UserLocation();
             DocumentReference userRef = mDb.collection(mcontext.getString(R.string.collection_users))
                     .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
@@ -583,17 +1153,16 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
             userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if(task.isSuccessful()){
+                    if (task.isSuccessful()) {
                         Log.d(TAG, "onComplete: successfully set the user client.");
                         User user = Objects.requireNonNull(task.getResult()).toObject(User.class);
                         mUserLocation.setUser(user);
-                        ((UserClient)(mcontext.getApplicationContext())).setUser(user);
+                        ((UserClient) (mcontext.getApplicationContext())).setUser(user);
                         getLastKnownLocation();
                     }
                 }
             });
-        }
-        else{
+        } else {
             getLastKnownLocation();
         }
     }
@@ -612,6 +1181,7 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
                     Location location = task.getResult();
                     assert location != null;
                     GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+                    address = getaddress(location);
                     mUserLocation.setGeo_point(geoPoint);
                     mUserLocation.setTimestamp(null);
                     saveUserLocation();
@@ -621,9 +1191,9 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
 
     }
 
-    private void saveUserLocation(){
+    private void saveUserLocation() {
 
-        if(mUserLocation != null){
+        if (mUserLocation != null) {
             DocumentReference locationRef = mDb
                     .collection(mcontext.getString(R.string.collection_user_locations))
                     .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
@@ -631,7 +1201,7 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
             locationRef.set(mUserLocation).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
-                    if(task.isSuccessful()){
+                    if (task.isSuccessful()) {
                         Log.d(TAG, "saveUserLocation: \ninserted user location into database." +
                                 "\n latitude: " + mUserLocation.getGeo_point().getLatitude() +
                                 "\n longitude: " + mUserLocation.getGeo_point().getLongitude());
@@ -642,16 +1212,15 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
     }
 
 
-
-    private void startLocationService(){
-        if(!isLocationServiceRunning()){
+    private void startLocationService() {
+        if (!isLocationServiceRunning()) {
             Intent serviceIntent = new Intent(mcontext, LocationService.class);
 //        this.startService(serviceIntent);
 
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O){
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
 
                 Objects.requireNonNull(getContext()).startForegroundService(serviceIntent);
-            }else{
+            } else {
                 mcontext.startService(serviceIntent);
             }
         }
@@ -659,14 +1228,35 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
 
     private boolean isLocationServiceRunning() {
         ActivityManager manager = (ActivityManager) mcontext.getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)){
-            if("com.strongties.safarnama.services.LocationService".equals(service.service.getClassName())) {
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if ("com.strongties.safarnama.services.LocationService".equals(service.service.getClassName())) {
                 Log.d(TAG, "isLocationServiceRunning: location service is already running.");
                 return true;
             }
         }
         Log.d(TAG, "isLocationServiceRunning: location service is not running.");
         return false;
+    }
+
+    public String getaddress(Location loc) {
+
+        StringBuffer address = new StringBuffer();
+        Geocoder gcd = new Geocoder(getContext(), Locale.getDefault());
+        List<Address> addresses;
+        try {
+            addresses = gcd.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
+
+            if (addresses.size() > 0)
+                System.out.println(addresses.get(0).getLocality());
+            address.append(addresses.get(0).getAddressLine(0)).append("\n");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        Log.d(TAG, "Address -> " + address.toString());
+        return address.toString();
     }
 
 }

@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="30dp">
+
+    <Button
+        android:id="@+id/landmark_view_on_map"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/dialog_bg_colored"
+        android:text="@string/view_on_map"
+        android:textColor="@color/white"
+        android:textSize="15sp" />
+
+    <Button
+        android:id="@+id/landmark_go_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/dialog_bg_colored"
+        android:text="@string/back"
+        android:textColor="@color/white"
+        android:textSize="15sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="1">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.75">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/landmark_photo_main"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@color/color8" />
+
+                <TextView
+                    android:id="@+id/landmark_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/background_blur"
+                    android:gravity="bottom"
+                    android:paddingLeft="10dp"
+                    android:text="@string/placename"
+                    android:textColor="@color/textItemMenu"
+                    android:textColorHighlight="@color/white"
+                    android:textColorLink="@color/white"
+                    android:textIsSelectable="true"
+                    android:textSize="25dp"
+                    android:textStyle="italic" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.25">
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/background">
+
+
+                <RelativeLayout
+                    android:id="@+id/landmark_header_btns"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:orientation="horizontal"
+                        android:weightSum="1">
+
+                        <Button
+                            android:id="@+id/landmark_add_to_bucket"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginTop="15dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_weight="0.5"
+                            android:background="@drawable/dialog_bg_colored"
+                            android:drawableRight="@drawable/bucketlistadd"
+                            android:drawablePadding="20dp"
+                            android:text="@string/BucketList"
+                            android:textColor="@color/white"
+                            android:textSize="15sp" />
+
+                        <Button
+                            android:id="@+id/landmark_add_to_accomplish"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="15dp"
+                            android:layout_marginRight="10dp"
+
+                            android:layout_weight="0.5"
+                            android:background="@drawable/dialog_bg_colored"
+                            android:drawableRight="@drawable/accomplished_add"
+                            android:drawablePadding="5dp"
+                            android:text="@string/accomplished"
+                            android:textColor="@color/white"
+                            android:textSize="15sp" />
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+
+                <TextView
+                    android:id="@+id/landmark_type_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/landmark_header_btns"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/category"
+                    android:textSize="15sp"
+                    android:textStyle="italic" />
+
+                <TextView
+                    android:id="@+id/landmark_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/landmark_header_btns"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_toRightOf="@id/landmark_type_label"
+                    android:background="@drawable/dialog_bg"
+                    android:text="@string/type"
+                    android:textColor="@color/textItemMenu"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/landmark_city_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/landmark_type_label"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="30dp"
+                    android:text="@string/city"
+                    android:textSize="15sp"
+                    android:textStyle="italic" />
+
+                <TextView
+                    android:id="@+id/landmark_city"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/landmark_type_label"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_toRightOf="@id/landmark_city_label"
+                    android:background="@drawable/dialog_bg"
+                    android:text="@string/city"
+                    android:textColor="@color/textItemMenu"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/landmark_district_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/landmark_city_label"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="30dp"
+                    android:text="@string/district"
+                    android:textSize="15sp"
+                    android:textStyle="italic" />
+
+                <TextView
+                    android:id="@+id/landmark_district"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/landmark_city_label"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_toRightOf="@id/landmark_district_label"
+                    android:background="@drawable/dialog_bg"
+                    android:text="@string/district"
+                    android:textColor="@color/textItemMenu"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/landmark_state_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/landmark_district_label"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="30dp"
+                    android:text="@string/state"
+                    android:textSize="15sp"
+                    android:textStyle="italic" />
+
+                <TextView
+                    android:id="@+id/landmark_state"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/landmark_district_label"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_toRightOf="@id/landmark_district_label"
+                    android:background="@drawable/dialog_bg"
+                    android:text="@string/state"
+                    android:textColor="@color/textItemMenu"
+                    android:textSize="15sp" />
+
+
+                <TextView
+                    android:id="@+id/landmark_fee_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/landmark_state_label"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="30dp"
+                    android:text="@string/fee" />
+
+                <TextView
+                    android:id="@+id/landmark_fee"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/landmark_fee_label"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/dialog_bg"
+                    android:text="@string/fee"
+                    android:textColor="@color/textItemMenu"
+                    android:textSize="20sp" />
+
+
+                <TextView
+                    android:id="@+id/landmark_description_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/landmark_fee"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/description"
+                    android:textSize="20sp"
+                    android:textStyle="italic" />
+
+                <TextView
+                    android:id="@+id/landmark_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/landmark_description_label"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/dialog_bg"
+                    android:text="@string/description"
+                    android:textColor="@color/textItemMenu"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/landmark_description_shrt_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/landmark_description"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/description_short"
+                    android:textSize="20sp"
+                    android:textStyle="italic" />
+
+                <TextView
+                    android:id="@+id/landmark_description_shrt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/landmark_description_shrt_label"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/dialog_bg"
+                    android:text="@string/description_short"
+                    android:textColor="@color/textItemMenu"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/landmark_history_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/landmark_description_shrt"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/history"
+                    android:textSize="20sp"
+                    android:textStyle="italic" />
+
+                <TextView
+                    android:id="@+id/landmark_history"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/landmark_history_label"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/dialog_bg"
+                    android:text="@string/history"
+                    android:textColor="@color/textItemMenu"
+                    android:textSize="15sp" />
+
+
+                <TextView
+                    android:id="@+id/landmark_images_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/landmark_history"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/moments"
+                    android:textSize="20sp"
+                    android:textStyle="italic" />
+
+                <LinearLayout
+                    android:id="@+id/landmark_layout_img"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_below="@id/landmark_images_label"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.4">
+
+                        <ImageView
+                            android:id="@+id/landmark_img_1"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="2dp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.6"
+                        android:orientation="vertical"
+                        android:weightSum="1">
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.5">
+
+                            <ImageView
+                                android:id="@+id/landmark_img_2"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_margin="2dp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.5">
+
+                            <ImageView
+                                android:id="@+id/landmark_img_3"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_margin="2dp" />
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/landmark_scroll_space"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_below="@id/landmark_layout_img"
+                    android:orientation="horizontal" />
+
+                <Button
+                    android:id="@+id/landmark_view_more"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@id/landmark_scroll_space"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/dialog_bg"
+                    android:text="@string/viewmore"
+                    android:textSize="12sp" />
+
+
+            </RelativeLayout>
+
+
+        </ScrollView>
+
+    </LinearLayout>
+
+
+</RelativeLayout>

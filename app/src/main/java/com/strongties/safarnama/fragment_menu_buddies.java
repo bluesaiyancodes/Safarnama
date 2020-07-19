@@ -1,9 +1,7 @@
 package com.strongties.safarnama;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -29,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -45,14 +44,10 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.strongties.safarnama.adapters.RecyclerViewAdapter_friend_list;
 import com.strongties.safarnama.adapters.RecyclerViewAdapter_request_list;
-import com.strongties.safarnama.user_classes.RV_friend;
 import com.strongties.safarnama.user_classes.RV_friendrequest;
 import com.strongties.safarnama.user_classes.User;
-import com.strongties.safarnama.user_classes.UserLocation;
 import com.strongties.safarnama.user_classes.UserRelation;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -71,25 +66,25 @@ public class fragment_menu_buddies extends Fragment {
     View v;
     private RecyclerView friendrecyclerview;
     private RecyclerView requestrecyclerview;
-    private List<RV_friend> list_friend;
     private List<RV_friendrequest> list_request;
 
     private FirebaseFirestore mDb;
     private FusedLocationProviderClient mFusedLocationClient;
     private ListenerRegistration mUserListenerRegistration;
-    private ListenerRegistration mRequestListenerRegistration;
+
+    RecyclerViewAdapter_friend_list friendrecyclerAdapter;
+    RecyclerViewAdapter_request_list requestrecyclerAdapter;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_menu_buddies,container,false);
 
         friendrecyclerview = v.findViewById(R.id.menu3_rv_friend);
-        RecyclerViewAdapter_friend_list friendrecyclerAdapter = new RecyclerViewAdapter_friend_list(getContext(),list_friend);
+       // friendrecyclerview.setHasFixedSize(true);
         friendrecyclerview.setLayoutManager(new LinearLayoutManager(getActivity()));
         friendrecyclerview.setAdapter(friendrecyclerAdapter);
 
         requestrecyclerview = v.findViewById(R.id.menu3_rv_request);
-        RecyclerViewAdapter_request_list requestrecyclerAdapter = new RecyclerViewAdapter_request_list(getContext(),list_request);
         requestrecyclerview.setLayoutManager(new LinearLayoutManager(getActivity()));
         requestrecyclerview.setAdapter(requestrecyclerAdapter);
 
@@ -124,21 +119,65 @@ public class fragment_menu_buddies extends Fragment {
         TextView tv_profile_badge = v.findViewById(R.id.menu3_buddies_profile_badge);
         ImageView iv_profile_img = v.findViewById(R.id.menu3_buddies_profile_img);
 
-        tv_profile_name.setText(currentuser.getUsername());
-        tv_profile_email.setText(currentuser.getEmail());
-        Glide.with(mcontext)
-                .load(currentuser.getPhoto())
-                .placeholder(R.drawable.loading_image)
-                .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
-                .into(iv_profile_img);
+        DocumentReference documentReference = FirebaseFirestore.getInstance()
+                .collection(mcontext.getString(R.string.collection_users))
+                .document(FirebaseAuth.getInstance().getUid());
+
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    Log.d(TAG, "onComplete: successfully set the user client.");
+                    User user = Objects.requireNonNull(task.getResult()).toObject(User.class);
+
+                    Log.d(TAG, "username -> "+user.getUsername());
+                    Log.d(TAG, "email -> "+user.getEmail());
+                    Log.d(TAG, "uid -> "+user.getUser_id());
+                    tv_profile_name.setText(user.getUsername());
+                    tv_profile_email.setText(user.getEmail());
+
+                    switch (user.getAvatar()){
+                        case "0 Star":
+                            tv_profile_badge.setText(getString(R.string.avatar_0_lvl));
+                            break;
+                        case "1 Star":
+                            tv_profile_badge.setText(getString(R.string.avatar_1_lvl));
+                            break;
+                        case "2 Star":
+                            tv_profile_badge.setText(getString(R.string.avatar_2_lvl));
+                            break;
+                        case "3 Star":
+                            tv_profile_badge.setText(getString(R.string.avatar_3_lvl));
+                            break;
+                        case "4 Star":
+                            tv_profile_badge.setText(getString(R.string.avatar_4_lvl));
+                            break;
+                        case "5 Star":
+                            tv_profile_badge.setText(getString(R.string.avatar_5_lvl));
+                            break;
+                        default:
+                            break;
+                    }
+                    Glide.with(mcontext)
+                            .load(user.getPhoto())
+                            .placeholder(R.drawable.loading_image)
+                            .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
+                            .into(iv_profile_img);
+
+
+                }
+            }
+        });
+
+
 
 
         LinearLayout profile_layout = v.findViewById(R.id.menu3_buddies_profile);
         profile_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((AppCompatActivity)mcontext).getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_bottom,R.anim.exit_to_top)
-                        .replace(R.id.fragment_container, new fragment_menu_buddies_profile(), "Buddy Profile Fragment").commit();
+                ((AppCompatActivity)mcontext).getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_bottom,R.anim.exit_to_top, R.anim.enter_from_top, R.anim.exit_to_bottom)
+                        .replace(R.id.fragment_container, new fragment_menu_buddies_profile(), "Buddy Profile Fragment").addToBackStack( "buddyProfile" ).commit();
             }
         });
 
@@ -153,6 +192,7 @@ public class fragment_menu_buddies extends Fragment {
                 Dialog parentDialog = new Dialog(mcontext);
                 parentDialog.setContentView(R.layout.dialog_friend_search);
                 parentDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                parentDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
 
                 final EditText email = parentDialog.findViewById(R.id.friend_search_email);
 
@@ -176,8 +216,8 @@ public class fragment_menu_buddies extends Fragment {
         friend_map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((AppCompatActivity)mcontext).getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_bottom,R.anim.exit_to_top)
-                        .replace(R.id.fragment_container, new fragment_buddy_googleMap(), "Buddy Google map").commit();
+                ((AppCompatActivity)mcontext).getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_bottom,R.anim.exit_to_top, R.anim.enter_from_top, R.anim.exit_to_bottom)
+                        .replace(R.id.fragment_container, new fragment_buddy_googleMap(), "Buddy Google map").addToBackStack( "buddyGmap" ).commit();
             }
         });
 
@@ -198,58 +238,24 @@ public class fragment_menu_buddies extends Fragment {
                 .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
                 .collection(getString(R.string.collection_requestlist));
 
-        mRequestListenerRegistration = requestusersRef
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                        if (e != null){
-                            Log.e(TAG, "onEvent: Listen failed.", e);
-                        }
+       FirestoreRecyclerOptions<UserRelation> options = new FirestoreRecyclerOptions.Builder<UserRelation>()
+                .setQuery(requestusersRef, UserRelation.class)
+                .build();
 
-                        if(queryDocumentSnapshots != null){
-                            for (QueryDocumentSnapshot doc : queryDocumentSnapshots){
-                                UserRelation requesteduserRelation = doc.toObject(UserRelation.class);
-                                User requesteduser = requesteduserRelation.getUser();
-                                String pattern = "dd-MM-YYYY";
-                                DateFormat df = new SimpleDateFormat(pattern);
-                                String dateasstring = df.format(requesteduserRelation.getTimestamp());
-
-                                list_request.add(new RV_friendrequest(requesteduser.getUsername(), requesteduser.getEmail(), dateasstring, requesteduser.getPhoto(), requesteduserRelation));
-                            }
-                        }
-                    }
-                });
-
-
+       requestrecyclerAdapter = new RecyclerViewAdapter_request_list(options);
         //For Friend List
-        list_friend = new ArrayList<>();
 
         CollectionReference usersRef = mDb
                 .collection(getString(R.string.collection_relations))
                 .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
                 .collection(getString(R.string.collection_friendlist));
 
-        mUserListenerRegistration = usersRef
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                        if (e != null){
-                            Log.e(TAG, "onEvent: Listen failed.", e);
-                        }
+        FirestoreRecyclerOptions<UserRelation> option = new FirestoreRecyclerOptions.Builder<UserRelation>()
+                .setQuery(usersRef, UserRelation.class)
+                .build();
 
-                        if(queryDocumentSnapshots != null){
-                            for (QueryDocumentSnapshot doc : queryDocumentSnapshots){
-                                final UserRelation userRel = doc.toObject(UserRelation.class);
-                                final User user = userRel.getUser();
-                                String pattern = "dd-MM-YYYY";
-                                DateFormat df = new SimpleDateFormat(pattern);
-                                String dateasstring = df.format(userRel.getTimestamp());
+        friendrecyclerAdapter = new RecyclerViewAdapter_friend_list(option);
 
-                                list_friend.add(new RV_friend(user.getUsername(), user.getEmail(), dateasstring, user.getPhoto(), userRel));
-                            }
-                        }
-                    }
-                });
 
 
     }
@@ -282,7 +288,7 @@ public class fragment_menu_buddies extends Fragment {
 
                                     myDialog = new Dialog(mcontext);
                                     myDialog.setContentView(R.layout.menu3_dialogue_findbuddy);
-                                    myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                    Objects.requireNonNull(myDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
                                     TextView name_tv = myDialog.findViewById(R.id.menu3_findbuddy_name);
                                     TextView email_tv = myDialog.findViewById(R.id.menu3_findbuddy_email);
@@ -303,95 +309,58 @@ public class fragment_menu_buddies extends Fragment {
                                             //Consraints
 
                                             //Check in current user's Requested list
-
-                                            DocumentReference docIdRef1 = mDb.
-                                                    collection(getString(R.string.collection_relations))
-                                                    .document(currentuser.getUser_id())
-                                                    .collection(getString(R.string.collection_requestedlist))
-                                                    .document(user.getUser_id());
-
-                                            docIdRef1.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                    if (task.isSuccessful()) {
-                                                        DocumentSnapshot document = task.getResult();
-                                                        assert document != null;
-                                                        if (document.exists()) {
-                                                            Log.d(TAG, "Document exists!");
-                                                          //  Toast.makeText(mcontext, getString(R.string.friend_request_pending), Toast.LENGTH_SHORT).show();
-                                                        } else {
-                                                            Log.d(TAG, "Document does not exist!");
-                                                        }
-                                                    } else {
-                                                        Log.d(TAG, "Failed with: ", task.getException());
-                                                    }
-                                                }
-                                            });
-
-
+                                            //and
                                             //Check in current user's Friend list
 
-                                            DocumentReference docIdRef2 = mDb.
-                                                    collection(getString(R.string.collection_relations))
-                                                    .document(currentuser.getUser_id())
-                                                    .collection(getString(R.string.collection_friendlist))
-                                                    .document(user.getUser_id());
+                                            if(MainActivity.RequestedList.contains(user.getUser_id())){
+                                                Toast.makeText(mcontext, getString(R.string.friend_request_pending), Toast.LENGTH_SHORT).show();
+                                            }else if(MainActivity.FriendList.contains(user.getUser_id())){
+                                                Toast.makeText(mcontext, getString(R.string.friend_request_already_accepted), Toast.LENGTH_SHORT).show();
+                                            }else {
 
-                                            docIdRef2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                    if (task.isSuccessful()) {
-                                                        DocumentSnapshot document = task.getResult();
-                                                        assert document != null;
-                                                        if (document.exists()) {
-                                                            Log.d(TAG, "Document exists!");
-                                                            //Toast.makeText(mcontext, getString(R.string.friend_request_already_accepted), Toast.LENGTH_SHORT).show();
-                                                        } else {
-                                                            Log.d(TAG, "Document does not exist!");
+
+                                                //add into requested list for current user
+                                                userRelation.setUser_id(user.getUser_id());
+                                                DocumentReference usercollectionRef = mDb.collection(getString(R.string.collection_relations))
+                                                        .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                                                        .collection(getString(R.string.collection_requestedlist))
+                                                        .document(user.getUser_id());
+                                                usercollectionRef.set(userRelation).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if(task.isSuccessful()){
+                                                            //   Toast.makeText(mcontext, getString(R.string.friend_request_success), Toast.LENGTH_SHORT).show();
+                                                            Log.d(TAG, "Successfull added to request list for sender");
+                                                        }else{
+                                                            //  Toast.makeText(mcontext, getString(R.string.friend_request_fail), Toast.LENGTH_SHORT).show();
+                                                            Log.w(TAG, "Error getting documents.", task.getException());
                                                         }
-                                                    } else {
-                                                        Log.d(TAG, "Failed with: ", task.getException());
                                                     }
-                                                }
-                                            });
+                                                });
+                                                // add into request list for requested user
+                                                userRelation.setUser_id(currentuser.getUser_id());
+                                                usercollectionRef = mDb.collection(getString(R.string.collection_relations))
+                                                        .document(user.getUser_id())
+                                                        .collection(getString(R.string.collection_requestlist))
+                                                        .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
+                                                usercollectionRef.set(userRelation).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if(task.isSuccessful()){
+                                                            Toast.makeText(mcontext, getString(R.string.friend_request_success), Toast.LENGTH_SHORT).show();
+                                                            Log.d(TAG, "Successfull added to request list for reciever");
+                                                        }else{
+                                                            Toast.makeText(mcontext, getString(R.string.friend_request_fail), Toast.LENGTH_SHORT).show();
+                                                            Log.w(TAG, "Error getting documents.", task.getException());
+                                                        }
+                                                    }
+                                                });
+
+                                            }
 
 
-                                            //add into requested list for current user
-                                            userRelation.setUser(user);
-                                            DocumentReference usercollectionRef = mDb.collection(getString(R.string.collection_relations))
-                                                    .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
-                                                    .collection(getString(R.string.collection_requestedlist))
-                                                    .document(user.getUser_id());
-                                            usercollectionRef.set(userRelation).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    if(task.isSuccessful()){
-                                                        //   Toast.makeText(mcontext, getString(R.string.friend_request_success), Toast.LENGTH_SHORT).show();
-                                                        Log.d(TAG, "Successfull added to request list for sender");
-                                                    }else{
-                                                        //  Toast.makeText(mcontext, getString(R.string.friend_request_fail), Toast.LENGTH_SHORT).show();
-                                                        Log.w(TAG, "Error getting documents.", task.getException());
-                                                    }
-                                                }
-                                            });
-                                            // add into request list for requested user
-                                            userRelation.setUser(currentuser);
-                                            usercollectionRef = mDb.collection(getString(R.string.collection_relations))
-                                                    .document(user.getUser_id())
-                                                    .collection(getString(R.string.collection_requestlist))
-                                                    .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
-                                            usercollectionRef.set(userRelation).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    if(task.isSuccessful()){
-                                                        Toast.makeText(mcontext, getString(R.string.friend_request_success), Toast.LENGTH_SHORT).show();
-                                                        Log.d(TAG, "Successfull added to request list for reciever");
-                                                    }else{
-                                                        Toast.makeText(mcontext, getString(R.string.friend_request_fail), Toast.LENGTH_SHORT).show();
-                                                        Log.w(TAG, "Error getting documents.", task.getException());
-                                                    }
-                                                }
-                                            });
+
+
 
                                         }
                                     });
@@ -422,6 +391,70 @@ public class fragment_menu_buddies extends Fragment {
 
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        friendrecyclerAdapter.startListening();
+        requestrecyclerAdapter.startListening();
+        getallfriends();
+        getallrequested();
+    }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        friendrecyclerAdapter.stopListening();
+        requestrecyclerAdapter.startListening();
+    }
+
+    private void getallfriends() {
+
+        CollectionReference collRef = FirebaseFirestore.getInstance()
+                .collection(getString(R.string.collection_relations))
+                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                .collection(getString(R.string.collection_friendlist));
+
+        collRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                        String user_id = document.getId();
+                        if(!MainActivity.FriendList.contains(user_id)){
+                            MainActivity.FriendList.add(user_id);
+                        }
+                    }
+                }
+            }
+        });
+
+        Log.d(TAG, "FriendList" + MainActivity.FriendList);
+
+    }
+
+    private  void getallrequested(){
+
+        CollectionReference collRef = FirebaseFirestore.getInstance()
+                .collection(getString(R.string.collection_relations))
+                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                .collection(getString(R.string.collection_requestedlist));
+
+        collRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                        String user_id = document.getId();
+                        if(!MainActivity.RequestedList.contains(user_id)){
+                            MainActivity.RequestedList.add(user_id);
+                        }
+                    }
+                }
+            }
+        });
+
+        Log.d(TAG, "Requested List" + MainActivity.RequestedList);
+
+    }
 
 }

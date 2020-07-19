@@ -1,8 +1,6 @@
 package com.strongties.safarnama;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -33,8 +31,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.strongties.safarnama.user_classes.User;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 import pl.droidsonroids.gif.GifDrawable;
@@ -170,18 +166,20 @@ public class LoginScreen extends AppCompatActivity {
             String uid = user.getUid();
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-            Map<String, Object> userdb = new HashMap<>();
-            userdb.put("username", name);
-            userdb.put("email", email);
-            userdb.put("user_id", uid);
-            userdb.put("photo", photo);
+
+            User user_ = new User();
+            user_.setUsername(name);
+            user_.setEmail(email);
+            user_.setPhoto(photo);
+            user_.setUser_id(uid);
+            user_.setAvatar(getString(R.string.avatar_0));
 
             DocumentReference newUserRef = db
                     .collection(getString(R.string.collection_users))
                     .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
 
 
-            newUserRef.set(userdb).addOnCompleteListener(new OnCompleteListener<Void>() {
+            newUserRef.set(user_).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
 

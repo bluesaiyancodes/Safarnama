@@ -17,23 +17,27 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.strongties.safarnama.R;
 import com.strongties.safarnama.UserClient;
-import com.strongties.safarnama.user_classes.RV_friend;
 import com.strongties.safarnama.user_classes.RV_friendrequest;
 import com.strongties.safarnama.user_classes.User;
 import com.strongties.safarnama.user_classes.UserRelation;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Objects;
 
-public class RecyclerViewAdapter_request_list extends RecyclerView.Adapter<RecyclerViewAdapter_request_list.MyViewHolder> {
+public class RecyclerViewAdapter_request_list extends FirestoreRecyclerAdapter<UserRelation, RecyclerViewAdapter_request_list.MyViewHolder> {
 
 
     Context mContext;
@@ -44,29 +48,85 @@ public class RecyclerViewAdapter_request_list extends RecyclerView.Adapter<Recyc
     private static final String TAG = "Menu 3, ReqAdapter";
     User currentuser;
 
-    public RecyclerViewAdapter_request_list(Context mContext, List<RV_friendrequest> mData) {
-        this.mContext = mContext;
-        this.mData = mData;
+
+    public RecyclerViewAdapter_request_list(@NonNull FirestoreRecyclerOptions<UserRelation> options) {
+        super(options);
     }
+
 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View v;
-        v = LayoutInflater.from(mContext).inflate(R.layout.rv_menu3_request,parent,false);
+        v = LayoutInflater.from(parent.getContext()).inflate(R.layout.rv_menu3_request,parent,false);
         final MyViewHolder vHolder = new MyViewHolder(v);
 
-
+        mContext = parent.getContext();
         //Dialog Initiation
        // myDialog = new Dialog(mContext);
         //myDialog.setContentView(R.layout.rv_dialog_accomplished);
         //myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
 
+        mDb = FirebaseFirestore.getInstance();
+        currentuser = ((UserClient)(mContext.getApplicationContext())).getUser();
 
 
-        vHolder.item_request.setOnClickListener(new View.OnClickListener() {
+        return vHolder;
+    }
+
+    @Override
+    protected void onBindViewHolder(@NonNull MyViewHolder holder, int position, @NonNull UserRelation model) {
+
+        String user_id = model.getUser_id();
+        Log.d(TAG, "Model userRel-> " + model.getRelation());
+        Log.d(TAG, "Model userid-> " + model.getUser_id());
+        DocumentReference documentReference = FirebaseFirestore.getInstance()
+                .collection(mContext.getString(R.string.collection_users))
+                .document(user_id);
+
+        final User[] user = new User[1];
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    assert document != null;
+                    user[0] = document.toObject(User.class);
+                    if (document.exists()) {
+                        Log.d(TAG, "User Info Retrieved, Name: " + user[0].getUsername());
+
+
+                        holder.tv_name.setText(user[0].getUsername());
+                        holder.tv_email.setText(user[0].getEmail());
+
+                        String pattern = "dd-MM-YYYY";
+                        DateFormat df = new SimpleDateFormat(pattern);
+                        String dateasstring = df.format(model.getTimestamp());
+                        holder.tv_added_on.setText(dateasstring);
+                        // holder.img.setImageResource(mData.get(position).getPhoto());
+
+                        Glide.with(mContext)
+                                .load(user[0].getPhoto())
+                                .placeholder(R.drawable.loading_image)
+                                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                                .into(holder.img);
+
+
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+
+
+
+
+        holder.item_request.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v1) {
 
@@ -74,25 +134,22 @@ public class RecyclerViewAdapter_request_list extends RecyclerView.Adapter<Recyc
         });
 
 
-        mDb = FirebaseFirestore.getInstance();
-        currentuser = ((UserClient)(mContext.getApplicationContext())).getUser();
-
-
-
-        vHolder.img_accept.setOnClickListener(new View.OnClickListener() {
+        holder.img_accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Add to friend list for current User
-               // Toast.makeText(mContext, mData.get(vHolder.getAdapterPosition()).getUserRelation().getUser().getUser_id(), Toast.LENGTH_SHORT).show();
+                // Toast.makeText(mContext, mData.get(vHolder.getAdapterPosition()).getUserRelation().getUser().getUser_id(), Toast.LENGTH_SHORT).show();
+
                 DocumentReference usercollectionRef = mDb
                         .collection(mContext.getString(R.string.collection_relations))
                         .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
                         .collection(mContext.getString(R.string.collection_friendlist))
-                        .document(mData.get(vHolder.getAdapterPosition()).getUserRelation().getUser().getUser_id());
-                UserRelation userRelation1 = mData.get(vHolder.getAdapterPosition()).getUserRelation();
+                        .document(model.getUser_id());
+                UserRelation userRelation1 = new UserRelation();
+                userRelation1.setUser_id(model.getUser_id());
                 userRelation1.setRelation(mContext.getString(R.string.friend));
 
-               //Toast.makeText(mContext, mData.get(vHolder.getAdapterPosition()).getUserRelation().getUser().getUser_id(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(mContext, mData.get(vHolder.getAdapterPosition()).getUserRelation().getUser().getUser_id(), Toast.LENGTH_SHORT).show();
 
                 usercollectionRef.set(userRelation1).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -109,12 +166,12 @@ public class RecyclerViewAdapter_request_list extends RecyclerView.Adapter<Recyc
 
                 //Add to friend list for requested user
                 usercollectionRef = mDb.collection(mContext.getString(R.string.collection_relations))
-                        .document(mData.get(vHolder.getAdapterPosition()).getUserRelation().getUser().getUser_id())
+                        .document(model.getUser_id())
                         .collection(mContext.getString(R.string.collection_friendlist))
                         .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
                 UserRelation userRelation2 = new UserRelation();
                 userRelation2.setRelation(mContext.getString(R.string.friend));
-                userRelation2.setUser(currentuser);
+                userRelation2.setUser_id(currentuser.getUser_id());
                 usercollectionRef.set(userRelation2).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -130,7 +187,7 @@ public class RecyclerViewAdapter_request_list extends RecyclerView.Adapter<Recyc
 
 
                 DocumentReference removerequest = mDb.collection(mContext.getString(R.string.collection_relations))
-                        .document(mData.get(vHolder.getAdapterPosition()).getUserRelation().getUser().getUser_id())
+                        .document(model.getUser_id())
                         .collection(mContext.getString(R.string.collection_requestedlist))
                         .document(currentuser.getUser_id());
 
@@ -139,7 +196,7 @@ public class RecyclerViewAdapter_request_list extends RecyclerView.Adapter<Recyc
                 removerequest = mDb.collection(mContext.getString(R.string.collection_relations))
                         .document(currentuser.getUser_id())
                         .collection(mContext.getString(R.string.collection_requestlist))
-                        .document(mData.get(vHolder.getAdapterPosition()).getUserRelation().getUser().getUser_id());
+                        .document(model.getUser_id());
 
                 removerequest.delete();
 
@@ -148,11 +205,11 @@ public class RecyclerViewAdapter_request_list extends RecyclerView.Adapter<Recyc
             }
         });
 
-        vHolder.img_reject.setOnClickListener(new View.OnClickListener() {
+        holder.img_reject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 DocumentReference removerequest = mDb.collection(mContext.getString(R.string.collection_relations))
-                        .document(mData.get(vHolder.getAdapterPosition()).getUserRelation().getUser().getUser_id())
+                        .document(model.getUser_id())
                         .collection(mContext.getString(R.string.collection_requestedlist))
                         .document(currentuser.getUser_id());
 
@@ -161,7 +218,7 @@ public class RecyclerViewAdapter_request_list extends RecyclerView.Adapter<Recyc
                 removerequest = mDb.collection(mContext.getString(R.string.collection_relations))
                         .document(currentuser.getUser_id())
                         .collection(mContext.getString(R.string.collection_requestlist))
-                        .document(mData.get(vHolder.getAdapterPosition()).getUserRelation().getUser().getUser_id());
+                        .document(model.getUser_id());
 
                 removerequest.delete();
                 Toast.makeText(mContext, mContext.getString(R.string.friend_rejected), Toast.LENGTH_SHORT).show();
@@ -171,29 +228,11 @@ public class RecyclerViewAdapter_request_list extends RecyclerView.Adapter<Recyc
 
 
 
-        return vHolder;
-    }
 
-    @Override
-    public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
 
-        holder.tv_name.setText(mData.get(position).getName());
-        holder.tv_email.setText(mData.get(position).getEmail());
-        holder.tv_added_on.setText(mData.get(position).getAdded_on());
-       // holder.img.setImageResource(mData.get(position).getPhoto());
-
-        Glide.with(mContext)
-                .load(mData.get(holder.getAdapterPosition()).getPhotoUrl())
-                .placeholder(R.drawable.loading_image)
-                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                .into(holder.img);
 
     }
 
-    @Override
-    public int getItemCount() {
-        return mData.size();
-    }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
 

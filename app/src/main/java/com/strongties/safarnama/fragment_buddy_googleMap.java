@@ -1,16 +1,12 @@
 package com.strongties.safarnama;
 
 import android.Manifest;
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -18,27 +14,23 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Shader;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Looper;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
@@ -46,9 +38,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -75,8 +65,6 @@ import com.strongties.safarnama.user_classes.User;
 import com.strongties.safarnama.user_classes.UserLocation;
 import com.strongties.safarnama.user_classes.UserRelation;
 
-import java.io.IOException;
-import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -112,6 +100,7 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_buddy_gmap, container, false);
 
+        Button btn_back = root.findViewById(R.id.buddy_gmap_back);
         mcontext = getContext();
         if (!isLocationEnabled(getContext())) {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Objects.requireNonNull(getContext()));
@@ -140,6 +129,14 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
                 .findFragmentById(R.id.buddy_gmapview);
         assert mapFragment != null;
         mapFragment.getMapAsync(this);
+
+        btn_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((AppCompatActivity)mcontext).getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_top,R.anim.exit_to_bottom)
+                        .replace(R.id.fragment_container, new fragment_menu_buddies(), "Menu Buddies").commit();
+            }
+        });
 
 
         return root;
@@ -257,7 +254,7 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
                         UserRelation userRelation = doc.toObject(UserRelation.class);
                         DocumentReference docRef = mDb
                                 .collection(mcontext.getString(R.string.collection_user_locations))
-                                .document(userRelation.getUser().getUser_id());
+                                .document(userRelation.getUser_id());
 
                         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override

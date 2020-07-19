@@ -34,13 +34,14 @@ public class WishlistActivity extends AppCompatActivity {
         viewPager.setPageTransformer(true, new FadePageTransformer());
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
-        viewPager.setOffscreenPageLimit(0);
+        //viewPager.setOffscreenPageLimit(0);
 
         //Set Icon For tabs
         //tabLayout.getTabAt(0).setIcon(R.drawable.);
 
         //Remove Shadow from the action bar
         ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
         actionBar.setElevation(0);
 
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
@@ -58,7 +59,7 @@ public class WishlistActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                viewPager.getAdapter().notifyDataSetChanged();
+                //Objects.requireNonNull(viewPager.getAdapter()).notifyDataSetChanged();
 
             }
 

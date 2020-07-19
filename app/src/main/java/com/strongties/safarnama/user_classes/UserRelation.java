@@ -1,18 +1,17 @@
 package com.strongties.safarnama.user_classes;
 
-import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.ServerTimestamp;
 
 import java.util.Date;
 
 public class UserRelation {
-    private User user;
+    private String user_id;
     private String relation;
     private @ServerTimestamp
     Date timestamp;
 
-    public UserRelation(User user, String relation, Date timestamp) {
-        this.user = user;
+    public UserRelation(String user_id, String relation, Date timestamp) {
+        this.user_id = user_id;
         this.relation = relation;
         this.timestamp = timestamp;
     }
@@ -21,12 +20,12 @@ public class UserRelation {
 
     }
 
-    public User getUser() {
-        return user;
+    public String getUser_id() {
+        return user_id;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
     }
 
     public String  getRelation() {
@@ -48,7 +47,7 @@ public class UserRelation {
     @Override
     public String toString() {
         return "UserLocation{" +
-                "user=" + user +
+                "user_id=" + user_id +
                 ", relation=" + relation +
                 ", timestamp=" + timestamp +
                 '}';

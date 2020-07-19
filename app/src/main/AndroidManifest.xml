@@ -14,11 +14,9 @@
     <permission
         android:name="com.example.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
+
     <uses-permission android:name="com.example.permission.MAPS_RECEIVE" />
-
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-
-
 
     <application
         android:name=".UserClient"
@@ -26,40 +24,51 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
-        android:supportsRtl="true"
         android:screenOrientation="portrait"
+        android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SplashScreen"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait">
 
+        <activity
+            android:name=".SplashScreen"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
-
-        <activity android:name=".LoginScreen"
-            android:theme="@style/AppTheme.NoActionBar"
+        <activity
+            android:name=".LoginScreen"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".WishlistActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".configurePlacesActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".LandmarkActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".placeImagesActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".imageViewActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".MainActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".WishlistActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".configurePlacesActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait"/>
-
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <service android:name=".services.LocationService"
-            android:stopWithTask="true"/>
-
+        <service
+            android:name=".services.LocationService"
+            android:stopWithTask="true" />
     </application>
 
 </manifest>

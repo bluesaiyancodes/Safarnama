@@ -1,10 +1,9 @@
 package com.strongties.safarnama;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -28,16 +27,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.strongties.safarnama.adapters.RecyclerViewAdaptor_menu;
-import com.strongties.safarnama.user_classes.User;
-import com.strongties.safarnama.user_classes.UserLocation;
+import com.strongties.safarnama.user_classes.AvatarBackgroundTask;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,9 +45,11 @@ public class MainActivity extends AppCompatActivity {
 
     //Variables
     private ArrayList<String> mNames = new ArrayList<>();
-    private  ArrayList<String> mImageUrls = new ArrayList<>();
+    public static ArrayList<String> FriendList;
 
     GoogleSignInClient googleSignInClient;
+    public static ArrayList<String> RequestedList;
+    private ArrayList<String> mImageUrls = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +76,16 @@ public class MainActivity extends AppCompatActivity {
 
         getImages();
 
+        FriendList = new ArrayList<>();
+        RequestedList = new ArrayList<>();
+
+        AvatarBackgroundTask avatarBackgroundTask = new AvatarBackgroundTask(context);
+        avatarBackgroundTask.execute();
+
+        Log.d(TAG, "FriendList" + FriendList.toString());
+        Log.d(TAG, "RequestList" + RequestedList.toString());
+
+
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -91,12 +97,12 @@ public class MainActivity extends AppCompatActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
 
         MenuItem insert_FBFS = menu.findItem(R.id.add_new_places);
-        String email= FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
 
         MenuItem item = menu.findItem(R.id.app_mode);
 
-        switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK){
+        switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
             case Configuration.UI_MODE_NIGHT_YES:
                 item.setTitle(getString(R.string.mode_light));
                 break;
@@ -105,10 +111,10 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
 
-        if (!(email.equals("bluebishal@gmail.com") || email.equals("jeevanjyotisahoo1@gmail.com")  )){
+        if (!(email.equals("bluebishal@gmail.com") || email.equals("jeevanjyotisahoo1@gmail.com"))) {
             insert_FBFS.setEnabled(false);
             insert_FBFS.getIcon().setAlpha(0);
-        }else {
+        } else {
             insert_FBFS.setEnabled(true);
             insert_FBFS.getIcon().setAlpha(255);
         }
@@ -120,10 +126,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.wishlist:
                 Intent intent = new Intent(this, WishlistActivity.class);
                 startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_top,R.anim.exit_to_bottom);
+                overridePendingTransition(R.anim.enter_from_top, R.anim.exit_to_bottom);
                 return true;
             case R.id.app_mode:
-                switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK){
+                switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
                     case Configuration.UI_MODE_NIGHT_YES:
                         item.setTitle(getString(R.string.mode_light));
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
@@ -136,14 +142,15 @@ public class MainActivity extends AppCompatActivity {
                 invalidateOptionsMenu();
                 return true;
             case R.id.add_new_places:
-                 intent = new Intent(this, configurePlacesActivity.class);
+                intent = new Intent(this, configurePlacesActivity.class);
                 startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_top,R.anim.exit_to_bottom);
+                overridePendingTransition(R.anim.enter_from_top, R.anim.exit_to_bottom);
                 return true;
             case R.id.contactus:
                 Dialog myDialog = new Dialog(MainActivity.this);
                 myDialog.setContentView(R.layout.dialog_contact_us);
                 Objects.requireNonNull(myDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                myDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
                 Button contact_submit = myDialog.findViewById(R.id.contact_btn);
                 final EditText contact_body = myDialog.findViewById(R.id.contact_body);
                 contact_submit.setOnClickListener(new View.OnClickListener() {
@@ -155,9 +162,9 @@ public class MainActivity extends AppCompatActivity {
 
                         Intent i = new Intent(Intent.ACTION_SEND);
                         i.setType("message/rfc822");
-                        i.putExtra(Intent.EXTRA_EMAIL  , new String[]{getString(R.string.support_email)});
+                        i.putExtra(Intent.EXTRA_EMAIL, new String[]{getString(R.string.support_email)});
                         i.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.support_sub) + currentDate);
-                        i.putExtra(Intent.EXTRA_TEXT   , contact_body.getText().toString());
+                        i.putExtra(Intent.EXTRA_TEXT, contact_body.getText().toString());
                         try {
                             startActivity(Intent.createChooser(i, getString(R.string.support_title)));
                         } catch (android.content.ActivityNotFoundException ex) {
@@ -186,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void getImages(){
+    private void getImages() {
         Log.d(TAG, "initImageBitmaps: preparing bitmaps.");
 
 
@@ -199,19 +206,18 @@ public class MainActivity extends AppCompatActivity {
         mImageUrls.add("https://i.redd.it/j6myfqglup501.jpg");
         mNames.add(getString(R.string.menu_3));
 
+        mImageUrls.add("https://i.redd.it/k98uzl68eh501.jpg");
+        mNames.add("Feed");
 
         mImageUrls.add("https://i.redd.it/0h2gm1ix6p501.jpg");
         mNames.add(getString(R.string.menu_4));
-
-       // mImageUrls.add("https://i.redd.it/k98uzl68eh501.jpg");
-       // mNames.add("Item 5");
 
 
         initRecyclerView();
 
     }
 
-    private void initRecyclerView(){
+    private void initRecyclerView() {
         Log.d(TAG, "initRecyclerView: init recyclerview");
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -220,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
         RecyclerViewAdaptor_menu adapter = new RecyclerViewAdaptor_menu(this, mNames, mImageUrls);
         recyclerView.setAdapter(adapter);
 
-        Log.d(TAG, "Screen Height: " + Float.toString(getScreenWidth()));
+        Log.d(TAG, "Screen Height: " + getScreenWidth());
 
 
     }
@@ -235,5 +241,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.confirm))
+                .setMessage("Do you really want to exit the Application ? ")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                        // System.exit(0);
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Continue with delete operation
+                        dialog.cancel();
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
 
+    }
 }

@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.strongties.safarnama.R;
 import com.strongties.safarnama.fragment_menu_buddies;
 import com.strongties.safarnama.fragment_menu_distance;
+import com.strongties.safarnama.fragment_menu_feed;
 import com.strongties.safarnama.fragment_menu_googleMap;
 
 import java.util.ArrayList;
@@ -61,6 +62,9 @@ public class RecyclerViewAdaptor_menu extends RecyclerView.Adapter<RecyclerViewA
             holder.image.setImageResource(R.drawable.ic_menu_3);
             holder.name.setText(mNames.get(position));
         }else if(position == 3){
+            holder.image.setImageResource(R.drawable.ic_menu_feed);
+            holder.name.setText(mNames.get(position));
+        }else if(position == 4){
             holder.image.setImageResource(R.drawable.ic_menu_4);
             holder.name.setText(mNames.get(position));
         }
@@ -94,12 +98,14 @@ public class RecyclerViewAdaptor_menu extends RecyclerView.Adapter<RecyclerViewA
                             .replace(R.id.fragment_container, new fragment_menu_buddies(), "Menu Buddies").commit();
                 }
                 if (position == 3){
+                    //Toast.makeText(mcontext, "Menu 4", Toast.LENGTH_SHORT).show();
+                    ((AppCompatActivity)mcontext).getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right,R.anim.exit_to_left)
+                            .replace(R.id.fragment_container, new fragment_menu_feed(), "Menu Feed").commit();
 
-                    Toast.makeText(mcontext, "Coming Soon", Toast.LENGTH_SHORT).show();
                 }
                 if (position == 4){
 
-                    Toast.makeText(mcontext, "Menu 5", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mcontext, "Coming Soon", Toast.LENGTH_SHORT).show();
                 }
             }
         });

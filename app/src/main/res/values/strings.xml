@@ -30,12 +30,9 @@
     <string name="menu1_dialoge_info">Information</string>
 
 
-
-
     <string name="BucketList">Bucket List</string>
     <string name="Explore">Explore</string>
     <string name="Accomplished">Accomplished</string>
-
 
 
     <string name="give_permission">Grant Permission</string>
@@ -108,7 +105,6 @@
     <string name="show_accomplished_void">Add some places in Accomplished List</string>
 
 
-
     <string name="collection_users">Users</string>
     <string name="collection_user_locations">User Locations</string>
     <string name="collection_relations">User Relations</string>
@@ -116,18 +112,69 @@
     <string name="collection_requestlist">Request list</string>
     <string name="collection_requestedlist">Requested list</string>
     <string name="collection_landmarks">Landmarks</string>
+    <string name="collection_feed">Feed</string>
+    <string name="collection_posts">posts</string>
+    <string name="document_global">global</string>
 
     <string name="i_circle">\u24D8</string>
+    <string name="i_star1">\u2605</string>
+    <string name="i_star2">\u2730</string>
 
 
-    <string name="inside_1">Inside 1 KM</string>
     <string name="inside_5">Inside 5 KM</string>
-    <string name="inside_10">Inside 10 KM</string>
-    <string name="inside_50">Inside 50 KM</string>
+    <string name="inside_40">Inside 40 KM</string>
     <string name="inside_100">Inside 100 KM</string>
     <string name="inside_200">Inside 200 KM</string>
     <string name="above_200">Above 200 KM</string>
-    <string name="profile">Your Profile</string>
 
+
+    <string name="profile">Your Profile</string>
+    <string name="text_placeholder">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</string>
+    <string name="feed_insert">New Post</string>
+    <string name="feed_insert_body">Write your Mind !</string>
+    <string name="post">Post</string>
+    <string name="feed_post_success">Posted Successfully</string>
+    <string name="feed_msg_accomplished">"Today I completed my visit to "</string>
+
+
+    <string name="avatar_0">0 Star</string>
+    <string name="avatar_0_lvl">Path Finder \u2606</string>
+    <string name="avatar_0_text">Path Finder</string>
+    <string name="avatar_1">1 Star</string>
+    <string name="avatar_1_lvl">Occasional \u2B50</string>
+    <string name="avatar_1_text">Occasional</string>
+    <string name="avatar_2">2 Star</string>
+    <string name="avatar_2_lvl">Curious \u2605 \u2605</string>
+    <string name="avatar_2_text">Curious</string>
+    <string name="avatar_3">3 Star</string>
+    <string name="avatar_3_lvl">Thrill Seeker \u2B50 \u2B50 \u2B50</string>
+    <string name="avatar_3_text">Thrill Seeker</string>
+    <string name="avatar_4">4 Star</string>
+    <string name="avatar_4_lvl">Adventurer \u2B50 \u2B50 \u2B50 \u2B50</string>
+    <string name="avatar_4_text">Adventurer</string>
+    <string name="avatar_5">5 Star</string>
+    <string name="avatar_5_lvl">Wanderer \u2B50 \u2B50 \u2B50 \u2B50 \u2B50</string>
+    <string name="avatar_5_text">Wanderer</string>
+    <string name="error_permission_map">Error Getting Location Data</string>
+    <string name="change_success">Update Successful</string>
+    <string name="back">Back</string>
+    <string name="public_feed">Public Feed</string>
+    <string name="buddy_feed">Buddy Feed</string>
+    <string name="view_on_map">View on Map</string>
+    <string name="category">Category</string>
+    <string name="city">City</string>
+    <string name="fee">Entry Fee</string>
+    <string name="description_short">To Sum Up</string>
+    <string name="state">State</string>
+    <string name="history">Did you know ?</string>
+    <string name="moments">Moments</string>
+    <string name="viewmore">View More</string>
+    <string name="document_meta">Meta</string>
+    <string name="collection_all">All</string>
+    <string name="document_lists">Lists</string>
+    <string name="collection_bucket_list">BucketList</string>
+    <string name="collection_accomplished_list">Accomplished List</string>
+    <string name="details">Details</string>
+    <string name="download">Download</string>
 
 </resources>

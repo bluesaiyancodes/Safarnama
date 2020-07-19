@@ -1,10 +1,7 @@
 package com.strongties.safarnama.adapters;
 
 import android.app.Dialog;
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
@@ -24,27 +21,26 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.strongties.safarnama.DatabaseHelper;
 import com.strongties.safarnama.R;
 import com.strongties.safarnama.UserClient;
-import com.strongties.safarnama.user_classes.RV_Accomplished;
-import com.strongties.safarnama.user_classes.RV_friend;
 import com.strongties.safarnama.user_classes.User;
+import com.strongties.safarnama.user_classes.UserRelation;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 
-public class RecyclerViewAdapter_friend_list extends RecyclerView.Adapter<RecyclerViewAdapter_friend_list.MyViewHolder> {
+public class RecyclerViewAdapter_friend_list extends FirestoreRecyclerAdapter<UserRelation, RecyclerViewAdapter_friend_list.MyViewHolder> {
 
 
     Context mContext;
-    List<RV_friend> mData;
     Dialog myDialog;
     User currentuser;
 
@@ -52,9 +48,8 @@ public class RecyclerViewAdapter_friend_list extends RecyclerView.Adapter<Recycl
 
     private FirebaseFirestore mDb;
 
-    public RecyclerViewAdapter_friend_list(Context mContext, List<RV_friend> mData) {
-        this.mContext = mContext;
-        this.mData = mData;
+    public RecyclerViewAdapter_friend_list(@NonNull FirestoreRecyclerOptions<UserRelation> options) {
+        super(options);
     }
 
     @NonNull
@@ -62,9 +57,10 @@ public class RecyclerViewAdapter_friend_list extends RecyclerView.Adapter<Recycl
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         final View v;
-        v = LayoutInflater.from(mContext).inflate(R.layout.rv_menu3_friend,parent,false);
+        v = LayoutInflater.from(parent.getContext()).inflate(R.layout.rv_menu3_friend,parent,false);
         final MyViewHolder vHolder = new MyViewHolder(v);
 
+        mContext = parent.getContext();
 
         //Firebase Initiation
         mDb = FirebaseFirestore.getInstance();
@@ -73,13 +69,73 @@ public class RecyclerViewAdapter_friend_list extends RecyclerView.Adapter<Recycl
 
 
 
-        vHolder.item_friend.setOnClickListener(new View.OnClickListener() {
+
+
+
+        return vHolder;
+    }
+
+
+    @Override
+    protected void onBindViewHolder(@NonNull MyViewHolder holder, int position, @NonNull UserRelation model) {
+        String user_id = model.getUser_id();
+
+        DocumentReference documentReference = FirebaseFirestore.getInstance()
+                .collection(mContext.getString(R.string.collection_users))
+                .document(user_id);
+
+        final User[] user = new User[1];
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    assert document != null;
+                    user[0] = document.toObject(User.class);
+                    if (document.exists()) {
+                        Log.d(TAG, "User Info Retrieved, Name: " + user[0].getUsername());
+
+                        holder.tv_name.setText(user[0].getUsername());
+                        holder.tv_email.setText(user[0].getEmail());
+                        String pattern = "dd-MM-YYYY";
+                        DateFormat df = new SimpleDateFormat(pattern);
+                        String dateasstring;
+                        try {
+                             dateasstring = df.format(model.getTimestamp());
+                        }catch (NullPointerException e){
+                            dateasstring = "";
+                        }
+                        holder.tv_added_on.setText(dateasstring);
+                        // holder.img.setImageResource(mData.get(position).getPhoto());
+
+                        Glide.with(mContext)
+                                .load(user[0].getPhoto())
+                                .placeholder(R.drawable.loading_image)
+                                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                                .into(holder.img);
+
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+
+
+
+
+
+
+        holder.item_friend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v1) {
 
                 myDialog = new Dialog(mContext);
                 myDialog.setContentView(R.layout.menu3_dialogue_buddy);
                 Objects.requireNonNull(myDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                myDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
 
                 TextView tv_name = myDialog.findViewById(R.id.menu3_buddy_name);
                 TextView tv_email = myDialog.findViewById(R.id.menu3_buddy_email);
@@ -88,61 +144,208 @@ public class RecyclerViewAdapter_friend_list extends RecyclerView.Adapter<Recycl
                 ImageView iv_avatar = myDialog.findViewById(R.id.menu3_buddy_avatar);
                 Button buddy_remove = myDialog.findViewById(R.id.menu3_buddy_btn);
 
-                tv_name.setText(mData.get(vHolder.getAdapterPosition()).getName());
-                tv_email.setText(mData.get(vHolder.getAdapterPosition()).getEmail());
-                tv_date_added.setText(mData.get(vHolder.getAdapterPosition()).getAdded_on());
 
-                Glide.with(mContext)
-                        .load(mData.get(vHolder.getAdapterPosition()).getPhotoUrl())
-                        .placeholder(R.drawable.loading_image)
-                        .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
-                        .into(iv_img);
+
+
+                DocumentReference documentReference = FirebaseFirestore.getInstance()
+                        .collection(mContext.getString(R.string.collection_users))
+                        .document(user_id);
+
+                final User[] user = new User[1];
+                documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            assert document != null;
+                            user[0] = document.toObject(User.class);
+                            if (document.exists()) {
+                                Log.d(TAG, "User Info Retrieved, Name: " + user[0].getUsername());
+
+
+                                tv_name.setText(user[0].getUsername());
+                                tv_email.setText(user[0].getEmail());
+                                String pattern = "dd-MM-YYYY";
+                                DateFormat df = new SimpleDateFormat(pattern);
+                                String dateasstring = df.format(model.getTimestamp());
+                                tv_date_added.setText(dateasstring);
+
+                                Glide.with(mContext)
+                                        .load(user[0].getPhoto())
+                                        .placeholder(R.drawable.loading_image)
+                                        .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
+                                        .into(iv_img);
+
+                                switch (user[0].getAvatar()){
+                                    case "0 Star":
+                                        Glide.with(mContext)
+                                                .load(R.drawable.avatar_0_star)
+                                                .placeholder(R.drawable.loading_image)
+                                                .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
+                                                .into(iv_avatar);
+                                        break;
+                                    case "1 Star":
+                                        Glide.with(mContext)
+                                                .load(R.drawable.avatar_1_star)
+                                                .placeholder(R.drawable.loading_image)
+                                                .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
+                                                .into(iv_avatar);
+                                        break;
+                                    case "2 Star":
+                                        Glide.with(mContext)
+                                                .load(R.drawable.avatar_2_star)
+                                                .placeholder(R.drawable.loading_image)
+                                                .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
+                                                .into(iv_avatar);
+                                        break;
+                                    case "3 Star":
+                                        Glide.with(mContext)
+                                                .load(R.drawable.avatar_3_star)
+                                                .placeholder(R.drawable.loading_image)
+                                                .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
+                                                .into(iv_avatar);
+                                        break;
+                                    case "4 Star":
+                                        Glide.with(mContext)
+                                                .load(R.drawable.avatar_4_star)
+                                                .placeholder(R.drawable.loading_image)
+                                                .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
+                                                .into(iv_avatar);
+                                        break;
+                                    case "5 Star":
+                                        Glide.with(mContext)
+                                                .load(R.drawable.avatar_5_star)
+                                                .placeholder(R.drawable.loading_image)
+                                                .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
+                                                .into(iv_avatar);
+                                        break;
+                                    default:
+                                        Glide.with(mContext)
+                                                .load(R.drawable.loading_image)
+                                                .placeholder(R.drawable.loading_image)
+                                                .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
+                                                .into(iv_avatar);
+                                        break;
+                                }
+
+                            } else {
+                                Log.d(TAG, "No such document");
+                            }
+                        } else {
+                            Log.d(TAG, "get failed with ", task.getException());
+                        }
+                    }
+                });
+
+
+
+
+
 
                 buddy_remove.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         // remove from current user friend list
 
-                        DocumentReference docRef1 = mDb
-                                .collection(mContext.getString(R.string.collection_relations))
-                                .document(currentuser.getUser_id())
-                                .collection(mContext.getString(R.string.collection_friendlist))
-                                .document(mData.get(vHolder.getAdapterPosition()).getUserRelation().getUser().getUser_id());
-                        //Toast.makeText(mContext, mData.get(vHolder.getAdapterPosition()).getUserRelation().getUser().getUser_id(), Toast.LENGTH_SHORT).show();
-                        docRef1.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+
+                        DocumentReference documentReference = FirebaseFirestore.getInstance()
+                                .collection(mContext.getString(R.string.collection_users))
+                                .document(user_id);
+
+                        final User[] user = new User[1];
+                        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    //   Toast.makeText(mcontext, getString(R.string.friend_request_success), Toast.LENGTH_SHORT).show();
-                                    Log.d(TAG, "Successfull removed from friend list for user");
-                                }else{
-                                    //  Toast.makeText(mcontext, getString(R.string.friend_request_fail), Toast.LENGTH_SHORT).show();
-                                    Log.w(TAG, "Error getting documents.", task.getException());
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    assert document != null;
+                                    user[0] = document.toObject(User.class);
+                                    if (document.exists()) {
+                                        Log.d(TAG, "User Info Retrieved, Name: " + user[0].getUsername());
+
+
+                                        DocumentReference docRef1 = mDb
+                                                .collection(mContext.getString(R.string.collection_relations))
+                                                .document(currentuser.getUser_id())
+                                                .collection(mContext.getString(R.string.collection_friendlist))
+                                                .document(user[0].getUser_id());
+                                        //Toast.makeText(mContext, mData.get(vHolder.getAdapterPosition()).getUserRelation().getUser().getUser_id(), Toast.LENGTH_SHORT).show();
+                                        docRef1.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if(task.isSuccessful()){
+                                                    //   Toast.makeText(mcontext, getString(R.string.friend_request_success), Toast.LENGTH_SHORT).show();
+                                                    Log.d(TAG, "Successfull removed from friend list for user");
+                                                }else{
+                                                    //  Toast.makeText(mcontext, getString(R.string.friend_request_fail), Toast.LENGTH_SHORT).show();
+                                                    Log.w(TAG, "Error getting documents.", task.getException());
+                                                }
+                                            }
+                                        });
+
+
+                                    } else {
+                                        Log.d(TAG, "No such document");
+                                    }
+                                } else {
+                                    Log.d(TAG, "get failed with ", task.getException());
                                 }
                             }
                         });
+
+
+
 
                         // remove from buddy's friend list
 
-                        DocumentReference docRef2 = mDb
-                                .collection(mContext.getString(R.string.collection_relations))
-                                .document(mData.get(vHolder.getAdapterPosition()).getUserRelation().getUser().getUser_id())
-                                .collection(mContext.getString(R.string.collection_friendlist))
-                                .document(currentuser.getUser_id());
-                        docRef2.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+
+                        documentReference = FirebaseFirestore.getInstance()
+                                .collection(mContext.getString(R.string.collection_users))
+                                .document(user_id);
+
+                        final User[] user1 = new User[1];
+                        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    //   Toast.makeText(mcontext, getString(R.string.friend_request_success), Toast.LENGTH_SHORT).show();
-                                    Log.d(TAG, "Successfull removed from friend list for friend");
-                                    Toast.makeText(mContext, mContext.getString(R.string.friend_unfriend_msg), Toast.LENGTH_SHORT).show();
-                                }else{
-                                    //  Toast.makeText(mcontext, getString(R.string.friend_request_fail), Toast.LENGTH_SHORT).show();
-                                    Log.w(TAG, "Error getting documents.", task.getException());
-                                    Toast.makeText(mContext, mContext.getString(R.string.friend_reunfriend_msg), Toast.LENGTH_SHORT).show();
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    assert document != null;
+                                    user1[0] = document.toObject(User.class);
+                                    if (document.exists()) {
+                                        Log.d(TAG, "User Info Retrieved, Name: " + user1[0].getUsername());
+
+
+                                        DocumentReference docRef2 = mDb
+                                                .collection(mContext.getString(R.string.collection_relations))
+                                                .document(user1[0].getUser_id())
+                                                .collection(mContext.getString(R.string.collection_friendlist))
+                                                .document(currentuser.getUser_id());
+                                        docRef2.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if(task.isSuccessful()){
+                                                    //   Toast.makeText(mcontext, getString(R.string.friend_request_success), Toast.LENGTH_SHORT).show();
+                                                    Log.d(TAG, "Successfull removed from friend list for friend");
+                                                    Toast.makeText(mContext, mContext.getString(R.string.friend_unfriend_msg), Toast.LENGTH_SHORT).show();
+                                                }else{
+                                                    //  Toast.makeText(mcontext, getString(R.string.friend_request_fail), Toast.LENGTH_SHORT).show();
+                                                    Log.w(TAG, "Error getting documents.", task.getException());
+                                                    Toast.makeText(mContext, mContext.getString(R.string.friend_reunfriend_msg), Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
+
+
+
+                                    } else {
+                                        Log.d(TAG, "No such document");
+                                    }
+                                } else {
+                                    Log.d(TAG, "get failed with ", task.getException());
                                 }
                             }
                         });
+
 
 
                     }
@@ -155,28 +358,12 @@ public class RecyclerViewAdapter_friend_list extends RecyclerView.Adapter<Recycl
 
 
 
-        return vHolder;
-    }
 
-    @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
-        holder.tv_name.setText(mData.get(position).getName());
-        holder.tv_email.setText(mData.get(position).getEmail());
-        holder.tv_added_on.setText(mData.get(position).getAdded_on());
-       // holder.img.setImageResource(mData.get(position).getPhoto());
 
-        Glide.with(mContext)
-                .load(mData.get(holder.getAdapterPosition()).getPhotoUrl())
-                .placeholder(R.drawable.loading_image)
-                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                .into(holder.img);
 
-    }
 
-    @Override
-    public int getItemCount() {
-        return mData.size();
+
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{

@@ -83,4 +83,7 @@ dependencies {
     implementation 'org.jetbrains:annotations:15.0'
 
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.19'
+
+    //Showcase View
+    compile 'com.github.amlcurran.showcaseview:library:5.4.3'
 }

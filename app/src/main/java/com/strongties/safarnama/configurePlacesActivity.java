@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -59,29 +58,38 @@ public class configurePlacesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-         setContentView(R.layout.activity_configure_places);
+         setContentView(R.layout.activity_configure_places_v2);
 
         mContext = getApplicationContext();
 
 
-        //Read from Landmarks csv file
-        InputStream is = mContext.getResources().openRawResource(R.raw.landmarks_odisha);
-        BufferedReader reader = new BufferedReader(
-                new InputStreamReader(is, StandardCharsets.UTF_8));
-        String line = "";
-        int linecounter = 0;
-        DocumentReference docRef;
-
-        try {
-            while ((line = reader.readLine()) != null) {
-                // Split the line into different tokens (using the comma as a separator excluding commas inside quotes).
-                // Log.d("Database: ", line.toString());
-
-                ArrayList<String> tokens = customSplitSpecific(line);
-              //  Log.d("Database: ", "Custom token 0 -> "+tokens.get(0));
 
 
-               // String[] tokens = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+        Button btn_upload = findViewById(R.id.config_v2_upload);
+
+        btn_upload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //Read from Landmarks csv file
+                InputStream is = mContext.getResources().openRawResource(R.raw.landmarks_odishav2);
+                BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(is, StandardCharsets.UTF_8));
+                String line = "";
+                int linecounter = 0;
+                DocumentReference docRef;
+
+
+                try {
+                    while ((line = reader.readLine()) != null) {
+                        // Split the line into different tokens (using the comma as a separator excluding commas inside quotes).
+                        // Log.d("Database: ", line.toString());
+
+                        ArrayList<String> tokens = customSplitSpecific(line);
+                        //  Log.d("Database: ", "Custom token 0 -> "+tokens.get(0));
+
+
+                        // String[] tokens = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
 /*
                 Log.d("Database: ", "token 0 -> "+tokens.get(0));
                 Log.d("Database: ", "token 1 -> "+tokens.get(1));
@@ -102,87 +110,89 @@ public class configurePlacesActivity extends AppCompatActivity {
  */
 
 
-                //count lines
-                linecounter++;
-                //exclude the first line as it contains headers
-                if(linecounter == 1){
-                    continue;
+                        //count lines
+                        linecounter++;
+                        //exclude the first line as it contains headers
+                        if(linecounter == 1){
+                            continue;
+                        }
+                        //Insert Data
+                        Log.d("CloudEntry", "name -> " + tokens.get(0));
+                        Log.d("CloudEntry", "geopoint -> lat - " + tokens.get(5) + "& lon - "+ tokens.get(6));
+                        GeoPoint geoPoint = new GeoPoint(Double.parseDouble(tokens.get(5)), Double.parseDouble(tokens.get(6)));
+
+                        Landmark landmark = new Landmark();
+                        landmark.setName(tokens.get(0));
+                        landmark.setId(tokens.get(1));
+                        landmark.setState(tokens.get(2));
+                        landmark.setDistrict(tokens.get(3));
+                        landmark.setCity(tokens.get(4));
+                        landmark.setGeo_point(geoPoint);
+                        landmark.setCategory(tokens.get(7));
+                        landmark.setFee(tokens.get(8));
+                        landmark.setHours(tokens.get(9));
+                        landmark.setShort_desc(tokens.get(10));
+                        landmark.setLong_desc(tokens.get(11));
+                        landmark.setHistory(tokens.get(12));
+                        landmark.setImg_url(tokens.get(13));
+                        landmark.setImg_all_url(tokens.get(14));
+
+                        docRef = FirebaseFirestore.getInstance()
+                                .collection(getString(R.string.collection_landmarks))
+                                .document(landmark.getState())
+                                .collection(landmark.getCity())
+                                .document(landmark.getId());
+
+                        docRef.set(landmark).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    // Toast.makeText(mContext, "Landmark Inserted Successfully", Toast.LENGTH_SHORT).show();
+                                }
+                                else {
+                                    //Toast.makeText(mContext, "Encountered Errors. Try Later.", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+
+                        LandmarkMeta landmarkMeta = new LandmarkMeta();
+                        landmarkMeta.setId(landmark.getId());
+                        landmarkMeta.setCity(landmark.getCity());
+                        landmarkMeta.setState(landmark.getState());
+                        landmarkMeta.setGeoPoint(landmark.getGeo_point());
+                        landmarkMeta.setLandmark(landmark);
+                        docRef = FirebaseFirestore.getInstance()
+                                .collection(getString(R.string.collection_landmarks))
+                                .document(getString(R.string.document_meta))
+                                .collection(getString(R.string.collection_all))
+                                .document(landmark.getId());
+
+                        docRef.set(landmarkMeta).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    //  Toast.makeText(mContext, "LandmarkMeta Inserted Successfully", Toast.LENGTH_SHORT).show();
+                                }
+                                else {
+                                    // Toast.makeText(mContext, "Encountered Errors. Try Later.", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                        Log.d("DatabaseHelper" ,"CSV read " );
+                    }
+                } catch (IOException e1) {
+                    Log.e("DatabaseHelper", "Error" + line, e1);
+                    e1.printStackTrace();
                 }
-                //Insert Data
 
-                GeoPoint geoPoint = new GeoPoint(Double.parseDouble(tokens.get(5)), Double.parseDouble(tokens.get(6)));
+                Toast.makeText(mContext, linecounter-1 + " Landmarks Inserted.", Toast.LENGTH_SHORT).show();
 
-                Landmark landmark = new Landmark();
-                landmark.setName(tokens.get(0));
-                landmark.setId(tokens.get(1));
-                landmark.setState(tokens.get(2));
-                landmark.setDistrict(tokens.get(3));
-                landmark.setCity(tokens.get(4));
-                landmark.setGeo_point(geoPoint);
-                landmark.setCategory(tokens.get(7));
-                landmark.setFee(tokens.get(8));
-                landmark.setHours(tokens.get(9));
-                landmark.setShort_desc(tokens.get(10));
-                landmark.setLong_desc(tokens.get(11));
-                landmark.setHistory(tokens.get(12));
-                landmark.setImg_url(tokens.get(13));
-                landmark.setImg_all_url(tokens.get(14));
-
-                docRef = FirebaseFirestore.getInstance()
-                        .collection(getString(R.string.collection_landmarks))
-                        .document(landmark.getState())
-                        .collection(landmark.getCity())
-                        .document(landmark.getId());
-
-                docRef.set(landmark).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
-                           // Toast.makeText(mContext, "Landmark Inserted Successfully", Toast.LENGTH_SHORT).show();
-                        }
-                        else {
-                            //Toast.makeText(mContext, "Encountered Errors. Try Later.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-
-                LandmarkMeta landmarkMeta = new LandmarkMeta();
-                landmarkMeta.setId(landmark.getId());
-                landmarkMeta.setCity(landmark.getCity());
-                landmarkMeta.setState(landmark.getState());
-                landmarkMeta.setGeoPoint(landmark.getGeo_point());
-                landmarkMeta.setLandmark(landmark);
-                docRef = FirebaseFirestore.getInstance()
-                        .collection(getString(R.string.collection_landmarks))
-                        .document(getString(R.string.document_meta))
-                        .collection(getString(R.string.collection_all))
-                        .document(landmark.getId());
-
-                docRef.set(landmarkMeta).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
-                          //  Toast.makeText(mContext, "LandmarkMeta Inserted Successfully", Toast.LENGTH_SHORT).show();
-                        }
-                        else {
-                           // Toast.makeText(mContext, "Encountered Errors. Try Later.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-
-
-
-
-
-                Log.d("DatabaseHelper" ,"CSV read " );
             }
-        } catch (IOException e1) {
-            Log.e("DatabaseHelper", "Error" + line, e1);
-            e1.printStackTrace();
-        }
+        });
 
 
-
+/*
+        //Configure_places_v1
         Button submit = findViewById(R.id.config_places_submit);
         EditText name = findViewById(R.id.config_places_name);
         EditText id = findViewById(R.id.config_places_id);
@@ -248,8 +258,7 @@ public class configurePlacesActivity extends AppCompatActivity {
             }
         });
 
-
-
+ */
 
 
 

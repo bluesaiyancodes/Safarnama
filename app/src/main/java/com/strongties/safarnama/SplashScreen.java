@@ -1,8 +1,6 @@
 package com.strongties.safarnama;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -32,7 +30,7 @@ public class SplashScreen extends AppCompatActivity {
 
 //        String mode = prefs.getString("mode", "light");
   //      if(mode.equals("light")){
-    //        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
       //  }else {
         //    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         //}

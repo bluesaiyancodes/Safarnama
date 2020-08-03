@@ -185,7 +185,7 @@ public class fragment_menu_distance extends Fragment {
 
                    // LatLng place = new LatLng(20.233721,85.838676);
 
-                    addtoLists(latLng);
+                    addtoLists(latLng, address);
                    // calculateDirections(latLng, place);
                    // Double dist = distance(latLng.latitude, place.latitude, latLng.longitude, place.longitude, 0, 0);
                    // Log.d(TAG, "calculateDirections: distance: " + Double.toString(dist));
@@ -195,15 +195,19 @@ public class fragment_menu_distance extends Fragment {
 
     }
 
-    private void addtoLists(LatLng current_loc) {
+    private void addtoLists(LatLng current_loc, String address) {
 
+        String[] tokens = address.split(",");
+        String[] stateToken = tokens[3].split(" ");
+        String local = stateToken[1];
+        Log.d(TAG, "local -> "+ stateToken[1]);
 
         dbhelper = new DatabaseHelper(getContext());
         SQLiteDatabase database = dbhelper.getReadableDatabase();
 
         Cursor cursor;
 
-        cursor = database.rawQuery("SELECT name, lat, lon, url, type, place_id FROM LANDMARKS", new String[]{});
+        cursor = database.rawQuery("SELECT name, lat, lon, url, type, place_id, state FROM LANDMARKS", new String[]{});
 
         if(cursor != null){
             cursor.moveToFirst();
@@ -219,44 +223,52 @@ public class fragment_menu_distance extends Fragment {
             String img_url = cursor.getString(3);
             String type = cursor.getString(4);
             String place_id = cursor.getString(5);
+            String state = cursor.getString(6);
 
-            double dist = distance(current_loc.latitude, current_loc.longitude, place_lat, place_lon, 0, 0);
-            if(dist <= 1000){
-                inside_1.add(name);
-                img_inside_1.add(img_url);
-                type_inside_1.add(type);
-                id_inside_1.add(place_id);
-            }else if(dist >100 && dist <= 5000){
-                inside_5.add(name);
-                img_inside_5.add(img_url);
-                type_inside_5.add(type);
-                id_inside_5.add(place_id);
-            }else if(dist > 5000 && dist <= 10000){
-                inside_10.add(name);
-                img_inside_10.add(img_url);
-                type_inside_10.add(type);
-                id_inside_10.add(place_id);
-            }else if(dist >10000 && dist <= 50000){
-                inside_40.add(name);
-                img_inside_40.add(img_url);
-                type_inside_40.add(type);
-                id_inside_40.add(place_id);
-            }else if(dist > 50000 && dist <= 100000){
-                inside_100.add(name);
-                img_inside_100.add(img_url);
-                type_inside_100.add(type);
-                id_inside_100.add(place_id);
-            }else if(dist > 100000 && dist <= 200000){
-                inside_200.add(name);
-                img_inside_200.add(img_url);
-                type_inside_200.add(type);
-                id_inside_200.add(place_id);
-            }else {
-                above_200.add(name);
-                img_above_200.add(img_url);
-                type_above_200.add(type);
-                id_above_200.add(place_id);
+            // add landmarks in nearby menu only if they have the same state
+            //Log.d(TAG, "local -> "+ local);
+           // Log.d(TAG, "state -> "+ state);
+            if(state.equals(local)){
+                double dist = distance(current_loc.latitude, current_loc.longitude, place_lat, place_lon, 0, 0);
+                if(dist <= 1000){
+                    inside_1.add(name);
+                    img_inside_1.add(img_url);
+                    type_inside_1.add(type);
+                    id_inside_1.add(place_id);
+                }else if(dist >100 && dist <= 5000){
+                    inside_5.add(name);
+                    img_inside_5.add(img_url);
+                    type_inside_5.add(type);
+                    id_inside_5.add(place_id);
+                }else if(dist > 5000 && dist <= 10000){
+                    inside_10.add(name);
+                    img_inside_10.add(img_url);
+                    type_inside_10.add(type);
+                    id_inside_10.add(place_id);
+                }else if(dist >10000 && dist <= 50000){
+                    inside_40.add(name);
+                    img_inside_40.add(img_url);
+                    type_inside_40.add(type);
+                    id_inside_40.add(place_id);
+                }else if(dist > 50000 && dist <= 100000){
+                    inside_100.add(name);
+                    img_inside_100.add(img_url);
+                    type_inside_100.add(type);
+                    id_inside_100.add(place_id);
+                }else if(dist > 100000 && dist <= 200000){
+                    inside_200.add(name);
+                    img_inside_200.add(img_url);
+                    type_inside_200.add(type);
+                    id_inside_200.add(place_id);
+                }else {
+                    above_200.add(name);
+                    img_above_200.add(img_url);
+                    type_above_200.add(type);
+                    id_above_200.add(place_id);
+                }
+
             }
+
         }while (cursor.moveToNext());
 
 

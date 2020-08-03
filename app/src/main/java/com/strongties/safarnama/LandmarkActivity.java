@@ -1,12 +1,14 @@
 package com.strongties.safarnama;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -76,6 +78,8 @@ public class LandmarkActivity extends AppCompatActivity{
         Button add_accomplish = findViewById(R.id.landmark_add_to_accomplish);
 
 
+        ProgressDialog mProgressDialog = ProgressDialog.show(LandmarkActivity.this, "Loading", "Fetching Information from Server");
+        mProgressDialog.setCanceledOnTouchOutside(false); // main method that force user cannot click outside
 
 
         DocumentReference documentReference = FirebaseFirestore.getInstance()
@@ -100,9 +104,34 @@ public class LandmarkActivity extends AppCompatActivity{
                     city.setText(landmark.getCity());
                     type.setText(landmark.getCategory());
                     fee.setText(landmark.getFee());
-                    short_desc.setText(landmark.getShort_desc());
-                    long_desc.setText(landmark.getLong_desc());
-                    history.setText(landmark.getHistory());
+                    short_desc.setText(landmark.getShort_desc().replace("\"", ""));
+                    long_desc.setText(landmark.getLong_desc().replace("\"", ""));
+
+                    String[] long_desc_tokens = landmark.getHistory().split(":");
+                    Log.d(TAG, "Token[0] -> " + long_desc_tokens[0]);
+                    StringBuilder htmlString = new StringBuilder();
+                    int count = 0;
+                    for (String token : long_desc_tokens){
+                        count++;
+                        token = token.replace("\"\"", "\"");
+                        if(count==1){
+                            if(token.charAt(0) == '"'){
+                                token=token.substring(1);
+                            }
+                        }
+                        if(count<long_desc_tokens.length){
+                            htmlString.append("&#8226;  ").append(token).append("<br/> <br/>");
+                        }else {
+                            if(token.charAt(token.length()-1) == '"'){
+                                token=token.substring(0, token.length()-1);
+                            }else if(token.charAt(token.length()-2) == '"'){
+                                token=token.substring(0, token.length()-2);
+                            }
+                            htmlString.append("&#8226;  ").append(token).append("<br/>");
+                        }
+
+                    }
+                    history.setText(Html.fromHtml(htmlString.toString()));
 
 
 
@@ -173,13 +202,20 @@ public class LandmarkActivity extends AppCompatActivity{
 
 
 
+
+
                     }catch (ArrayIndexOutOfBoundsException e){
                         Log.d(TAG, "Images are not present");
                     }
 
                 }
+                mProgressDialog.dismiss();
             }
         });
+
+
+
+
 
 
 

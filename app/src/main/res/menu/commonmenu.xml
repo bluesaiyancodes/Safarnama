@@ -24,6 +24,12 @@
         />
 
     <item
+        android:id="@+id/walkthrough"
+        android:title="@string/walkthrough"
+        app:showAsAction="never"
+        />
+
+    <item
         android:id="@+id/contactus"
         android:title="@string/contact_us"
         app:showAsAction="never"

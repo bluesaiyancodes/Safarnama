@@ -11,7 +11,8 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:visibility="gone"/>
+        android:visibility="gone" />
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,15 +21,24 @@
         android:orientation="vertical"
         android:weightSum="1">
 
-        <fragment
-            android:id="@+id/gmapview"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight=".75"
-            tools:context=".fragment_menu_googleMap" />
+            android:layout_weight="0.75">
+
+            <fragment
+                android:id="@+id/gmapview"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context=".fragment_menu_googleMap" />
+
+
+        </RelativeLayout>
+
 
         <LinearLayout
+            android:id="@+id/menu1_layout_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"

@@ -13,8 +13,6 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,6 +26,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,20 +68,19 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.strongties.safarnama.background_tasks.MapBackgroundTask;
 import com.strongties.safarnama.services.LocationService;
 import com.strongties.safarnama.user_classes.Landmark;
 import com.strongties.safarnama.user_classes.LandmarkMeta;
-import com.strongties.safarnama.user_classes.MapBackgroundTask;
 import com.strongties.safarnama.user_classes.User;
 import com.strongties.safarnama.user_classes.UserLocation;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
     GoogleMap googleMap;
+    View mapView;
 
     LocationRequest mLocationRequest;
     Location mLastLocation;
@@ -103,6 +101,8 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
     private static final String TAG = "Map Fragment";
     ProgressBar loading;    //Set the progress bar
 
+
+
     public fragment_menu_googleMap() {
         this.req = "all";
     }
@@ -110,6 +110,7 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
     public fragment_menu_googleMap(String req) {
         this.req = req;
     }
+
     MapBackgroundTask backgroundTask;
     LocationCallback mLocationCallback = new LocationCallback() {
         @Override
@@ -164,6 +165,7 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
         View root = inflater.inflate(R.layout.fragment_menu_google_map, container, false);
 
         mcontext = getContext();
+
         if (!isLocationEnabled(getContext())) {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
             alertDialogBuilder.setTitle(getString(R.string.get_loc_check));
@@ -183,12 +185,13 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
 
 
         mDb = FirebaseFirestore.getInstance();
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(Objects.requireNonNull(getContext()));
         checkLocationPermission();
 
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.gmapview);
         assert mapFragment != null;
+        mapView = mapFragment.getView();
         mapFragment.getMapAsync(this);
 
 
@@ -202,22 +205,32 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
         btn_all.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              //  backgroundTask.cancel(true);
+                //  backgroundTask.cancel(true);
+                assert getFragmentManager() != null;
                 getFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new fragment_menu_googleMap("all"), "Google Map Fragment").commit();
 
-                Toast.makeText(getContext(), getString(R.string.show_all), Toast.LENGTH_SHORT).show();
+                Toast toast = Toast.makeText(getContext(), getString(R.string.show_all), Toast.LENGTH_SHORT);
+                toast.getView().setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getActivity()), R.drawable.dialog_bg_colored));
+                TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                toastmsg.setTextColor(Color.WHITE);
+                toast.show();
             }
         });
 
         btn_new.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              //  backgroundTask.cancel(true);
+                //  backgroundTask.cancel(true);
+                assert getFragmentManager() != null;
                 getFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new fragment_menu_googleMap("new"), "Google Map Fragment").commit();
 
-                Toast.makeText(getContext(), getString(R.string.show_new), Toast.LENGTH_SHORT).show();
+                Toast toast = Toast.makeText(getContext(), getString(R.string.show_new), Toast.LENGTH_SHORT);
+                toast.getView().setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getActivity()), R.drawable.dialog_bg_colored));
+                TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                toastmsg.setTextColor(Color.WHITE);
+                toast.show();
 
             }
         });
@@ -226,10 +239,15 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
             @Override
             public void onClick(View v) {
                 backgroundTask.cancel(true);
+                assert getFragmentManager() != null;
                 getFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new fragment_menu_googleMap("wish"), "Google Map Fragment").commit();
 
-                Toast.makeText(getContext(), getString(R.string.show_bucket), Toast.LENGTH_SHORT).show();
+                Toast toast = Toast.makeText(getContext(), getString(R.string.show_bucket), Toast.LENGTH_SHORT);
+                toast.getView().setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getActivity()), R.drawable.dialog_bg_colored));
+                TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                toastmsg.setTextColor(Color.WHITE);
+                toast.show();
 
             }
         });
@@ -238,10 +256,15 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
             @Override
             public void onClick(View v) {
                 backgroundTask.cancel(true);
+                assert getFragmentManager() != null;
                 getFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new fragment_menu_googleMap("accomplish"), "Google Map Fragment").commit();
 
-                Toast.makeText(getContext(), getString(R.string.show_accomplished), Toast.LENGTH_SHORT).show();
+                Toast toast = Toast.makeText(getContext(), getString(R.string.show_accomplished), Toast.LENGTH_SHORT);
+                toast.getView().setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getActivity()), R.drawable.dialog_bg_colored));
+                TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                toastmsg.setTextColor(Color.WHITE);
+                toast.show();
 
             }
         });
@@ -281,7 +304,20 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
 
         googleMap = mMap;
         //googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-        googleMap.getUiSettings().setZoomControlsEnabled(true);
+       // googleMap.getUiSettings().setZoomControlsEnabled(true);
+        googleMap.getUiSettings().setAllGesturesEnabled(true);
+
+        if (mapView != null &&
+                mapView.findViewById(Integer.parseInt("1")) != null) {
+            // Get the button view
+            View locationButton = ((View) mapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
+            // and next place it, on bottom right (as Google Maps app)
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
+            // position on right bottom
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+            layoutParams.setMargins(0, 0, 30, 30);
+        }
 
         switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
             case Configuration.UI_MODE_NIGHT_YES:
@@ -314,6 +350,7 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
             mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
             googleMap.setMyLocationEnabled(true);
         }
+
 
 
         //Add Markers
@@ -1181,7 +1218,6 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
                     Location location = task.getResult();
                     assert location != null;
                     GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
-                    address = getaddress(location);
                     mUserLocation.setGeo_point(geoPoint);
                     mUserLocation.setTimestamp(null);
                     saveUserLocation();
@@ -1238,25 +1274,5 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
         return false;
     }
 
-    public String getaddress(Location loc) {
-
-        StringBuffer address = new StringBuffer();
-        Geocoder gcd = new Geocoder(getContext(), Locale.getDefault());
-        List<Address> addresses;
-        try {
-            addresses = gcd.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
-
-            if (addresses.size() > 0)
-                System.out.println(addresses.get(0).getLocality());
-            address.append(addresses.get(0).getAddressLine(0)).append("\n");
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-        Log.d(TAG, "Address -> " + address.toString());
-        return address.toString();
-    }
 
 }

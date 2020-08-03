@@ -177,4 +177,23 @@
     <string name="details">Details</string>
     <string name="download">Download</string>
 
+
+    <string name="intro_safarnama">Welcome to Safarnama! The go-to application for all your travel needs. Reduce your travel hassles starting from headaches of finding a location to losing your friends on the road. Before diving deep, lets get to some basic pointers. </string>
+    <string name="intro_marker_head">Markers</string>
+    <string name="intro_marker">"You may find marker symbols throughout the application that usually denotes a place of interest. Click on the marker and avail the options that appear in the bottom right corner which will show you directions to the marker using Google Maps."</string>
+    <string name="intro_buddy_head">Buddies</string>
+    <string name="intro_buddies">Buddies are your close friends and your travel partners who are always connected with each other. To be buddies both the users should be registered in the application. <b>Beware</b> Buddies can access your location. Remove the user from your buddy list to deny the privileges.</string>
+    <string name="intro_nearby_head">Nearby</string>
+    <string name="intro_nearby">Find your places of interest within a range. This menu provides you with locations that lie within a specific radius of your location. Click on the places to know more about it.</string>
+    <string name="intro_lists_head">Lists</string>
+    <string name="intro_lists">Find a place that you would like to visit? Add it to your bucket list. Also, you can add a place that you\'ve previously visited to your accomplished list. To view and manage your lists, click on the air balloon in the top right section</string>
+    <string name="intro_map_filter_head">Map Filters</string>
+    <string name="intro_map_filter">Filter the markers in the map using the provided options. View all places, View new places that you have not visited, View places in your bucket list, or View places in your accomplished list.</string>
+    <string name="intro_final_head">Enough Intro ?</string>
+    <string name="intro_final">We believe you have got the basics down, and don\'t worry if you have not, you will familiarize in no time. We hope Safarname helps you in planning and easing your trips with your buddies and polishes the explorer in you.</string>
+    <string name="intro_badges_head">Badges</string>
+    <string name="intro_badges">The more you travel, the more you explore about the world. Why not celebrate this? We introduce badges! Upgrade your badge by traveling to various places and putting them in your accomplished list.</string>
+    <string name="walkthrough">Walk Through</string>
+    <string name="search_place">Search Place</string>
+    <string name="place_not_found">Place Not Found !</string>
 </resources>

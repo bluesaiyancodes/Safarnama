@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static String DBname = "wander";
-    private static int version = 11;
+    private static int version = 14;
     private Context context;
 
     public DatabaseHelper(Context context) {
@@ -60,7 +60,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(sql);
 
         //Read from Landmarks csv file
-        InputStream is = context.getResources().openRawResource(R.raw.landmarks_odisha);
+        InputStream is = context.getResources().openRawResource(R.raw.landmarks_odishav2);
         BufferedReader reader = new BufferedReader(
                 new InputStreamReader(is, StandardCharsets.UTF_8));
         String line = "";

@@ -86,7 +86,7 @@ public class LoginScreen extends AppCompatActivity {
         if(firebaseAuth.getCurrentUser() != null){
             FirebaseUser user = firebaseAuth.getCurrentUser();
             Toast.makeText(this, "Signin Success", Toast.LENGTH_SHORT);
-            Intent myIntent = new Intent(LoginScreen.this, MainActivity.class);
+            Intent myIntent = new Intent(LoginScreen.this, WalkThroughActivity.class);
            // myIntent.putExtra("key", value); //Optional parameters
             LoginScreen.this.startActivity(myIntent);
             LoginScreen.this.finish();
@@ -138,7 +138,7 @@ public class LoginScreen extends AppCompatActivity {
                             LoginScreen.this.writeFirebase(user);
 
 
-                            Intent myIntent = new Intent(LoginScreen.this, MainActivity.class);
+                            Intent myIntent = new Intent(LoginScreen.this, WalkThroughActivity.class);
                             // myIntent.putExtra("key", value); //Optional parameters
                             LoginScreen.this.startActivity(myIntent);
                             LoginScreen.this.finish();

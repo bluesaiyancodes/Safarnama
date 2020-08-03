@@ -49,7 +49,7 @@
                 android:layout_weight="0.5"
                 android:text="@string/friend_request_send"
                 android:drawablePadding="10dp"
-                android:drawableTop="@drawable/buddy_add"/>
+                android:drawableTop="@drawable/buddy_request"/>
 
 
     </LinearLayout>

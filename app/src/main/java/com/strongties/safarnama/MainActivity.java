@@ -13,8 +13,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,6 +26,8 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -31,7 +35,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.strongties.safarnama.adapters.RecyclerViewAdaptor_menu;
-import com.strongties.safarnama.user_classes.AvatarBackgroundTask;
+import com.strongties.safarnama.background_tasks.AvatarBackgroundTask;
+import com.strongties.safarnama.background_tasks.OtherBackgroundTask;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,7 +54,10 @@ public class MainActivity extends AppCompatActivity {
 
     GoogleSignInClient googleSignInClient;
     public static ArrayList<String> RequestedList;
+    private static final String SHOWCASE_ID = "1";
+    public static ArrayList<String> places_list;
     private ArrayList<String> mImageUrls = new ArrayList<>();
+    public static ArrayList<String> places_id_list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,12 +86,96 @@ public class MainActivity extends AppCompatActivity {
 
         FriendList = new ArrayList<>();
         RequestedList = new ArrayList<>();
+        places_list = new ArrayList<>();
+        places_id_list = new ArrayList<>();
 
+        //add places into places ArrayList
+        OtherBackgroundTask otherBackgroundTask = new OtherBackgroundTask(context);
+        otherBackgroundTask.execute();
+
+        // Fetch User Avatar details in Background
         AvatarBackgroundTask avatarBackgroundTask = new AvatarBackgroundTask(context);
         avatarBackgroundTask.execute();
 
         Log.d(TAG, "FriendList" + FriendList.toString());
         Log.d(TAG, "RequestList" + RequestedList.toString());
+
+        //Firsttime usage
+        showcaseViewer();
+
+
+
+    }
+
+    private void showcaseViewer() {
+
+
+        //This code creates a new layout parameter so the button in the showcase can move to a new spot.
+        final RelativeLayout.LayoutParams lps = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        // This aligns button to the bottom left side of screen
+        lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        lps.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        // Set margins to the button, we add 16dp margins here
+        int margin = ((Number) (getResources().getDisplayMetrics().density * 16)).intValue();
+        lps.setMargins(margin, margin, margin, margin+250);
+
+
+        //This creates the first showcase.
+        ShowcaseView showCase = new ShowcaseView.Builder(this)
+                .withMaterialShowcase()
+                .setTarget(new ViewTarget( findViewById(R.id.menu1_mixed)))
+                .setContentTitle("Mixed Map Filter")
+                .setContentText("Show all the markers from Bucket List, Acomplished Lists, and also many Known-Unknown places")
+                .setStyle(R.style.CustomShowcaseTheme)
+                .build();
+        showCase.setButtonText("next");
+        showCase.setButtonPosition(lps);
+
+
+        //When the button is clicked then the switch statement will check the counter and make the new showcase.
+        showCase.overrideButtonClick(new View.OnClickListener() {
+                                         int count1 = 0;
+
+                                         @Override
+                                         public void onClick(View v) {
+                                             count1++;
+                                             switch (count1) {
+                                                 default:
+                                                     showCase.hide();
+                                                 case 1:
+                                                     showCase.setTarget(new ViewTarget(findViewById(R.id.menu1_explore)));
+                                                     showCase.setContentTitle("Explore Map Filter");
+                                                     showCase.setContentText("This Filter shows new places that you have not visited before. The places that are not present in your Bucket List or Accomplished List.");
+                                                     showCase.setButtonText("next");
+                                                     break;
+                                                 case 2:
+                                                     showCase.setTarget(new ViewTarget(findViewById(R.id.menu1_wish)));
+                                                     showCase.setContentTitle("Bucket List Map Filter");
+                                                     showCase.setContentText("This filter shows all the places that you have in your bucket list.");
+                                                     showCase.setButtonText("next");
+                                                     break;
+                                                 case 3:
+                                                     showCase.setTarget(new ViewTarget(findViewById(R.id.menu1_accomplish)));
+                                                     showCase.setContentTitle("Accomplished List Map Filter");
+                                                     showCase.setContentText("This filter shows all the places that the user has already visited. These are the places that are present in the Accomplished List.");
+                                                     showCase.setButtonText("Close");
+                                                     break;
+
+                                             }
+                                         }
+                                     });
+
+
+        /*
+        ViewTarget target = new ViewTarget( findViewById(R.id.menu1_mixed));
+        new ShowcaseView.Builder(this)
+                .setTarget(target)
+                .setContentTitle("Mixed Map Filter")
+                .setContentText("Show all the markers from Bucket List, Acomplished Lists, and also many Known-Unknown places")
+                .setStyle(R.style.CustomShowcaseTheme_next)
+                .build();
+
+         */
 
 
     }
@@ -127,6 +219,12 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, WishlistActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_top, R.anim.exit_to_bottom);
+                return true;
+            case R.id.walkthrough:
+                intent = new Intent(this, WalkThroughActivity.class);
+                intent.putExtra("forcedShow", "false");
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
                 return true;
             case R.id.app_mode:
                 switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {

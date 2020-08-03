@@ -18,6 +18,7 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
@@ -31,6 +32,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
@@ -38,7 +40,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -67,6 +71,7 @@ import com.strongties.safarnama.user_classes.UserRelation;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -75,7 +80,6 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
 
     LocationRequest mLocationRequest;
     Location mLastLocation;
-    Marker mCurrLocationMarker;
     FusedLocationProviderClient mFusedLocationClient;
 
     private UserLocation mUserLocation;
@@ -85,17 +89,37 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
 
     private User currentuser;
 
-    String req;     //Type of request
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
 
     private static final String TAG = "Map Fragment";
+    public static List<Marker> markers;
+    LocationCallback mLocationCallback = new LocationCallback() {
+        @Override
+        public void onLocationResult(@org.jetbrains.annotations.NotNull LocationResult locationResult) {
+            List<Location> locationList = locationResult.getLocations();
+            if (locationList.size() > 0) {
+                //The last location in the list is the newest
+                Location location = locationList.get(locationList.size() - 1);
+                Log.i("MapsActivity", "Location: " + location.getLatitude() + " " + location.getLongitude());
+                mLastLocation = location;
 
-    public fragment_buddy_googleMap() {
-        this.req = "all";
-    }
+                // Place Markers
+                removeMarkers();
+                addMarkers();
 
-    public fragment_buddy_googleMap(String req) {
-        this.req = req;
-    }
+
+                //Place current location marker
+               // LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                //move map camera
+              //  googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+                if (isLocationEnabled(getContext())) {
+                    getUserDetails();
+                }
+            }
+        }
+    };
+
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_buddy_gmap, container, false);
@@ -116,6 +140,9 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
             alertDialogBuilder.show();
         }
 
+        //initialize marker arraylist
+        markers = new ArrayList<>();
+
 
         mDb = FirebaseFirestore.getInstance();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(Objects.requireNonNull(getContext()));
@@ -133,7 +160,7 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((AppCompatActivity)mcontext).getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_top,R.anim.exit_to_bottom)
+                ((AppCompatActivity) mcontext).getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_top, R.anim.exit_to_bottom)
                         .replace(R.id.fragment_container, new fragment_menu_buddies(), "Menu Buddies").commit();
             }
         });
@@ -150,7 +177,7 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
         googleMap = mMap;
         //googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
-        switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK){
+        switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
             case Configuration.UI_MODE_NIGHT_YES:
                 MapStyleOptions style = MapStyleOptions.loadRawResourceStyle(mcontext, R.raw.mapstyle_night);
                 mMap.setMapStyle(style);
@@ -159,7 +186,9 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
                 break;
         }
 
-        addMarkers();
+        //addMarkers();
+
+
         if (ActivityCompat.checkSelfPermission(mcontext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mcontext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
@@ -177,9 +206,72 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
 
         googleMap.setMyLocationEnabled(true);
         googleMap.setOnInfoWindowClickListener(this);
+
+
+
+        mLocationRequest = new LocationRequest();
+
+        mLocationRequest.setInterval(2000); // One sec interval
+        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getContext()),
+                    Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                //Location Permission already granted
+                mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+                googleMap.setMyLocationEnabled(true);
+                googleMap.setOnInfoWindowClickListener(this);
+            } else {
+                //Request Location Permission
+                checkLocationPermission();
+            }
+        } else {
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+            googleMap.setMyLocationEnabled(true);
+            googleMap.setOnInfoWindowClickListener(this);
+        }
+
+
     }
 
 
+    private void checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                new AlertDialog.Builder(getContext())
+                        .setTitle("Location Permission Needed")
+                        .setMessage("This app needs the Location permission, please accept to use location functionality")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Prompt the user once explanation has been shown
+                                ActivityCompat.requestPermissions(getActivity(),
+                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                        MY_PERMISSIONS_REQUEST_LOCATION);
+                            }
+                        })
+                        .create()
+                        .show();
+
+
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION);
+            }
+        }
+    }
 
 
     //calculate dp according to device density
@@ -223,7 +315,8 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
             canvas.restore();
             try {
                 canvas.setBitmap(null);
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         } catch (Throwable t) {
             t.printStackTrace();
         }
@@ -232,8 +325,6 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
 
 
     private void addMarkers() {
-
-        List <Marker> markers = null;
 
         CollectionReference colRef = mDb
                 .collection(mcontext.getString(R.string.collection_relations))
@@ -244,13 +335,13 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
 
-                if (e != null){
+                if (e != null) {
                     Log.e(TAG, "onEvent: Listen failed.", e);
                 }
 
-                if(queryDocumentSnapshots != null){
+                if (queryDocumentSnapshots != null) {
 
-                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots){
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                         UserRelation userRelation = doc.toObject(UserRelation.class);
                         DocumentReference docRef = mDb
                                 .collection(mcontext.getString(R.string.collection_user_locations))
@@ -265,6 +356,7 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
                                         final UserLocation userLocation = document.toObject(UserLocation.class);
                                         assert userLocation != null;
 
+                                        final Marker[] marker = new Marker[1];
 
                                         Glide.with(mcontext)
                                                 .asBitmap()
@@ -279,7 +371,7 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
                                                         DateFormat df2 = new SimpleDateFormat(pattern2);
                                                         String timestring = df1.format(userLocation.getTimestamp()) + " - " + df2.format(userLocation.getTimestamp());
 
-                                                        googleMap.addMarker(new MarkerOptions()
+                                                        marker[0] = googleMap.addMarker(new MarkerOptions()
                                                                 .position(new LatLng(userLocation.getGeo_point().getLatitude(), userLocation.getGeo_point().getLongitude()))
                                                                 .title(userLocation.getUser().getUsername())
                                                                 .snippet("Last Known: " + timestring)
@@ -291,7 +383,9 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
                                                     }
                                                 });
 
-
+                                        if(marker[0] !=null) {
+                                            markers.add(marker[0]);
+                                        }
 
 
                                     } else {
@@ -309,21 +403,25 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
                 }
 
 
-
             }
         });
 
 
+    }
 
-
-
-
+    private void removeMarkers() {
+        if (markers != null) {
+            for (Marker marker : markers) {
+                marker.remove();
+            }
+        }
+        assert markers != null;
+        markers.clear();
     }
 
 
     @Override
     public void onInfoWindowClick(final Marker marker) {
-
 
 
     }
@@ -347,8 +445,8 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
     }
 
 
-    private void getUserDetails(){
-        if(mUserLocation == null){
+    private void getUserDetails() {
+        if (mUserLocation == null) {
             mUserLocation = new UserLocation();
             DocumentReference userRef = mDb.collection(mcontext.getString(R.string.collection_users))
                     .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
@@ -356,17 +454,16 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
             userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if(task.isSuccessful()){
+                    if (task.isSuccessful()) {
                         Log.d(TAG, "onComplete: successfully set the user client.");
                         User user = Objects.requireNonNull(task.getResult()).toObject(User.class);
                         mUserLocation.setUser(user);
-                        ((UserClient)(mcontext.getApplicationContext())).setUser(user);
+                        ((UserClient) (mcontext.getApplicationContext())).setUser(user);
                         getLastKnownLocation();
                     }
                 }
             });
-        }
-        else{
+        } else {
             getLastKnownLocation();
         }
     }
@@ -385,8 +482,8 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
                     Location location = task.getResult();
                     assert location != null;
                     GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
-                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+                  //  LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                  //  googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
                     mUserLocation.setGeo_point(geoPoint);
                     mUserLocation.setTimestamp(null);
                     saveUserLocation();
@@ -396,9 +493,9 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
 
     }
 
-    private void saveUserLocation(){
+    private void saveUserLocation() {
 
-        if(mUserLocation != null){
+        if (mUserLocation != null) {
             DocumentReference locationRef = mDb
                     .collection(mcontext.getString(R.string.collection_user_locations))
                     .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
@@ -406,7 +503,7 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
             locationRef.set(mUserLocation).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
-                    if(task.isSuccessful()){
+                    if (task.isSuccessful()) {
                         Log.d(TAG, "saveUserLocation: \ninserted user location into database." +
                                 "\n latitude: " + mUserLocation.getGeo_point().getLatitude() +
                                 "\n longitude: " + mUserLocation.getGeo_point().getLongitude());

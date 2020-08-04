@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -101,8 +102,10 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "RequestList" + RequestedList.toString());
 
         //Firsttime usage
-        showcaseViewer();
-
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("myPrefs", MODE_PRIVATE);
+        if (pref.getBoolean("first_run", true)) {
+            showcaseViewer();
+        }
 
 
     }
@@ -142,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
                                              switch (count1) {
                                                  default:
                                                      showCase.hide();
+                                                     break;
                                                  case 1:
                                                      showCase.setTarget(new ViewTarget(findViewById(R.id.menu1_explore)));
                                                      showCase.setContentTitle("Explore Map Filter");
@@ -163,7 +167,12 @@ public class MainActivity extends AppCompatActivity {
 
                                              }
                                          }
-                                     });
+        });
+
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("myPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putBoolean("first_run", false);
+        editor.apply();
 
 
         /*

@@ -208,11 +208,10 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
         googleMap.setOnInfoWindowClickListener(this);
 
 
-
         mLocationRequest = new LocationRequest();
 
-        mLocationRequest.setInterval(2000); // One sec interval
-        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setInterval(5000); // Five sec interval
+        mLocationRequest.setFastestInterval(3000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -410,6 +409,7 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
     }
 
     private void removeMarkers() {
+        googleMap.clear();
         if (markers != null) {
             for (Marker marker : markers) {
                 marker.remove();

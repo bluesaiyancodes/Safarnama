@@ -183,12 +183,13 @@ public class fragment_menu_distance extends Fragment {
                     address = getaddres(location);
                     //currentUserLocation.setGeo_point(geoPoint);
 
-                   // LatLng place = new LatLng(20.233721,85.838676);
+                    // LatLng place = new LatLng(20.233721,85.838676);
 
                     addtoLists(latLng, address);
-                   // calculateDirections(latLng, place);
-                   // Double dist = distance(latLng.latitude, place.latitude, latLng.longitude, place.longitude, 0, 0);
-                   // Log.d(TAG, "calculateDirections: distance: " + Double.toString(dist));
+                    //
+                    // calculateDirections(latLng, place);
+                    // Double dist = distance(latLng.latitude, place.latitude, latLng.longitude, place.longitude, 0, 0);
+                    // Log.d(TAG, "calculateDirections: distance: " + Double.toString(dist));
                 }
             }
         });

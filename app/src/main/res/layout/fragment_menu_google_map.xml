@@ -54,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight=".25"
                 android:background="?android:attr/selectableItemBackground"
-                android:drawableTop="@drawable/location" />
+                android:drawableTop="@drawable/all_places" />
 
             <Button
                 android:id="@+id/menu1_explore"

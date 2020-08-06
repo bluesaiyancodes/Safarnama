@@ -66,6 +66,7 @@ public class LandmarkActivity extends AppCompatActivity{
         TextView short_desc = findViewById(R.id.landmark_description_shrt);
         TextView long_desc = findViewById(R.id.landmark_description);
         TextView history = findViewById(R.id.landmark_history);
+        ImageView category_img = findViewById(R.id.image_category);
         ImageView img_main = findViewById(R.id.landmark_photo_main);
         ImageView img_1 = findViewById(R.id.landmark_img_1);
         ImageView img_2 = findViewById(R.id.landmark_img_2);
@@ -107,15 +108,53 @@ public class LandmarkActivity extends AppCompatActivity{
                     short_desc.setText(landmark.getShort_desc().replace("\"", ""));
                     long_desc.setText(landmark.getLong_desc().replace("\"", ""));
 
+
+                    switch (landmark.getCategory()) {
+                        case "Dams & Water Reservoirs":
+                            category_img.setImageResource(R.drawable.category_dams);
+                            break;
+                        case "Education & History":
+                            category_img.setImageResource(R.drawable.category_education_and_history);
+                            break;
+                        case "Garden & Parks":
+                            category_img.setImageResource(R.drawable.category_garden_and_parks);
+                            break;
+                        case "Hills & Caves":
+                            category_img.setImageResource(R.drawable.category_hills_and_caves);
+                            break;
+                        case "Historical Monuments":
+                            category_img.setImageResource(R.drawable.category_historical_monuments);
+                            break;
+                        case "Nature & Wildlife":
+                            category_img.setImageResource(R.drawable.category_nature_and_wildlife);
+                            break;
+                        case "Port & Sea Beach":
+                            category_img.setImageResource(R.drawable.category_port_and_sea_beach);
+                            break;
+                        case "Religious Sites":
+                            category_img.setImageResource(R.drawable.category_religious);
+                            break;
+                        case "Waterfalls":
+                            category_img.setImageResource(R.drawable.category_waterfalls);
+                            break;
+                        case "Zoos & Reserves":
+                            category_img.setImageResource(R.drawable.category_zoo);
+                            break;
+                        default:
+                            category_img.setImageResource(R.drawable.add_icon);
+                            break;
+                    }
+
+
                     String[] long_desc_tokens = landmark.getHistory().split(":");
                     Log.d(TAG, "Token[0] -> " + long_desc_tokens[0]);
                     StringBuilder htmlString = new StringBuilder();
                     int count = 0;
-                    for (String token : long_desc_tokens){
+                    for (String token : long_desc_tokens) {
                         count++;
                         token = token.replace("\"\"", "\"");
-                        if(count==1){
-                            if(token.charAt(0) == '"'){
+                        if (count == 1) {
+                            if (token.charAt(0) == '"') {
                                 token=token.substring(1);
                             }
                         }

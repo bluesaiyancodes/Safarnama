@@ -97,8 +97,41 @@ public class RecyclerViewAdapter_explore extends FirestoreRecyclerAdapter<Landma
 
          */
 
-
-
+        switch (model.getLandmark().getCategory()) {
+            case "Dams & Water Reservoirs":
+                holder.img_heart.setImageResource(R.drawable.category_dams);
+                break;
+            case "Education & History":
+                holder.img_heart.setImageResource(R.drawable.category_education_and_history);
+                break;
+            case "Garden & Parks":
+                holder.img_heart.setImageResource(R.drawable.category_garden_and_parks);
+                break;
+            case "Hills & Caves":
+                holder.img_heart.setImageResource(R.drawable.category_hills_and_caves);
+                break;
+            case "Historical Monuments":
+                holder.img_heart.setImageResource(R.drawable.category_historical_monuments);
+                break;
+            case "Nature & Wildlife":
+                holder.img_heart.setImageResource(R.drawable.category_nature_and_wildlife);
+                break;
+            case "Port & Sea Beach":
+                holder.img_heart.setImageResource(R.drawable.category_port_and_sea_beach);
+                break;
+            case "Religious Sites":
+                holder.img_heart.setImageResource(R.drawable.category_religious);
+                break;
+            case "Waterfalls":
+                holder.img_heart.setImageResource(R.drawable.category_waterfalls);
+                break;
+            case "Zoos & Reserves":
+                holder.img_heart.setImageResource(R.drawable.category_zoo);
+                break;
+            default:
+                holder.img_heart.setImageResource(R.drawable.add_icon);
+                break;
+        }
 
 
         //Dialog Initiation

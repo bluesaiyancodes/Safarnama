@@ -107,11 +107,11 @@
                             android:layout_marginTop="15dp"
                             android:layout_marginRight="10dp"
                             android:layout_weight="0.5"
-                            android:background="@drawable/dialog_bg_colored"
-                            android:drawableRight="@drawable/bucketlistadd"
+                            android:background="@drawable/dialog_bg"
+                            android:drawableEnd="@drawable/bucketlistadd"
                             android:drawablePadding="20dp"
                             android:text="@string/BucketList"
-                            android:textColor="@color/white"
+                            android:textColor="@color/textItemMenu"
                             android:textSize="15sp" />
 
                         <Button
@@ -119,14 +119,14 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="15dp"
-                            android:layout_marginRight="10dp"
+                            android:layout_marginEnd="10dp"
 
                             android:layout_weight="0.5"
-                            android:background="@drawable/dialog_bg_colored"
-                            android:drawableRight="@drawable/accomplished_add"
+                            android:background="@drawable/dialog_bg"
+                            android:drawableEnd="@drawable/accomplished_add"
                             android:drawablePadding="5dp"
                             android:text="@string/accomplished"
-                            android:textColor="@color/white"
+                            android:textColor="@color/textItemMenu"
                             android:textSize="15sp" />
                     </LinearLayout>
 
@@ -144,31 +144,44 @@
                     android:textSize="15sp"
                     android:textStyle="italic" />
 
+                <ImageView
+                    android:id="@+id/image_category"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/landmark_header_btns"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_toEndOf="@id/landmark_type_label"
+                    android:src="@drawable/add_icon" />
+
+
                 <TextView
                     android:id="@+id/landmark_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/landmark_header_btns"
-                    android:layout_marginLeft="30dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
-                    android:layout_marginRight="20dp"
+                    android:layout_marginEnd="20dp"
                     android:layout_marginBottom="10dp"
-                    android:layout_toRightOf="@id/landmark_type_label"
+                    android:layout_toEndOf="@id/image_category"
                     android:background="@drawable/dialog_bg"
                     android:text="@string/type"
                     android:textColor="@color/textItemMenu"
                     android:textSize="15sp" />
+
 
                 <TextView
                     android:id="@+id/landmark_city_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/landmark_type_label"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="30dp"
                     android:text="@string/city"
                     android:textSize="15sp"
                     android:textStyle="italic" />
+
 
                 <TextView
                     android:id="@+id/landmark_city"

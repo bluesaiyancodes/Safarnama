@@ -23,7 +23,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -236,6 +235,7 @@ public class MainActivity extends AppCompatActivity {
                 overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
                 return true;
             case R.id.app_mode:
+                /*
                 switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
                     case Configuration.UI_MODE_NIGHT_YES:
                         item.setTitle(getString(R.string.mode_light));
@@ -247,6 +247,8 @@ public class MainActivity extends AppCompatActivity {
                         break;
                 }
                 invalidateOptionsMenu();
+                 */
+                Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.add_new_places:
                 intent = new Intent(this, configurePlacesActivity.class);

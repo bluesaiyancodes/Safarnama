@@ -10,6 +10,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.bitmap.FitCenter;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.strongties.safarnama.R;
 import com.strongties.safarnama.user_classes.ScreenItem;
 
@@ -31,15 +35,40 @@ public class IntroViewPagerAdapter extends PagerAdapter {
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
 
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View layoutScreen = inflater.inflate(R.layout.layout_screen,null);
+        View layoutScreen = inflater.inflate(R.layout.layout_screen, null);
 
         ImageView imgSlide = layoutScreen.findViewById(R.id.intro_img);
         TextView title = layoutScreen.findViewById(R.id.intro_title);
         TextView description = layoutScreen.findViewById(R.id.intro_description);
 
-        title.setText(mListScreen.get(position).getTitle());
-        description.setText(mListScreen.get(position).getDescription());
-        imgSlide.setImageResource(mListScreen.get(position).getScreenImg());
+        if (position == 1) {
+            title.setText(mListScreen.get(position).getTitle());
+            description.setText(mListScreen.get(position).getDescription());
+            Glide.with(mContext).asGif().load(R.raw.map_marker)
+                    .transform(new FitCenter(), new RoundedCorners(30))
+                    // .fitCenter()
+                    // .apply(RequestOptions.bitmapTransform(new RoundedCorners(25)))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(imgSlide);
+
+
+          /*  GifDrawable gifDrawable = null;
+            try {
+                gifDrawable = new GifDrawable(mContext.getResources(), R.raw.map_marker);
+              //  gifDrawable.setLoopCount(1);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            imgSlide.setImageDrawable(gifDrawable);
+           */
+
+
+        } else {
+            title.setText(mListScreen.get(position).getTitle());
+            description.setText(mListScreen.get(position).getDescription());
+            imgSlide.setImageResource(mListScreen.get(position).getScreenImg());
+        }
+
 
         container.addView(layoutScreen);
 

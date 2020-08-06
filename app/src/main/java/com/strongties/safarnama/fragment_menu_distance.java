@@ -230,22 +230,22 @@ public class fragment_menu_distance extends Fragment {
            // Log.d(TAG, "state -> "+ state);
             if(state.equals(local)){
                 double dist = distance(current_loc.latitude, current_loc.longitude, place_lat, place_lon, 0, 0);
-                if(dist <= 1000){
+                if (dist <= 1000) {
                     inside_1.add(name);
                     img_inside_1.add(img_url);
                     type_inside_1.add(type);
                     id_inside_1.add(place_id);
-                }else if(dist >100 && dist <= 5000){
+                } else if (dist > 1000 && dist <= 5000) {
                     inside_5.add(name);
                     img_inside_5.add(img_url);
                     type_inside_5.add(type);
                     id_inside_5.add(place_id);
-                }else if(dist > 5000 && dist <= 10000){
+                } else if (dist > 5000 && dist <= 10000) {
                     inside_10.add(name);
                     img_inside_10.add(img_url);
                     type_inside_10.add(type);
                     id_inside_10.add(place_id);
-                }else if(dist >10000 && dist <= 50000){
+                } else if (dist > 10000 && dist <= 50000) {
                     inside_40.add(name);
                     img_inside_40.add(img_url);
                     type_inside_40.add(type);

@@ -1,16 +1,19 @@
 package com.strongties.safarnama;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -83,11 +86,15 @@ public class LoginScreen extends AppCompatActivity {
                 }
             });
 
-        if(firebaseAuth.getCurrentUser() != null){
+        if(firebaseAuth.getCurrentUser() != null) {
             FirebaseUser user = firebaseAuth.getCurrentUser();
-            Toast.makeText(this, "Signin Success", Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(this, "Signin Success", Toast.LENGTH_SHORT);
+            toast.getView().setBackground(ContextCompat.getDrawable(LoginScreen.this, R.drawable.dialog_bg_toast_colored));
+            TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+            toastmsg.setTextColor(Color.WHITE);
+            // toast.show();
             Intent myIntent = new Intent(LoginScreen.this, WalkThroughActivity.class);
-           // myIntent.putExtra("key", value); //Optional parameters
+            // myIntent.putExtra("key", value); //Optional parameters
             LoginScreen.this.startActivity(myIntent);
             LoginScreen.this.finish();
         }
@@ -132,7 +139,11 @@ public class LoginScreen extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             progressBar.setVisibility(View.INVISIBLE);
                             Log.d("TAG", "signInWithCredential:success");
-                            Toast.makeText(LoginScreen.this, "Signin Success", Toast.LENGTH_SHORT);
+                            Toast toast = Toast.makeText(LoginScreen.this, "Signin Success", Toast.LENGTH_SHORT);
+                            toast.getView().setBackground(ContextCompat.getDrawable(LoginScreen.this, R.drawable.dialog_bg_toast_colored));
+                            TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                            toastmsg.setTextColor(Color.WHITE);
+                            // toast.show();
 
                             FirebaseUser user = firebaseAuth.getCurrentUser();
                             LoginScreen.this.writeFirebase(user);
@@ -149,7 +160,11 @@ public class LoginScreen extends AppCompatActivity {
                             Log.d("TAG", "signInWithCredential:Failure", task.getException());
 
 
-                            Toast.makeText(LoginScreen.this, "Signin Failed", Toast.LENGTH_SHORT);
+                            Toast toast = Toast.makeText(LoginScreen.this, "Signin Failed", Toast.LENGTH_SHORT);
+                            toast.getView().setBackground(ContextCompat.getDrawable(LoginScreen.this, R.drawable.dialog_bg_toast_colored));
+                            TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                            toastmsg.setTextColor(Color.WHITE);
+                            toast.show();
 
 
                         }

@@ -11,11 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -122,8 +124,12 @@ public class fragment_menu_feed extends Fragment {
                 docRef.set(userFeed).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
-                            Toast.makeText(mContext, getString(R.string.feed_post_success), Toast.LENGTH_SHORT).show();
+                        if(task.isSuccessful()) {
+                            Toast toast = Toast.makeText(mContext, getString(R.string.feed_post_success), Toast.LENGTH_SHORT);
+                            toast.getView().setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getActivity()), R.drawable.dialog_bg_toast_colored));
+                            TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                            toastmsg.setTextColor(Color.WHITE);
+                            toast.show();
                             feed_insert_dialog.cancel();
 
                             Log.d(TAG, "Successfully added to User feed list ");

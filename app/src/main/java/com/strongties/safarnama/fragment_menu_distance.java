@@ -1,10 +1,13 @@
 package com.strongties.safarnama;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -16,11 +19,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -58,6 +64,7 @@ public class fragment_menu_distance extends Fragment {
     ArrayList <String> inside_200, img_inside_200, type_inside_200, id_inside_200;
     ArrayList <String> above_200, img_above_200, type_above_200, id_above_200;
 
+
     RecyclerView rV_1;
     RecyclerView rV_2;
     RecyclerView rV_3;
@@ -69,6 +76,7 @@ public class fragment_menu_distance extends Fragment {
     String address;
 
 
+
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_menu_distance, container, false);
 
@@ -76,18 +84,21 @@ public class fragment_menu_distance extends Fragment {
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(Objects.requireNonNull(getContext()));
 
+        Log.d(TAG, "Fragment Started");
+
 
         if (isLocationEnabled(getContext())) {
-        //    User user = ((UserClient) (mContext.getApplicationContext())).getUser();
+            //    User user = ((UserClient) (mContext.getApplicationContext())).getUser();
 //            Log.d(TAG, "Current User -> " + user.getUsername());
             getLastKnownLocation();
         }
 
-        if(geoApiContext == null){
+        if (geoApiContext == null) {
             geoApiContext = new GeoApiContext.Builder()
                     .apiKey(getString(R.string.google_api_key))
                     .build();
         }
+
 
         inside_1 = new ArrayList<>();
         inside_5 = new ArrayList<>();
@@ -135,15 +146,41 @@ public class fragment_menu_distance extends Fragment {
         rV_7 = root.findViewById(R.id.rv_dist_7);
 
 
-       // calculateDirections(place);
-
-
-
+        // calculateDirections(place);
 
 
         ///Log.d(TAG, "Show coordinates: current user: " + currentUserLocation.getGeo_point().getLatitude() +  ", " + currentUserLocation.getGeo_point().getLongitude());
         //currentUserLocation.getGeo_point();
 
+
+        // Custom Search
+
+        Button custom_search = root.findViewById(R.id.menu2_custom_search);
+        custom_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Dialog Initiation
+                Dialog myDialog = new Dialog(mContext);
+                myDialog.setContentView(R.layout.menu2_dialogue_custom_search);
+                Objects.requireNonNull(myDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                myDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+
+                Button search = myDialog.findViewById(R.id.menu2_search_dialog_btn);
+                search.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast toast = Toast.makeText(mContext, "Feature Coming Soon", Toast.LENGTH_SHORT);
+                        toast.getView().setBackground(ContextCompat.getDrawable(mContext, R.drawable.dialog_bg_toast_colored));
+                        TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                        toastmsg.setTextColor(Color.WHITE);
+                        toast.show();
+                    }
+                });
+
+                myDialog.show();
+
+            }
+        });
 
         return root;
     }
@@ -188,8 +225,8 @@ public class fragment_menu_distance extends Fragment {
                     addtoLists(latLng, address);
                     //
                     // calculateDirections(latLng, place);
-                    // Double dist = distance(latLng.latitude, place.latitude, latLng.longitude, place.longitude, 0, 0);
-                    // Log.d(TAG, "calculateDirections: distance: " + Double.toString(dist));
+                    // Double dist = Nearby(latLng.latitude, place.latitude, latLng.longitude, place.longitude, 0, 0);
+                    // Log.d(TAG, "calculateDirections: Nearby: " + Double.toString(dist));
                 }
             }
         });
@@ -199,7 +236,7 @@ public class fragment_menu_distance extends Fragment {
     private void addtoLists(LatLng current_loc, String address) {
 
         String[] tokens = address.split(",");
-        String[] stateToken = tokens[3].split(" ");
+        String[] stateToken = tokens[tokens.length - 2].split(" ");
         String local = stateToken[1];
         Log.d(TAG, "local -> "+ stateToken[1]);
 
@@ -212,11 +249,15 @@ public class fragment_menu_distance extends Fragment {
 
         if(cursor != null){
             cursor.moveToFirst();
-        }else{
-            Toast.makeText(getContext(), getString(R.string.error_fetching), Toast.LENGTH_SHORT).show();
+        }else {
+            Toast toast = Toast.makeText(getContext(), getString(R.string.error_fetching), Toast.LENGTH_SHORT);
+            toast.getView().setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getActivity()), R.drawable.dialog_bg_toast_colored));
+            TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+            toastmsg.setTextColor(Color.WHITE);
+            toast.show();
         }
 
-        do{
+        do {
             assert cursor != null;
             String name = cursor.getString(0);
             double place_lat = cursor.getDouble(1);
@@ -226,12 +267,14 @@ public class fragment_menu_distance extends Fragment {
             String place_id = cursor.getString(5);
             String state = cursor.getString(6);
 
-            // add landmarks in nearby menu only if they have the same state
-            //Log.d(TAG, "local -> "+ local);
-           // Log.d(TAG, "state -> "+ state);
-            if(state.equals(local)){
+            // add landmarks in Nearby menu only if they have the same state
+            //    Log.d(TAG, "local -> "+ local);
+            //   Log.d(TAG, "state -> "+ state);
+            if (state.equals(local)) {
                 double dist = distance(current_loc.latitude, current_loc.longitude, place_lat, place_lon, 0, 0);
+                Log.d(TAG, "placeName -> " + name + ", Nearby -> " + dist);
                 if (dist <= 1000) {
+
                     inside_1.add(name);
                     img_inside_1.add(img_url);
                     type_inside_1.add(type);
@@ -256,12 +299,13 @@ public class fragment_menu_distance extends Fragment {
                     img_inside_100.add(img_url);
                     type_inside_100.add(type);
                     id_inside_100.add(place_id);
-                }else if(dist > 100000 && dist <= 200000){
+                }else if (dist > 100000 && dist <= 200000) {
                     inside_200.add(name);
                     img_inside_200.add(img_url);
                     type_inside_200.add(type);
                     id_inside_200.add(place_id);
-                }else {
+                } else if (dist > 200000) {
+                    Log.d(TAG, "above 200 -> " + name);
                     above_200.add(name);
                     img_above_200.add(img_url);
                     type_above_200.add(type);
@@ -272,6 +316,7 @@ public class fragment_menu_distance extends Fragment {
 
         }while (cursor.moveToNext());
 
+        cursor.close();
 
 
         initRecyclerView();
@@ -321,6 +366,7 @@ public class fragment_menu_distance extends Fragment {
         Log.d(TAG, "Address Local -> " + tokens[1]);
         Log.d(TAG, "Address City -> " + tokens[2]);
         Log.d(TAG, "Address State -> " + tokens[3]);
+        Log.d(TAG, "Address State -> " + tokens[tokens.length - 2]);
 
         return address.toString();
     }

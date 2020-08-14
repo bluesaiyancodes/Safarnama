@@ -117,6 +117,9 @@ public class RecyclerViewAdapter_feed extends FirestoreRecyclerAdapter<UserFeed,
                                 case "5 Star":
                                     holder.tv_avatar_lvl.setText(mContext.getString(R.string.avatar_5_lvl));
                                     break;
+                                case "Developer":
+                                    holder.tv_avatar_lvl.setText(mContext.getString(R.string.avatar_dev_lvl));
+                                    break;
                                 default:
                                     break;
                             }

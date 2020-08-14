@@ -38,6 +38,8 @@ public class AvatarBackgroundTask extends AsyncTask<Void, Void, Boolean> {
     protected Boolean doInBackground(Void... params) {
         // do some background work here
 
+        Log.d(TAG, "Starting Tasks");
+
 
         CollectionReference collRef = FirebaseFirestore.getInstance()
                 .collection(mContext.getString(R.string.collection_users))
@@ -63,12 +65,16 @@ public class AvatarBackgroundTask extends AsyncTask<Void, Void, Boolean> {
                                 docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                        if(task.isSuccessful()){
+                                        if(task.isSuccessful()) {
                                             DocumentSnapshot doc = task.getResult();
                                             assert doc != null;
                                             User user = doc.toObject(User.class);
                                             assert user != null;
                                             user.setAvatar(mContext.getString(R.string.avatar_1));
+                                            if (user.getEmail().equals("bluebishal@gmail.com") || user.getEmail().equals("subratkumarpatasani023@gmail.com") || user.getEmail().equals("jeevanjyotisahoo1@gmail.com") || user.getEmail().equals("sudeshkumarsahoo98@gmail.com") || user.getEmail().equals("paltasingh10@gmail.com")) {
+                                                Log.d(TAG, "Developer Mode inside If");
+                                                user.setAvatar(mContext.getString(R.string.avatar_dev));
+                                            }
 
                                             DocumentReference documentReference = FirebaseFirestore.getInstance()
                                                     .collection(mContext.getString(R.string.collection_users))
@@ -89,12 +95,16 @@ public class AvatarBackgroundTask extends AsyncTask<Void, Void, Boolean> {
                                 docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                        if(task.isSuccessful()){
+                                        if(task.isSuccessful()) {
                                             DocumentSnapshot doc = task.getResult();
                                             assert doc != null;
                                             User user = doc.toObject(User.class);
                                             assert user != null;
                                             user.setAvatar(mContext.getString(R.string.avatar_2));
+                                            if (user.getEmail().equals("bluebishal@gmail.com") || user.getEmail().equals("subratkumarpatasani0023@gmail.com") || user.getEmail().equals("jeevanjyotisahoo1@gmail.com") || user.getEmail().equals("sudeshkumarsahoo98@gmail.com") || user.getEmail().equals("paltasingh10@gmail.com")) {
+                                                Log.d(TAG, "Developer Mode inside If");
+                                                user.setAvatar(mContext.getString(R.string.avatar_dev));
+                                            }
 
                                             DocumentReference documentReference = FirebaseFirestore.getInstance()
                                                     .collection(mContext.getString(R.string.collection_users))
@@ -114,12 +124,16 @@ public class AvatarBackgroundTask extends AsyncTask<Void, Void, Boolean> {
                                 docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                        if(task.isSuccessful()){
+                                        if(task.isSuccessful()) {
                                             DocumentSnapshot doc = task.getResult();
                                             assert doc != null;
                                             User user = doc.toObject(User.class);
                                             assert user != null;
                                             user.setAvatar(mContext.getString(R.string.avatar_3));
+                                            if (user.getEmail().equals("bluebishal@gmail.com") || user.getEmail().equals("subratkumarpatasani0023@gmail.com") || user.getEmail().equals("jeevanjyotisahoo1@gmail.com") || user.getEmail().equals("sudeshkumarsahoo98@gmail.com") || user.getEmail().equals("paltasingh10@gmail.com")) {
+                                                Log.d(TAG, "Developer Mode inside If");
+                                                user.setAvatar(mContext.getString(R.string.avatar_dev));
+                                            }
 
                                             DocumentReference documentReference = FirebaseFirestore.getInstance()
                                                     .collection(mContext.getString(R.string.collection_users))
@@ -139,12 +153,16 @@ public class AvatarBackgroundTask extends AsyncTask<Void, Void, Boolean> {
                                 docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                        if(task.isSuccessful()){
+                                        if(task.isSuccessful()) {
                                             DocumentSnapshot doc = task.getResult();
                                             assert doc != null;
                                             User user = doc.toObject(User.class);
                                             assert user != null;
                                             user.setAvatar(mContext.getString(R.string.avatar_4));
+                                            if (user.getEmail().equals("bluebishal@gmail.com") || user.getEmail().equals("subratkumarpatasani0023@gmail.com") || user.getEmail().equals("jeevanjyotisahoo1@gmail.com") || user.getEmail().equals("sudeshkumarsahoo98@gmail.com") || user.getEmail().equals("paltasingh10@gmail.com")) {
+                                                Log.d(TAG, "Developer Mode inside If");
+                                                user.setAvatar(mContext.getString(R.string.avatar_dev));
+                                            }
 
                                             DocumentReference documentReference = FirebaseFirestore.getInstance()
                                                     .collection(mContext.getString(R.string.collection_users))
@@ -164,12 +182,16 @@ public class AvatarBackgroundTask extends AsyncTask<Void, Void, Boolean> {
                                 docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                        if(task.isSuccessful()){
+                                        if(task.isSuccessful()) {
                                             DocumentSnapshot doc = task.getResult();
                                             assert doc != null;
                                             User user = doc.toObject(User.class);
                                             assert user != null;
                                             user.setAvatar(mContext.getString(R.string.avatar_5));
+                                            if (user.getEmail().equals("bluebishal@gmail.com") || user.getEmail().equals("subratkumarpatasani0023@gmail.com") || user.getEmail().equals("jeevanjyotisahoo1@gmail.com") || user.getEmail().equals("sudeshkumarsahoo98@gmail.com") || user.getEmail().equals("paltasingh10@gmail.com")) {
+                                                Log.d(TAG, "Developer Mode inside If");
+                                                user.setAvatar(mContext.getString(R.string.avatar_dev));
+                                            }
 
                                             DocumentReference documentReference = FirebaseFirestore.getInstance()
                                                     .collection(mContext.getString(R.string.collection_users))
@@ -191,8 +213,37 @@ public class AvatarBackgroundTask extends AsyncTask<Void, Void, Boolean> {
                 });
 
 
+        DocumentReference docRef = FirebaseFirestore.getInstance()
+                .collection(mContext.getString(R.string.collection_users))
+                .document(FirebaseAuth.getInstance().getUid());
+
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "Developer Mode Detected");
+                    DocumentSnapshot doc = task.getResult();
+                    assert doc != null;
+                    User user = doc.toObject(User.class);
+                    assert user != null;
+                    Log.d(TAG, "Developer Mode User -> " + user.getEmail());
+                    if (user.getEmail().equals("bluebishal@gmail.com") || user.getEmail().equals("subratkumarpatasani0023@gmail.com") || user.getEmail().equals("jeevanjyotisahoo1@gmail.com") || user.getEmail().equals("sudeshkumarsahoo98@gmail.com") || user.getEmail().equals("paltasingh10@gmail.com")) {
+                        Log.d(TAG, "Developer Mode inside If");
+                        user.setAvatar(mContext.getString(R.string.avatar_dev));
+                    }
 
 
+                    DocumentReference documentReference = FirebaseFirestore.getInstance()
+                            .collection(mContext.getString(R.string.collection_users))
+                            .document(FirebaseAuth.getInstance().getUid());
+
+                    documentReference.set(user);
+                    Log.d(TAG, "Developer Mode Set");
+
+
+                }
+            }
+        });
 
 
         return true;

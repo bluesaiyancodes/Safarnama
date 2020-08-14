@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -75,6 +76,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
     GoogleMap googleMap;
 
@@ -91,8 +94,11 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
+    Button btn_map_type;
+
 
     private static final String TAG = "Map Fragment";
+    private String map_type;
     public static List<Marker> markers;
     LocationCallback mLocationCallback = new LocationCallback() {
         @Override
@@ -125,7 +131,14 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
         View root = inflater.inflate(R.layout.fragment_buddy_gmap, container, false);
 
         Button btn_back = root.findViewById(R.id.buddy_gmap_back);
+        btn_map_type = root.findViewById(R.id.buddy_gmap_type);
         mcontext = getContext();
+
+        assert mcontext != null;
+        SharedPreferences pref = mcontext.getSharedPreferences("myPrefs", MODE_PRIVATE);
+        map_type = pref.getString("map_type", getString(R.string.normal));
+
+
         if (!isLocationEnabled(getContext())) {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Objects.requireNonNull(getContext()));
             alertDialogBuilder.setTitle(getString(R.string.get_loc_check));
@@ -157,6 +170,43 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
         assert mapFragment != null;
         mapFragment.getMapAsync(this);
 
+
+        assert map_type != null;
+        if (map_type.equals(getString(R.string.normal))) {
+            btn_map_type.setText(R.string.satellite);
+            if (googleMap != null) {
+                googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            }
+        } else {
+            btn_map_type.setText(R.string.normal);
+            if (googleMap != null) {
+                googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+            }
+        }
+
+        btn_map_type.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences.Editor editor = pref.edit();
+                if (map_type.equals(getString(R.string.normal))) {
+                    if (googleMap != null) {
+                        googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                    }
+                    btn_map_type.setText(R.string.normal);
+                    map_type = getString(R.string.satellite);
+                } else {
+                    if (googleMap != null) {
+                        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                    }
+                    btn_map_type.setText(R.string.satellite);
+                    map_type = getString(R.string.normal);
+                }
+                editor.putString("map_type", map_type);
+                editor.apply();
+            }
+        });
+
+
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -176,6 +226,16 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
 
         googleMap = mMap;
         //googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+
+        SharedPreferences pref = mcontext.getSharedPreferences("myPrefs", MODE_PRIVATE);
+        map_type = pref.getString("map_type", getString(R.string.normal));
+        assert map_type != null;
+        if (map_type.equals(getString(R.string.normal))) {
+            googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        } else {
+            googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        }
+
 
         switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
             case Configuration.UI_MODE_NIGHT_YES:
@@ -357,32 +417,65 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
 
                                         final Marker[] marker = new Marker[1];
 
-                                        Glide.with(mcontext)
-                                                .asBitmap()
-                                                .load(userLocation.getUser().getPhoto())
-                                                .into(new CustomTarget<Bitmap>() {
-                                                    @Override
-                                                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                                                        //imageView.setImageBitmap(resource);
-                                                        String pattern1 = " HH:mm";
-                                                        String pattern2 = " dd/MM";
-                                                        DateFormat df1 = new SimpleDateFormat(pattern1);
-                                                        DateFormat df2 = new SimpleDateFormat(pattern2);
-                                                        String timestring = df1.format(userLocation.getTimestamp()) + " - " + df2.format(userLocation.getTimestamp());
+                                        // branch for - if user picture isn't available
 
-                                                        marker[0] = googleMap.addMarker(new MarkerOptions()
-                                                                .position(new LatLng(userLocation.getGeo_point().getLatitude(), userLocation.getGeo_point().getLongitude()))
-                                                                .title(userLocation.getUser().getUsername())
-                                                                .snippet("Last Known: " + timestring)
-                                                                .icon(BitmapDescriptorFactory.fromBitmap(createUserBitmap(resource))));
-                                                    }
+                                        if (!userLocation.getUser().getPhoto().equals("null")) {
+                                            Glide.with(mcontext)
+                                                    .asBitmap()
+                                                    .load(userLocation.getUser().getPhoto())
+                                                    .into(new CustomTarget<Bitmap>() {
+                                                        @Override
+                                                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                                            //imageView.setImageBitmap(resource);
+                                                            String pattern1 = " HH:mm";
+                                                            String pattern2 = " dd/MM";
+                                                            DateFormat df1 = new SimpleDateFormat(pattern1);
+                                                            DateFormat df2 = new SimpleDateFormat(pattern2);
+                                                            String timestring = df1.format(userLocation.getTimestamp()) + " - " + df2.format(userLocation.getTimestamp());
 
-                                                    @Override
-                                                    public void onLoadCleared(@Nullable Drawable placeholder) {
-                                                    }
-                                                });
+                                                            marker[0] = googleMap.addMarker(new MarkerOptions()
+                                                                    .position(new LatLng(userLocation.getGeo_point().getLatitude(), userLocation.getGeo_point().getLongitude()))
+                                                                    .title(userLocation.getUser().getUsername())
+                                                                    .snippet("Last Known: " + timestring)
+                                                                    .icon(BitmapDescriptorFactory.fromBitmap(createUserBitmap(resource))));
+                                                        }
 
-                                        if(marker[0] !=null) {
+                                                        @Override
+                                                        public void onLoadCleared(@Nullable Drawable placeholder) {
+                                                        }
+                                                    });
+
+
+                                        } else {
+                                            Glide.with(mcontext)
+                                                    .asBitmap()
+                                                    .load(R.drawable.profile_pic_placeholder)
+                                                    .into(new CustomTarget<Bitmap>() {
+                                                        @Override
+                                                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                                            //imageView.setImageBitmap(resource);
+                                                            String pattern1 = " HH:mm";
+                                                            String pattern2 = " dd/MM";
+                                                            DateFormat df1 = new SimpleDateFormat(pattern1);
+                                                            DateFormat df2 = new SimpleDateFormat(pattern2);
+                                                            String timestring = df1.format(userLocation.getTimestamp()) + " - " + df2.format(userLocation.getTimestamp());
+
+                                                            marker[0] = googleMap.addMarker(new MarkerOptions()
+                                                                    .position(new LatLng(userLocation.getGeo_point().getLatitude(), userLocation.getGeo_point().getLongitude()))
+                                                                    .title(userLocation.getUser().getUsername())
+                                                                    .snippet("Last Known: " + timestring)
+                                                                    .icon(BitmapDescriptorFactory.fromBitmap(createUserBitmap(resource))));
+                                                        }
+
+                                                        @Override
+                                                        public void onLoadCleared(@Nullable Drawable placeholder) {
+                                                        }
+                                                    });
+
+                                        }
+
+
+                                        if (marker[0] != null) {
                                             markers.add(marker[0]);
                                         }
 

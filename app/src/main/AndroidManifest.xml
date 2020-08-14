@@ -27,7 +27,7 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".WalkThroughActivity"></activity>
+
         <activity
             android:name=".SplashScreen"
             android:screenOrientation="portrait"
@@ -61,6 +61,12 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".imageViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".WalkThroughActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".nearbyCustomSearchActivity"
             android:screenOrientation="portrait" />
 
         <meta-data

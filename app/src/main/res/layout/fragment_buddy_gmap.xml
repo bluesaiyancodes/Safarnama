@@ -13,6 +13,18 @@
         android:layout_height="match_parent" />
 
     <Button
+        android:id="@+id/buddy_gmap_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/buddy_gmap_back"
+        android:layout_marginStart="5dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/dialog_bg_colored"
+        android:text="Map Type"
+        android:textColor="@color/white"
+        android:textSize="12sp" />
+
+    <Button
         android:id="@+id/buddy_gmap_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

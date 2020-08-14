@@ -1,6 +1,7 @@
 package com.strongties.safarnama.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -103,9 +105,13 @@ public class RecyclerViewAdaptor_menu extends RecyclerView.Adapter<RecyclerViewA
                             .replace(R.id.fragment_container, new fragment_menu_feed(), "Menu Feed").commit();
 
                 }
-                if (position == 4){
+                if (position == 4) {
 
-                    Toast.makeText(mcontext, "Coming Soon", Toast.LENGTH_SHORT).show();
+                    Toast toast = Toast.makeText(mcontext, "Coming Soon", Toast.LENGTH_SHORT);
+                    toast.getView().setBackground(ContextCompat.getDrawable(mcontext, R.drawable.dialog_bg_toast_colored));
+                    TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                    toastmsg.setTextColor(Color.WHITE);
+                    toast.show();
                 }
             }
         });

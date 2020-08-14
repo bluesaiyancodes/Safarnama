@@ -41,7 +41,14 @@ public class IntroViewPagerAdapter extends PagerAdapter {
         TextView title = layoutScreen.findViewById(R.id.intro_title);
         TextView description = layoutScreen.findViewById(R.id.intro_description);
 
-        if (position == 1) {
+        if (position == 0) {
+            title.setText(mListScreen.get(position).getTitle());
+            description.setText(mListScreen.get(position).getDescription());
+            Glide.with(mContext).load(R.drawable.namaskara)
+                    .transform(new FitCenter(), new RoundedCorners(30))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(imgSlide);
+        } else if (position == 1) {
             title.setText(mListScreen.get(position).getTitle());
             description.setText(mListScreen.get(position).getDescription());
             Glide.with(mContext).asGif().load(R.raw.map_marker)
@@ -63,6 +70,34 @@ public class IntroViewPagerAdapter extends PagerAdapter {
            */
 
 
+        } else if (position == 2) {
+            title.setText(mListScreen.get(position).getTitle());
+            description.setText(mListScreen.get(position).getDescription());
+            Glide.with(mContext).asGif().load(R.raw.list_intro)
+                    .transform(new FitCenter(), new RoundedCorners(30))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(imgSlide);
+        } else if (position == 3) {
+            title.setText(mListScreen.get(position).getTitle());
+            description.setText(mListScreen.get(position).getDescription());
+            Glide.with(mContext).asGif().load(R.raw.map_filters)
+                    .transform(new FitCenter(), new RoundedCorners(30))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(imgSlide);
+        } else if (position == 4) {
+            title.setText(mListScreen.get(position).getTitle());
+            description.setText(mListScreen.get(position).getDescription());
+            Glide.with(mContext).asGif().load(R.raw.buddies)
+                    .transform(new FitCenter(), new RoundedCorners(30))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(imgSlide);
+        } else if (position == 5) {
+            title.setText(mListScreen.get(position).getTitle());
+            description.setText(mListScreen.get(position).getDescription());
+            Glide.with(mContext).asGif().load(R.raw.badges)
+                    .transform(new FitCenter(), new RoundedCorners(30))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(imgSlide);
         } else {
             title.setText(mListScreen.get(position).getTitle());
             description.setText(mListScreen.get(position).getDescription());

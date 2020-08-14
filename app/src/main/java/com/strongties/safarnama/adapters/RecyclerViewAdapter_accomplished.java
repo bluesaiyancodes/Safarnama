@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -79,11 +80,44 @@ public class RecyclerViewAdapter_accomplished extends FirestoreRecyclerAdapter<L
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(holder.img);
 
+        switch (model.getLandmarkMeta().getLandmark().getCategory()) {
+            case "Dams & Water Reservoirs":
+                holder.category.setImageResource(R.drawable.category_dams);
+                break;
+            case "Education & History":
+                holder.category.setImageResource(R.drawable.category_education_and_history);
+                break;
+            case "Garden & Parks":
+                holder.category.setImageResource(R.drawable.category_garden_and_parks);
+                break;
+            case "Hills & Caves":
+                holder.category.setImageResource(R.drawable.category_hills_and_caves);
+                break;
+            case "Historical Monuments":
+                holder.category.setImageResource(R.drawable.category_historical_monuments);
+                break;
+            case "Nature & Wildlife":
+                holder.category.setImageResource(R.drawable.category_nature_and_wildlife);
+                break;
+            case "Port & Sea Beach":
+                holder.category.setImageResource(R.drawable.category_port_and_sea_beach);
+                break;
+            case "Religious Sites":
+                holder.category.setImageResource(R.drawable.category_religious);
+                break;
+            case "Waterfalls":
+                holder.category.setImageResource(R.drawable.category_waterfalls);
+                break;
+            case "Zoos & Reserves":
+                holder.category.setImageResource(R.drawable.category_zoo);
+                break;
+            default:
+                holder.category.setImageResource(R.drawable.add_icon);
+                break;
+        }
 
 
-
-
-         //Dialog Initiation
+        //Dialog Initiation
         myDialog = new Dialog(mContext);
         myDialog.setContentView(R.layout.rv_dialog_accomplished);
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -144,8 +178,12 @@ public class RecyclerViewAdapter_accomplished extends FirestoreRecyclerAdapter<L
                         bucketRef.set(landmarkList).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    Toast.makeText(mContext, mContext.getString(R.string.wishlistadd), Toast.LENGTH_SHORT).show();
+                                if(task.isSuccessful()) {
+                                    Toast toast = Toast.makeText(mContext, mContext.getString(R.string.wishlistadd), Toast.LENGTH_SHORT);
+                                    toast.getView().setBackground(ContextCompat.getDrawable(mContext, R.drawable.dialog_bg_toast_colored));
+                                    TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                                    toastmsg.setTextColor(Color.WHITE);
+                                    toast.show();
                                 }
                             }
                         });
@@ -185,9 +223,13 @@ public class RecyclerViewAdapter_accomplished extends FirestoreRecyclerAdapter<L
                         bucketRef.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
+                                if(task.isSuccessful()) {
                                     myDialog.cancel();
-                                    Toast.makeText(mContext, mContext.getString(R.string.accomplishlistremove), Toast.LENGTH_SHORT).show();
+                                    Toast toast = Toast.makeText(mContext, mContext.getString(R.string.accomplishlistremove), Toast.LENGTH_SHORT);
+                                    toast.getView().setBackground(ContextCompat.getDrawable(mContext, R.drawable.dialog_bg_toast_colored));
+                                    TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                                    toastmsg.setTextColor(Color.WHITE);
+                                    toast.show();
                                 }
                             }
                         });
@@ -229,6 +271,7 @@ public class RecyclerViewAdapter_accomplished extends FirestoreRecyclerAdapter<L
         private TextView tv_location;
         private TextView tv_district;
         private ImageView img;
+        private ImageView category;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -238,6 +281,7 @@ public class RecyclerViewAdapter_accomplished extends FirestoreRecyclerAdapter<L
             tv_location = itemView.findViewById(R.id.location_accomplished);
             tv_district = itemView.findViewById(R.id.state_accomplished);
             img = itemView.findViewById(R.id.img_accomplished);
+            category = itemView.findViewById(R.id.accomplished_type);
         }
     }
 

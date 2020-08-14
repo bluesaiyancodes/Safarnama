@@ -151,7 +151,7 @@ public class WalkThroughActivity extends AppCompatActivity {
         //  mList.add(new ScreenItem(getString(R.string.intro_nearby_head),getString(R.string.intro_nearby),R.drawable.loading_image));
         mList.add(new ScreenItem(getString(R.string.intro_buddy_head), getString(R.string.intro_buddies), R.drawable.loading_image));
         mList.add(new ScreenItem(getString(R.string.intro_badges_head), getString(R.string.intro_badges), R.drawable.loading_image));
-        mList.add(new ScreenItem(getString(R.string.intro_final_head), getString(R.string.intro_final), R.drawable.loading_image));
+        mList.add(new ScreenItem(getString(R.string.intro_final_head), getString(R.string.intro_final), R.drawable.app_main_icon));
 
         // setup viewpager
         screenPager = findViewById(R.id.screen_viewpager);
@@ -254,7 +254,7 @@ public class WalkThroughActivity extends AppCompatActivity {
         mcontext = getApplicationContext();
 
         if (!isLocationEnabled(getApplicationContext())) {
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getApplicationContext());
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
             alertDialogBuilder.setTitle(getString(R.string.get_loc_check));
             alertDialogBuilder.setMessage(getString(R.string.get_loc_msg));
             alertDialogBuilder.setIcon(R.drawable.location);

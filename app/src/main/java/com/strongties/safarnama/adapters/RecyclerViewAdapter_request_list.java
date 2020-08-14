@@ -2,6 +2,7 @@ package com.strongties.safarnama.adapters;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -175,11 +177,19 @@ public class RecyclerViewAdapter_request_list extends FirestoreRecyclerAdapter<U
                 usercollectionRef.set(userRelation2).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
-                            Toast.makeText(mContext, mContext.getString(R.string.friend_accepted), Toast.LENGTH_SHORT).show();
+                        if(task.isSuccessful()) {
+                            Toast toast = Toast.makeText(mContext, mContext.getString(R.string.friend_accepted), Toast.LENGTH_SHORT);
+                            toast.getView().setBackground(ContextCompat.getDrawable(mContext, R.drawable.dialog_bg_toast_colored));
+                            TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                            toastmsg.setTextColor(Color.WHITE);
+                            toast.show();
                             Log.d(TAG, "Successfull added to friend list for requested user");
-                        }else{
-                            Toast.makeText(mContext, mContext.getString(R.string.friend_failed), Toast.LENGTH_SHORT).show();
+                        }else {
+                            Toast toast = Toast.makeText(mContext, mContext.getString(R.string.friend_failed), Toast.LENGTH_SHORT);
+                            toast.getView().setBackground(ContextCompat.getDrawable(mContext, R.drawable.dialog_bg_toast_colored));
+                            TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                            toastmsg.setTextColor(Color.WHITE);
+                            toast.show();
                             Log.w(TAG, "Error getting documents.", task.getException());
                         }
                     }
@@ -221,16 +231,14 @@ public class RecyclerViewAdapter_request_list extends FirestoreRecyclerAdapter<U
                         .document(model.getUser_id());
 
                 removerequest.delete();
-                Toast.makeText(mContext, mContext.getString(R.string.friend_rejected), Toast.LENGTH_SHORT).show();
+                Toast toast = Toast.makeText(mContext, mContext.getString(R.string.friend_rejected), Toast.LENGTH_SHORT);
+                toast.getView().setBackground(ContextCompat.getDrawable(mContext, R.drawable.dialog_bg_toast_colored));
+                TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                toastmsg.setTextColor(Color.WHITE);
+                toast.show();
 
             }
         });
-
-
-
-
-
-
     }
 
 

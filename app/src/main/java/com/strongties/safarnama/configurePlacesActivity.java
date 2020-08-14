@@ -1,14 +1,17 @@
 package com.strongties.safarnama;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -178,14 +181,18 @@ public class configurePlacesActivity extends AppCompatActivity {
                                 }
                             }
                         });
-                        Log.d("DatabaseHelper" ,"CSV read " );
+                        Log.d("DatabaseHelper", "CSV read ");
                     }
                 } catch (IOException e1) {
                     Log.e("DatabaseHelper", "Error" + line, e1);
                     e1.printStackTrace();
                 }
 
-                Toast.makeText(mContext, linecounter-1 + " Landmarks Inserted.", Toast.LENGTH_SHORT).show();
+                Toast toast = Toast.makeText(mContext, linecounter - 1 + " Landmarks Inserted.", Toast.LENGTH_SHORT);
+                toast.getView().setBackground(ContextCompat.getDrawable(configurePlacesActivity.this, R.drawable.dialog_bg_toast_colored));
+                TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                toastmsg.setTextColor(Color.WHITE);
+                toast.show();
 
             }
         });

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -101,18 +102,84 @@ public class RecyclerViewAdapter_friend_list extends FirestoreRecyclerAdapter<Us
                         DateFormat df = new SimpleDateFormat(pattern);
                         String dateasstring;
                         try {
-                             dateasstring = df.format(model.getTimestamp());
-                        }catch (NullPointerException e){
+                            dateasstring = df.format(model.getTimestamp());
+                        } catch (NullPointerException e) {
                             dateasstring = "";
                         }
                         holder.tv_added_on.setText(dateasstring);
                         // holder.img.setImageResource(mData.get(position).getPhoto());
 
-                        Glide.with(mContext)
-                                .load(user[0].getPhoto())
-                                .placeholder(R.drawable.loading_image)
-                                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                                .into(holder.img);
+                        if (!user[0].getPhoto().equals("null")) {
+                            Glide.with(mContext)
+                                    .load(user[0].getPhoto())
+                                    .placeholder(R.drawable.loading_image)
+                                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                                    .into(holder.img);
+
+                        } else {
+                            Glide.with(mContext)
+                                    .load(R.drawable.profile_pic_placeholder)
+                                    .placeholder(R.drawable.loading_image)
+                                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                                    .into(holder.img);
+
+                        }
+
+
+                        switch (user[0].getAvatar()) {
+                            case "0 Star":
+                                Glide.with(mContext)
+                                        .load(R.drawable.avatar_0_star)
+                                        .placeholder(R.drawable.loading_image)
+                                        .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
+                                        .into(holder.badge);
+                                break;
+                            case "1 Star":
+                                Glide.with(mContext)
+                                        .load(R.drawable.avatar_1_star)
+                                        .placeholder(R.drawable.loading_image)
+                                        .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
+                                        .into(holder.badge);
+                                break;
+                            case "2 Star":
+                                Glide.with(mContext)
+                                        .load(R.drawable.avatar_2_star)
+                                        .placeholder(R.drawable.loading_image)
+                                        .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
+                                        .into(holder.badge);
+                                break;
+                            case "3 Star":
+                                Glide.with(mContext)
+                                        .load(R.drawable.avatar_3_star)
+                                        .placeholder(R.drawable.loading_image)
+                                        .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
+                                        .into(holder.badge);
+                                break;
+                            case "4 Star":
+                                Glide.with(mContext)
+                                        .load(R.drawable.avatar_4_star)
+                                        .placeholder(R.drawable.loading_image)
+                                        .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
+                                        .into(holder.badge);
+                                break;
+                            case "5 Star":
+                                Glide.with(mContext)
+                                        .load(R.drawable.avatar_5_star)
+                                        .placeholder(R.drawable.loading_image)
+                                        .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
+                                        .into(holder.badge);
+                                break;
+                            case "Developer":
+                                Glide.with(mContext)
+                                        .load(R.drawable.avatar_6_star)
+                                        .placeholder(R.drawable.loading_image)
+                                        .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
+                                        .into(holder.badge);
+                                break;
+                            default:
+                                break;
+                        }
+
 
                     } else {
                         Log.d(TAG, "No such document");
@@ -215,6 +282,13 @@ public class RecyclerViewAdapter_friend_list extends FirestoreRecyclerAdapter<Us
                                     case "5 Star":
                                         Glide.with(mContext)
                                                 .load(R.drawable.avatar_5_star)
+                                                .placeholder(R.drawable.loading_image)
+                                                .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
+                                                .into(iv_avatar);
+                                        break;
+                                    case "Developer":
+                                        Glide.with(mContext)
+                                                .load(R.drawable.avatar_6_star)
                                                 .placeholder(R.drawable.loading_image)
                                                 .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
                                                 .into(iv_avatar);
@@ -323,14 +397,22 @@ public class RecyclerViewAdapter_friend_list extends FirestoreRecyclerAdapter<Us
                                         docRef2.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-                                                if(task.isSuccessful()){
+                                                if(task.isSuccessful()) {
                                                     //   Toast.makeText(mcontext, getString(R.string.friend_request_success), Toast.LENGTH_SHORT).show();
                                                     Log.d(TAG, "Successfull removed from friend list for friend");
-                                                    Toast.makeText(mContext, mContext.getString(R.string.friend_unfriend_msg), Toast.LENGTH_SHORT).show();
-                                                }else{
+                                                    Toast toast = Toast.makeText(mContext, mContext.getString(R.string.friend_unfriend_msg), Toast.LENGTH_SHORT);
+                                                    toast.getView().setBackground(ContextCompat.getDrawable(mContext, R.drawable.dialog_bg_toast_colored));
+                                                    TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                                                    toastmsg.setTextColor(Color.WHITE);
+                                                    toast.show();
+                                                }else {
                                                     //  Toast.makeText(mcontext, getString(R.string.friend_request_fail), Toast.LENGTH_SHORT).show();
                                                     Log.w(TAG, "Error getting documents.", task.getException());
-                                                    Toast.makeText(mContext, mContext.getString(R.string.friend_reunfriend_msg), Toast.LENGTH_SHORT).show();
+                                                    Toast toast = Toast.makeText(mContext, mContext.getString(R.string.friend_reunfriend_msg), Toast.LENGTH_SHORT);
+                                                    toast.getView().setBackground(ContextCompat.getDrawable(mContext, R.drawable.dialog_bg_toast_colored));
+                                                    TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                                                    toastmsg.setTextColor(Color.WHITE);
+                                                    toast.show();
                                                 }
                                             }
                                         });
@@ -374,6 +456,7 @@ public class RecyclerViewAdapter_friend_list extends FirestoreRecyclerAdapter<Us
         private TextView tv_email;
         private TextView tv_added_on;
         private ImageView img;
+        private ImageView badge;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -383,6 +466,7 @@ public class RecyclerViewAdapter_friend_list extends FirestoreRecyclerAdapter<Us
             tv_email = itemView.findViewById(R.id.menu3_friend_email);
             tv_added_on = itemView.findViewById(R.id.menu3_friend_added_on);
             img = itemView.findViewById(R.id.menu3_friend_img);
+            badge = itemView.findViewById(R.id.menu3_buddy_badge);
         }
     }
 

@@ -155,6 +155,9 @@
     <string name="avatar_5">5 Star</string>
     <string name="avatar_5_lvl">Wanderer \u2B50 \u2B50 \u2B50 \u2B50 \u2B50</string>
     <string name="avatar_5_text">Wanderer</string>
+    <string name="avatar_dev">Developer</string>
+    <string name="avatar_dev_lvl">\u272d Developer \u272d</string>
+    <string name="avatar_dev_text">Developer</string>
     <string name="error_permission_map">Error Getting Location Data</string>
     <string name="change_success">Update Successful</string>
     <string name="back">Back</string>
@@ -176,6 +179,15 @@
     <string name="collection_accomplished_list">Accomplished List</string>
     <string name="details">Details</string>
     <string name="download">Download</string>
+    <string name="walkthrough">Walk Through</string>
+    <string name="search_place">Search Place</string>
+    <string name="place_not_found">Place Not Found !</string>
+
+
+    <string name="custom_search">Custom Search</string>
+    <string name="custom_search_body">Search the places near you based on the disance in between. \n Specify the details below -</string>
+    <string name="custom_search_min">Minimum Distance (KM)</string>
+    <string name="custom_search_max">Maximum Distance (KM)</string>
 
 
     <string name="intro_safarnama">Welcome to Safarnama! The go-to application for all your travel needs. Reduce your travel hassles starting from headaches of finding a location to losing your friends on the road. Before diving deep, lets get to some basic pointers. </string>
@@ -193,7 +205,8 @@
     <string name="intro_final">We believe you have got the basics down, and don\'t worry if you have not, you will familiarize in no time. We hope Safarname helps you in planning and easing your trips with your buddies and polishes the explorer in you.</string>
     <string name="intro_badges_head">Badges</string>
     <string name="intro_badges">The more you travel, the more you explore about the world. Why not celebrate this? We introduce badges! Upgrade your badge by traveling to various places and putting them in your accomplished list.</string>
-    <string name="walkthrough">Walk Through</string>
-    <string name="search_place">Search Place</string>
-    <string name="place_not_found">Place Not Found !</string>
+    <string name="normal">Terrain View</string>
+    <string name="satellite">Satellite View</string>
+
+
 </resources>

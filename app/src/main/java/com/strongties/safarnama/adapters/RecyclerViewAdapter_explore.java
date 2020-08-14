@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -183,8 +184,13 @@ public class RecyclerViewAdapter_explore extends FirestoreRecyclerAdapter<Landma
                         bucketRef.set(landmarkList).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    Toast.makeText(mContext, mContext.getString(R.string.wishlistadd), Toast.LENGTH_SHORT).show();
+                                if(task.isSuccessful()) {
+                                    Toast toast = Toast.makeText(mContext, mContext.getString(R.string.wishlistadd), Toast.LENGTH_SHORT);
+                                    toast.getView().setBackground(ContextCompat.getDrawable(mContext, R.drawable.dialog_bg_toast_colored));
+                                    TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                                    toastmsg.setTextColor(Color.WHITE);
+                                    toast.show();
+                                    myDialog.cancel();
                                 }
                             }
                         });
@@ -210,8 +216,13 @@ public class RecyclerViewAdapter_explore extends FirestoreRecyclerAdapter<Landma
                         bucketRef.set(landmarkList).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    Toast.makeText(mContext, mContext.getString(R.string.accomplishlistadd), Toast.LENGTH_SHORT).show();
+                                if(task.isSuccessful()) {
+                                    Toast toast = Toast.makeText(mContext, mContext.getString(R.string.accomplishlistadd), Toast.LENGTH_SHORT);
+                                    toast.getView().setBackground(ContextCompat.getDrawable(mContext, R.drawable.dialog_bg_toast_colored));
+                                    TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                                    toastmsg.setTextColor(Color.WHITE);
+                                    toast.show();
+                                    myDialog.cancel();
                                 }
                             }
                         });

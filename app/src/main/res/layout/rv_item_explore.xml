@@ -23,7 +23,7 @@
                 android:layout_height="100dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
                 android:src="@drawable/loading_image"
                 android:id="@+id/img_explore" />
 
@@ -35,21 +35,20 @@
                 android:textSize="20sp"
                 android:text="@string/placename"
                 android:id="@+id/placename_explore"
-                android:layout_toRightOf="@id/img_explore"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@id/img_explore"
+                android:layout_marginTop="10dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="italic"
                 android:textSize="15sp"
                 android:textColor="@color/textItemMenu"
                 android:text="@string/location"
                 android:id="@+id/location_explore"
-                android:layout_toRightOf="@+id/img_explore"
+                android:layout_marginStart="10dp"
                 android:layout_below="@id/placename_explore"
-                android:layout_marginLeft="10dp"
+                android:layout_toEndOf="@+id/img_explore"
                 android:layout_marginTop="10dp"/>
 
             <TextView
@@ -60,9 +59,9 @@
                 android:textStyle="italic"
                 android:text="@string/district"
                 android:id="@+id/state_explore"
-                android:layout_toRightOf="@+id/img_explore"
+                android:layout_marginStart="10dp"
                 android:layout_below="@id/location_explore"
-                android:layout_marginLeft="10dp"
+                android:layout_toEndOf="@+id/img_explore"
                 android:layout_marginTop="5dp"/>
 
 
@@ -71,9 +70,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginRight="10dp"
+                android:layout_marginEnd="10dp"
                 android:src="@drawable/add_icon" />
 
         </RelativeLayout>

@@ -18,11 +18,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
     GoogleSignInClient googleSignInClient;
     public static ArrayList<String> RequestedList;
+    public static ArrayList<String> RequestList;
     private static final String SHOWCASE_ID = "1";
     public static ArrayList<String> places_list;
     private ArrayList<String> mImageUrls = new ArrayList<>();
@@ -86,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
         FriendList = new ArrayList<>();
         RequestedList = new ArrayList<>();
+        RequestList = new ArrayList<>();
         places_list = new ArrayList<>();
         places_id_list = new ArrayList<>();
 
@@ -103,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         //Firsttime usage
         SharedPreferences pref = getApplicationContext().getSharedPreferences("myPrefs", MODE_PRIVATE);
         if (pref.getBoolean("first_run", true)) {
-            showcaseViewer();
+            //  showcaseViewer();
         }
 
 
@@ -248,7 +252,11 @@ public class MainActivity extends AppCompatActivity {
                 }
                 invalidateOptionsMenu();
                  */
-                Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT).show();
+                Toast toast = Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT);
+                toast.getView().setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.dialog_bg_toast_colored));
+                TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                toastmsg.setTextColor(Color.WHITE);
+                toast.show();
                 return true;
             case R.id.add_new_places:
                 intent = new Intent(this, configurePlacesActivity.class);
@@ -277,7 +285,11 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             startActivity(Intent.createChooser(i, getString(R.string.support_title)));
                         } catch (android.content.ActivityNotFoundException ex) {
-                            Toast.makeText(MainActivity.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+                            Toast toast = Toast.makeText(MainActivity.this, "There are no email clients installed.", Toast.LENGTH_SHORT);
+                            toast.getView().setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.dialog_bg_toast_colored));
+                            TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                            toastmsg.setTextColor(Color.WHITE);
+                            toast.show();
                         }
 
                     }

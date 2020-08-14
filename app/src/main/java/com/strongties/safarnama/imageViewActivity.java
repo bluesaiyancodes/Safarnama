@@ -5,16 +5,19 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.github.chrisbanes.photoview.PhotoView;
@@ -25,7 +28,11 @@ public class imageViewActivity extends AppCompatActivity {
 
     BroadcastReceiver onComplete=new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
-            Toast.makeText(context, "Image Saved in " + Environment.DIRECTORY_PICTURES, Toast.LENGTH_SHORT).show();
+            Toast toast = Toast.makeText(context, "Image Saved in " + Environment.DIRECTORY_PICTURES, Toast.LENGTH_SHORT);
+            toast.getView().setBackground(ContextCompat.getDrawable(imageViewActivity.this, R.drawable.dialog_bg_toast_colored));
+            TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+            toastmsg.setTextColor(Color.WHITE);
+            toast.show();
         }
     };
 

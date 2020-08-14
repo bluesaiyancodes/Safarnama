@@ -2,6 +2,7 @@ package com.strongties.safarnama;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
@@ -117,6 +119,13 @@ public class fragment_menu_buddies_profile extends Fragment {
                         .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
                         .into(iv_avatar);
                 break;
+            case "Developer":
+                Glide.with(mContext)
+                        .load(R.drawable.avatar_6_star)
+                        .placeholder(R.drawable.loading_image)
+                        .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
+                        .into(iv_avatar);
+                break;
             default:
                 Glide.with(mContext)
                         .load(R.drawable.loading_image)
@@ -190,8 +199,12 @@ public class fragment_menu_buddies_profile extends Fragment {
                     docRef.set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
-                                Toast.makeText(mContext, getString(R.string.change_success), Toast.LENGTH_SHORT).show();
+                            if(task.isSuccessful()) {
+                                Toast toast = Toast.makeText(mContext, getString(R.string.change_success), Toast.LENGTH_SHORT);
+                                toast.getView().setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getActivity()), R.drawable.dialog_bg_toast_colored));
+                                TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                                toastmsg.setTextColor(Color.WHITE);
+                                toast.show();
 
                                 Log.d(TAG, "Successfully added to User feed list ");
                             }else{

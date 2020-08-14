@@ -10,7 +10,7 @@
         -->
         <item name="colorAccent">@color/colorAccent</item>
 
-        <item name="android:fontFamily">@font/timeless</item>
+        <item name="android:fontFamily">@font/roboto</item>
 
     </style>
     

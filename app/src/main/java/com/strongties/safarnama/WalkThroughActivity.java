@@ -254,7 +254,7 @@ public class WalkThroughActivity extends AppCompatActivity {
         mcontext = getApplicationContext();
 
         if (!isLocationEnabled(getApplicationContext())) {
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getApplicationContext());
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
             alertDialogBuilder.setTitle(getString(R.string.get_loc_check));
             alertDialogBuilder.setMessage(getString(R.string.get_loc_msg));
             alertDialogBuilder.setIcon(R.drawable.location);

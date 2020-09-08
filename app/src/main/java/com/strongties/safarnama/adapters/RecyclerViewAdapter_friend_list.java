@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -198,6 +199,7 @@ public class RecyclerViewAdapter_friend_list extends FirestoreRecyclerAdapter<Us
         holder.item_friend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v1) {
+                v1.startAnimation(new AlphaAnimation(1F, 0.7F));
 
                 myDialog = new Dialog(mContext);
                 myDialog.setContentView(R.layout.menu3_dialogue_buddy);
@@ -320,7 +322,7 @@ public class RecyclerViewAdapter_friend_list extends FirestoreRecyclerAdapter<Us
                     @Override
                     public void onClick(View v) {
                         // remove from current user friend list
-
+                        v.startAnimation(new AlphaAnimation(1F, 0.7F));
 
                         DocumentReference documentReference = FirebaseFirestore.getInstance()
                                 .collection(mContext.getString(R.string.collection_users))

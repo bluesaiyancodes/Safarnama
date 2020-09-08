@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -15,16 +16,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.strongties.safarnama.LandmarkActivity;
 import com.strongties.safarnama.R;
-import com.strongties.safarnama.user_classes.LandmarkMeta;
+import com.strongties.safarnama.user_classes.RV_Distance;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -32,21 +28,14 @@ public class RecyclerViewAdaptor_distance_places extends RecyclerView.Adapter<Re
 
     public static final String TAG = "RecyclerViewAdaptor";
 
-    //Variables
-    private ArrayList<String> mids = new ArrayList<>();
-    private ArrayList<String> mNames = new ArrayList<>();
-    private ArrayList<String> mImageURLs = new ArrayList<>();
-    private ArrayList<String> mtypes = new ArrayList<>();
+    private List<RV_Distance> mData;
     private Context mcontext;
 
-
-    public RecyclerViewAdaptor_distance_places(Context context, ArrayList<String> names, ArrayList<String> imageURLs, ArrayList<String> types, ArrayList<String> ids) {
-        mNames = names;
-        mImageURLs = imageURLs;
-        mtypes = types;
-        mcontext = context;
-        mids = ids;
+    public RecyclerViewAdaptor_distance_places(Context context, List<RV_Distance> mData) {
+        this.mcontext = context;
+        this.mData = mData;
     }
+
 
     @NonNull
     @Override
@@ -64,46 +53,25 @@ public class RecyclerViewAdaptor_distance_places extends RecyclerView.Adapter<Re
         Glide.with(mcontext)
                 .asBitmap()
                 .placeholder(R.drawable.loading_image)
-                .load(mImageURLs.get(position))
+                .load(mData.get(position).getImg_url())
                 .into(holder.image);
-        holder.name.setText(mNames.get(position));
-        holder.type.setText(mtypes.get(position));
+        holder.name.setText(mData.get(position).getName());
+        holder.type.setText(mData.get(position).getCategory());
 
         holder.layout_item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                v.startAnimation(new AlphaAnimation(1F, 0.7F));
 
-                DocumentReference documentReference = FirebaseFirestore.getInstance()
-                        .collection(mcontext.getString(R.string.collection_landmarks))
-                        .document(mcontext.getString(R.string.document_meta))
-                        .collection(mcontext.getString(R.string.collection_all))
-                        .document(mids.get(position));
-
-                documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot doc = task.getResult();
-                            assert doc != null;
-                            LandmarkMeta landmarkMeta = doc.toObject(LandmarkMeta.class);
-
-
-                            Intent intent = new Intent(mcontext, LandmarkActivity.class);
-                            Bundle args = new Bundle();
-                            args.putString("id", mids.get(position));
-                            assert landmarkMeta != null;
-                            args.putString("state", landmarkMeta.getState());
-                            args.putString("city", landmarkMeta.getCity());
-                            intent.putExtras(args);
-                            mcontext.startActivity(intent);
-                            ((Activity) mcontext).overridePendingTransition(R.anim.enter_from_top, R.anim.exit_to_bottom);
-
-
-
-
-                        }
-                    }
-                });
+                Intent intent = new Intent(mcontext, LandmarkActivity.class);
+                Bundle args = new Bundle();
+                args.putString("id", mData.get(position).getId());
+                args.putString("state", mData.get(position).getState());
+                args.putString("city", mData.get(position).getCity());
+                args.putDouble("distance", mData.get(position).getDistance());
+                intent.putExtras(args);
+                mcontext.startActivity(intent);
+                ((Activity) mcontext).overridePendingTransition(R.anim.enter_from_top, R.anim.exit_to_bottom);
 
             }
         });
@@ -111,7 +79,7 @@ public class RecyclerViewAdaptor_distance_places extends RecyclerView.Adapter<Re
 
     @Override
     public int getItemCount() {
-        return mNames.size();
+        return mData.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

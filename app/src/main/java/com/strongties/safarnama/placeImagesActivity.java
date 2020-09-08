@@ -3,6 +3,7 @@ package com.strongties.safarnama;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,6 +33,7 @@ public class placeImagesActivity extends AppCompatActivity{
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                v.startAnimation(new AlphaAnimation(1F, 0.7F));
                 onBackPressed();
             }
         });

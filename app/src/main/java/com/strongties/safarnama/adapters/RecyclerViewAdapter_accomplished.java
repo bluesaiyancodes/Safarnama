@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -129,6 +130,7 @@ public class RecyclerViewAdapter_accomplished extends FirestoreRecyclerAdapter<L
         holder.item_explore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v1) {
+                v1.startAnimation(new AlphaAnimation(1F, 0.7F));
                 TextView dialog_placename_tv = myDialog.findViewById(R.id.dialog_accomplished_place_name);
                 TextView dialog_description_tv = myDialog.findViewById(R.id.dialog_accomplished_description);
                 TextView dialog_type_tv = myDialog.findViewById(R.id.dialog_accomplished_type);
@@ -164,7 +166,7 @@ public class RecyclerViewAdapter_accomplished extends FirestoreRecyclerAdapter<L
                 btn_wish.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        v.startAnimation(new AlphaAnimation(1F, 0.7F));
 
                         DocumentReference bucketRef = FirebaseFirestore.getInstance()
                                 .collection(mContext.getString(R.string.collection_users))
@@ -212,7 +214,7 @@ public class RecyclerViewAdapter_accomplished extends FirestoreRecyclerAdapter<L
                 btn_cmpl.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        v.startAnimation(new AlphaAnimation(1F, 0.7F));
 
                         DocumentReference bucketRef = FirebaseFirestore.getInstance()
                                 .collection(mContext.getString(R.string.collection_users))
@@ -240,6 +242,7 @@ public class RecyclerViewAdapter_accomplished extends FirestoreRecyclerAdapter<L
                 btn_details.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        v.startAnimation(new AlphaAnimation(1F, 0.7F));
                         Intent intent = new Intent(mContext, LandmarkActivity.class);
                         Bundle args = new Bundle();
                         args.putString("state", model.getLandmarkMeta().getState());

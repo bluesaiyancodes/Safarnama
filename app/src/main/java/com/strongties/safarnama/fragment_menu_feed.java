@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -78,6 +79,7 @@ public class fragment_menu_feed extends Fragment {
 
         fab.setOnClickListener(view -> {
 
+            view.startAnimation(new AlphaAnimation(1F, 0.7F));
 
             Dialog feed_insert_dialog = new Dialog(mContext);
             feed_insert_dialog.setContentView(R.layout.dialog_feed_insert);
@@ -88,6 +90,7 @@ public class fragment_menu_feed extends Fragment {
 
             Button post = feed_insert_dialog.findViewById(R.id.feed_post_btn);
             post.setOnClickListener(v -> {
+                v.startAnimation(new AlphaAnimation(1F, 0.7F));
 
                 UserFeed userFeed = new UserFeed();
                 userFeed.setUser_id(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
@@ -150,7 +153,8 @@ public class fragment_menu_feed extends Fragment {
         public_feed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((AppCompatActivity)mContext).getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_left,R.anim.exit_to_right)
+                v.startAnimation(new AlphaAnimation(1F, 0.7F));
+                ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right)
                         .replace(R.id.fragment_container, new fragment_menu_feed("global"), "Global Feed Fragment").commit();
             }
         });
@@ -158,7 +162,8 @@ public class fragment_menu_feed extends Fragment {
         buddy_feed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((AppCompatActivity)mContext).getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right,R.anim.exit_to_left)
+                v.startAnimation(new AlphaAnimation(1F, 0.7F));
+                ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
                         .replace(R.id.fragment_container, new fragment_menu_feed("buddy"), "Buddy Feed Fragment").commit();
             }
         });

@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static String DBname = "wander";
-    private static int version = 16;
+    private static int version = 17;
     private Context context;
 
     public DatabaseHelper(Context context) {
@@ -56,7 +56,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
         //Create Table
-        String sql = "CREATE TABLE LANDMARKS (id INTEGER PRIMARY KEY AUTOINCREMENT, place_id TEXT, name TEXT, lat REAL, lon REAL, state TEXT, city TEXT, type TEXT, url TEXT)";
+        String sql = "CREATE TABLE LANDMARKS (id INTEGER PRIMARY KEY AUTOINCREMENT, place_id TEXT, name TEXT, lat REAL, lon REAL, state TEXT, district TEXT, city TEXT, type TEXT, url TEXT)";
         db.execSQL(sql);
 
         //Read from Landmarks csv file
@@ -77,7 +77,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 if(linecounter == 1){
                     continue;
                 }
-                insertdata(tokens.get(0), tokens.get(1), tokens.get(2), tokens.get(4), Double.parseDouble(tokens.get(5)), Double.parseDouble(tokens.get(6)),tokens.get(7), tokens.get(13), db);
+                insertdata(tokens.get(0), tokens.get(1), tokens.get(2), tokens.get(3), tokens.get(4), Double.parseDouble(tokens.get(5)), Double.parseDouble(tokens.get(6)), tokens.get(7), tokens.get(13), db);
 
                 Log.d("DatabaseHelper" ,"CSV read " );
             }
@@ -90,11 +90,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    private void insertdata(String name, String place_id, String state, String city, double lat, double lon, String type, String url, SQLiteDatabase database){
+    private void insertdata(String name, String place_id, String state, String district, String city, double lat, double lon, String type, String url, SQLiteDatabase database) {
         ContentValues values = new ContentValues();
         values.put("place_id", place_id);
         values.put("name", name);
         values.put("state", state);
+        values.put("district", district);
         values.put("city", city);
         values.put("lat", lat);
         values.put("lon", lon);

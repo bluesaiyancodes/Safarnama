@@ -9,7 +9,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -22,7 +21,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -51,11 +50,9 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -206,6 +203,7 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
             @Override
             public void onClick(View v) {
                 //  backgroundTask.cancel(true);
+                v.startAnimation(new AlphaAnimation(1F, 0.7F));
                 assert getFragmentManager() != null;
                 getFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new fragment_menu_googleMap("all"), "Google Map Fragment").commit();
@@ -222,6 +220,7 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
             @Override
             public void onClick(View v) {
                 //  backgroundTask.cancel(true);
+                v.startAnimation(new AlphaAnimation(1F, 0.7F));
                 assert getFragmentManager() != null;
                 getFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new fragment_menu_googleMap("new"), "Google Map Fragment").commit();
@@ -256,6 +255,7 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
             @Override
             public void onClick(View v) {
                 backgroundTask.cancel(true);
+                v.startAnimation(new AlphaAnimation(1F, 0.7F));
                 assert getFragmentManager() != null;
                 getFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new fragment_menu_googleMap("accomplish"), "Google Map Fragment").commit();
@@ -460,530 +460,6 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
         }
     }
 
-    private void addMarkers() {
-
-        loading.setVisibility(View.VISIBLE);
-        Objects.requireNonNull(getActivity()).getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-
-
-      //  dbhelper = new DatabaseHelper(getContext());
-      //  SQLiteDatabase database = dbhelper.getReadableDatabase();
-
-        Cursor cursor;
-
-        if (req.equals("all")) {
-
-            // For all requests
-
-
-            CollectionReference landmarkColl = mDb
-                    .collection(getString(R.string.collection_landmarks))
-                    .document(getString(R.string.document_meta))
-                    .collection(getString(R.string.collection_all));
-
-
-            landmarkColl.addSnapshotListener(new EventListener<QuerySnapshot>() {
-                @Override
-                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                    if (e != null) {
-                        Log.e(TAG, "onEvent: Listen failed.", e);
-                    }
-
-                    if (queryDocumentSnapshots != null) {
-                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                            LandmarkMeta landmarkMeta = doc.toObject(LandmarkMeta.class);
-
-                            CollectionReference collRef = mDb
-                                    .collection(getString(R.string.collection_landmarks))
-                                    .document(landmarkMeta.getState())
-                                    .collection(landmarkMeta.getCity());
-
-                            collRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
-                                @Override
-                                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                                    if (e != null) {
-                                        Log.e(TAG, "onEvent: Listen failed.", e);
-                                    }
-
-                                    if (queryDocumentSnapshots != null) {
-                                        for (QueryDocumentSnapshot places : queryDocumentSnapshots) {
-                                            Landmark landmark = places.toObject(Landmark.class);
-
-                                            DocumentReference bucketRef = mDb
-                                                    .collection(getString(R.string.collection_users))
-                                                    .document(getString(R.string.document_lists))
-                                                    .collection(getString(R.string.collection_bucket_list))
-                                                    .document(landmark.getId());
-
-                                            bucketRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                    if (task.isSuccessful()) {
-                                                        DocumentSnapshot document = task.getResult();
-                                                        if (document.exists()) {
-                                                            Log.d(TAG, "Landmark exists in Bucket List");
-                                                            LatLng place = new LatLng(landmark.getGeo_point().getLatitude(), landmark.getGeo_point().getLongitude());
-                                                            googleMap.addMarker(new MarkerOptions().position(place).title(landmark.getName())
-                                                                    .snippet(landmark.getCategory() + "  " + getString(R.string.i_circle))
-                                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-                                                        } else {
-                                                            Log.d(TAG, "Landmark does not exist in BL");
-                                                            DocumentReference accomplishedRef = mDb
-                                                                    .collection(getString(R.string.collection_users))
-                                                                    .document(getString(R.string.document_lists))
-                                                                    .collection(getString(R.string.collection_accomplished_list))
-                                                                    .document(landmark.getId());
-
-                                                            accomplishedRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                                @Override
-                                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                                    if (task.isSuccessful()) {
-                                                                        DocumentSnapshot documentSnapshot = task.getResult();
-                                                                        if (document.exists()) {
-                                                                            Log.d(TAG, "Landmark exists in Accomplished List");
-                                                                            LatLng place = new LatLng(landmark.getGeo_point().getLatitude(), landmark.getGeo_point().getLongitude());
-                                                                            googleMap.addMarker(new MarkerOptions().position(place).title(landmark.getName())
-                                                                                    .snippet(landmark.getCategory() + "  " + getString(R.string.i_circle))
-                                                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-                                                                        } else {
-                                                                            Log.d(TAG, "Landmark does not exist in Accomplished List");
-                                                                            LatLng place = new LatLng(landmark.getGeo_point().getLatitude(), landmark.getGeo_point().getLongitude());
-                                                                            googleMap.addMarker(new MarkerOptions().position(place).title(landmark.getName())
-                                                                                    .snippet(landmark.getCategory() + "  " + getString(R.string.i_circle))
-                                                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-                                                                        }
-                                                                    }
-                                                                }
-                                                            });
-
-
-                                                        }
-                                                    }
-                                                }
-                                            });
-
-
-                                        }
-                                    }
-                                }
-                            });
-
-                        }
-                    }
-                }
-            });
-
-
-
-
-
-            /*
-            *
-            * Old Code -> Fetching details using sqlite
-            *
-            cursor = database.rawQuery("SELECT name, lat, lon, type, visit FROM LANDMARKS", new String[]{});
-            if(cursor != null){
-                cursor.moveToFirst();
-            }else{
-                Toast.makeText(getContext(), getString(R.string.show_all_void), Toast.LENGTH_SHORT).show();
-            }
-            do{
-                Log.i(TAG, "count =  " + cursor.getCount());
-                String name = cursor.getString(0);
-                double lat = cursor.getDouble(1);
-                double lon = cursor.getDouble(2);
-                String type = cursor.getString(3);
-
-                LatLng place = new LatLng(lat, lon);
-                if(cursor.getString(4).equals("notvisited")){
-                    googleMap.addMarker(new MarkerOptions().position(place).title(name)
-                            .snippet(type + "  "+ getString(R.string.i_circle))
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-                }else if(cursor.getString(4).equals("tovisit")){
-                    googleMap.addMarker(new MarkerOptions().position(place).title(name)
-                            .snippet(type + "  "+ getString(R.string.i_circle))
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-                }else{
-                    googleMap.addMarker(new MarkerOptions().position(place).title(name)
-                            .snippet(type + "  "+ getString(R.string.i_circle))
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-                }
-
-            }while (cursor.moveToNext());
-             */
-        } else if (req.equals("new")) {
-
-            // For all new requests
-
-            Toast.makeText(getContext(), getString(R.string.show_new), Toast.LENGTH_SHORT).show();
-
-            CollectionReference landmarkColl = mDb
-                    .collection(getString(R.string.collection_landmarks))
-                    .document(getString(R.string.document_meta))
-                    .collection(getString(R.string.collection_all));
-
-
-            landmarkColl.addSnapshotListener(new EventListener<QuerySnapshot>() {
-                @Override
-                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                    if (e != null) {
-                        Log.e(TAG, "onEvent: Listen failed.", e);
-                    }
-
-                    if (queryDocumentSnapshots != null) {
-                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                            LandmarkMeta landmarkMeta = doc.toObject(LandmarkMeta.class);
-
-                            CollectionReference collRef = mDb
-                                    .collection(getString(R.string.collection_landmarks))
-                                    .document(landmarkMeta.getState())
-                                    .collection(landmarkMeta.getCity());
-
-                            collRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
-                                @Override
-                                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                                    if (e != null) {
-                                        Log.e(TAG, "onEvent: Listen failed.", e);
-                                    }
-
-                                    if (queryDocumentSnapshots != null) {
-                                        for (QueryDocumentSnapshot places : queryDocumentSnapshots) {
-                                            Landmark landmark = places.toObject(Landmark.class);
-
-                                            DocumentReference bucketRef = mDb
-                                                    .collection(getString(R.string.collection_users))
-                                                    .document(getString(R.string.document_lists))
-                                                    .collection(getString(R.string.collection_bucket_list))
-                                                    .document(landmark.getId());
-
-                                            bucketRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                    if (task.isSuccessful()) {
-                                                        DocumentSnapshot document = task.getResult();
-                                                        if (document.exists()) {
-                                                            Log.d(TAG, "Landmark exists in Bucket List");
-                                                        } else {
-                                                            Log.d(TAG, "Landmark does not exist in Bucket List");
-                                                            DocumentReference accomplishedRef = mDb
-                                                                    .collection(getString(R.string.collection_users))
-                                                                    .document(getString(R.string.document_lists))
-                                                                    .collection(getString(R.string.collection_accomplished_list))
-                                                                    .document(landmark.getId());
-
-                                                            accomplishedRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                                @Override
-                                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                                    if (task.isSuccessful()) {
-                                                                        DocumentSnapshot documentSnapshot = task.getResult();
-                                                                        if (document.exists()) {
-                                                                            Log.d(TAG, "Landmark exists in Accomplished List");
-                                                                        } else {
-                                                                            Log.d(TAG, "Landmark does not exist in Accomplished List");
-                                                                            LatLng place = new LatLng(landmark.getGeo_point().getLatitude(), landmark.getGeo_point().getLongitude());
-                                                                            googleMap.addMarker(new MarkerOptions().position(place).title(landmark.getName())
-                                                                                    .snippet(landmark.getCategory() + "  " + getString(R.string.i_circle))
-                                                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-                                                                        }
-                                                                    }
-                                                                }
-                                                            });
-
-
-                                                        }
-                                                    }
-                                                }
-                                            });
-
-
-                                        }
-                                    }
-                                }
-                            });
-
-                        }
-                    }
-                }
-            });
-
-
-
-            /*
-            *
-            * Old Code -> Fetching details using sqlite
-            *
-            cursor = database.rawQuery("SELECT name, lat, lon, type FROM LANDMARKS WHERE visit = ?", new String[]{"notvisited"});
-            if(cursor != null){
-                cursor.moveToFirst();
-            }else{
-                Toast.makeText(getContext(), getString(R.string.show_new_void), Toast.LENGTH_SHORT).show();
-            }
-
-            if(cursor.getCount() > 0){
-
-                Toast.makeText(getContext(), getString(R.string.show_new), Toast.LENGTH_SHORT).show();
-
-                do{
-                    String name = cursor.getString(0);
-                    double lat = cursor.getDouble(1);
-                    double lon = cursor.getDouble(2);
-                    String type = cursor.getString(3);
-
-                    LatLng place = new LatLng(lat, lon);
-                    googleMap.addMarker(new MarkerOptions().position(place).title(name)
-                            .snippet(type + "  "+ getString(R.string.i_circle))
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-                }while (cursor.moveToNext());
-
-            }else {
-                Toast.makeText(getContext(), getString(R.string.show_new_void), Toast.LENGTH_SHORT).show();
-            }
-             */
-
-
-        } else if (req.equals("wish")) {
-
-            //for wishlist
-
-            Toast.makeText(getContext(), getString(R.string.show_bucket), Toast.LENGTH_SHORT).show();
-
-            CollectionReference landmarkColl = mDb
-                    .collection(getString(R.string.collection_landmarks))
-                    .document(getString(R.string.document_meta))
-                    .collection(getString(R.string.collection_all));
-
-
-            landmarkColl.addSnapshotListener(new EventListener<QuerySnapshot>() {
-                @Override
-                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                    if (e != null) {
-                        Log.e(TAG, "onEvent: Listen failed.", e);
-                    }
-
-                    if (queryDocumentSnapshots != null) {
-                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                            LandmarkMeta landmarkMeta = doc.toObject(LandmarkMeta.class);
-
-                            CollectionReference collRef = mDb
-                                    .collection(getString(R.string.collection_landmarks))
-                                    .document(landmarkMeta.getState())
-                                    .collection(landmarkMeta.getCity());
-
-                            collRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
-                                @Override
-                                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                                    if (e != null) {
-                                        Log.e(TAG, "onEvent: Listen failed.", e);
-                                    }
-
-                                    if (queryDocumentSnapshots != null) {
-                                        for (QueryDocumentSnapshot places : queryDocumentSnapshots) {
-                                            Landmark landmark = places.toObject(Landmark.class);
-
-                                            DocumentReference bucketRef = mDb
-                                                    .collection(getString(R.string.collection_users))
-                                                    .document(getString(R.string.document_lists))
-                                                    .collection(getString(R.string.collection_bucket_list))
-                                                    .document(landmark.getId());
-
-                                            bucketRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                    if (task.isSuccessful()) {
-                                                        DocumentSnapshot document = task.getResult();
-                                                        if (document.exists()) {
-                                                            Log.d(TAG, "Landmark exists in Bucket List");
-                                                            LatLng place = new LatLng(landmark.getGeo_point().getLatitude(), landmark.getGeo_point().getLongitude());
-                                                            googleMap.addMarker(new MarkerOptions().position(place).title(landmark.getName())
-                                                                    .snippet(landmark.getCategory() + "  " + getString(R.string.i_circle))
-                                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-                                                        } else {
-                                                            Log.d(TAG, "Landmark does not exist in BL");
-                                                        }
-                                                    }
-                                                }
-                                            });
-
-
-                                        }
-                                    }
-                                }
-                            });
-
-                        }
-                    }
-                }
-            });
-
-
-            /*
-            *
-            * Old Code -> Fetching details using sqlite
-            *
-            cursor = database.rawQuery("SELECT name, lat, lon, type FROM LANDMARKS WHERE visit = ?", new String[]{"tovisit"});
-            if(cursor != null){
-                cursor.moveToFirst();
-            }else{
-                Toast.makeText(getContext(), getString(R.string.show_bucket_void), Toast.LENGTH_SHORT).show();
-            }
-
-            if(cursor.getCount() > 0){
-
-                Toast.makeText(getContext(), getString(R.string.show_bucket), Toast.LENGTH_SHORT).show();
-
-                do{
-                    String name = cursor.getString(0);
-                    double lat = cursor.getDouble(1);
-                    double lon = cursor.getDouble(2);
-                    String type = cursor.getString(3);
-
-                    LatLng place = new LatLng(lat, lon);
-                    googleMap.addMarker(new MarkerOptions().position(place).title(name)
-                            .snippet(type + "  "+ getString(R.string.i_circle))
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-                }while (cursor.moveToNext());
-
-            }else{
-                Toast.makeText(getContext(), getString(R.string.show_bucket_void), Toast.LENGTH_SHORT).show();
-            }
-             */
-
-        } else {
-
-            //For accomplished
-            Toast.makeText(getContext(), getString(R.string.show_accomplished), Toast.LENGTH_SHORT).show();
-
-            CollectionReference landmarkColl = mDb
-                    .collection(getString(R.string.collection_landmarks))
-                    .document(getString(R.string.document_meta))
-                    .collection(getString(R.string.collection_all));
-
-
-            landmarkColl.addSnapshotListener(new EventListener<QuerySnapshot>() {
-                @Override
-                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                    if (e != null) {
-                        Log.e(TAG, "onEvent: Listen failed.", e);
-                    }
-
-                    if (queryDocumentSnapshots != null) {
-                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                            LandmarkMeta landmarkMeta = doc.toObject(LandmarkMeta.class);
-
-                            CollectionReference collRef = mDb
-                                    .collection(getString(R.string.collection_landmarks))
-                                    .document(landmarkMeta.getState())
-                                    .collection(landmarkMeta.getCity());
-
-                            collRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
-                                @Override
-                                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                                    if (e != null) {
-                                        Log.e(TAG, "onEvent: Listen failed.", e);
-                                    }
-
-                                    if (queryDocumentSnapshots != null) {
-                                        for (QueryDocumentSnapshot places : queryDocumentSnapshots) {
-                                            Landmark landmark = places.toObject(Landmark.class);
-
-                                            DocumentReference bucketRef = mDb
-                                                    .collection(getString(R.string.collection_users))
-                                                    .document(getString(R.string.document_lists))
-                                                    .collection(getString(R.string.collection_bucket_list))
-                                                    .document(landmark.getId());
-
-                                            bucketRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                    if (task.isSuccessful()) {
-                                                        DocumentSnapshot document = task.getResult();
-                                                        if (document.exists()) {
-                                                            Log.d(TAG, "Landmark exists in Bucket List");
-                                                            LatLng place = new LatLng(landmark.getGeo_point().getLatitude(), landmark.getGeo_point().getLongitude());
-                                                            googleMap.addMarker(new MarkerOptions().position(place).title(landmark.getName())
-                                                                    .snippet(landmark.getCategory() + "  " + getString(R.string.i_circle))
-                                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-                                                        } else {
-                                                            Log.d(TAG, "Landmark does not exist in BL");
-                                                            DocumentReference accomplishedRef = mDb
-                                                                    .collection(getString(R.string.collection_users))
-                                                                    .document(getString(R.string.document_lists))
-                                                                    .collection(getString(R.string.collection_accomplished_list))
-                                                                    .document(landmark.getId());
-
-                                                            accomplishedRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                                @Override
-                                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                                    if (task.isSuccessful()) {
-                                                                        DocumentSnapshot documentSnapshot = task.getResult();
-                                                                        if (document.exists()) {
-                                                                            Log.d(TAG, "Landmark exists in Accomplished List");
-                                                                            LatLng place = new LatLng(landmark.getGeo_point().getLatitude(), landmark.getGeo_point().getLongitude());
-                                                                            googleMap.addMarker(new MarkerOptions().position(place).title(landmark.getName())
-                                                                                    .snippet(landmark.getCategory() + "  " + getString(R.string.i_circle))
-                                                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-                                                                        } else {
-                                                                            Log.d(TAG, "Landmark does not exist in Accomplished List");
-                                                                        }
-                                                                    }
-                                                                }
-                                                            });
-
-
-                                                        }
-                                                    }
-                                                }
-                                            });
-
-
-                                        }
-                                    }
-                                }
-                            });
-
-                        }
-                    }
-                }
-            });
-
-
-
-            /*
-            *
-            * Old Code -> Fetching details using sqlite
-            *
-            cursor = database.rawQuery("SELECT name, lat, lon, type FROM LANDMARKS WHERE visit = ?", new String[]{"visited"});
-            if(cursor != null){
-                cursor.moveToFirst();
-            }else{
-                Toast.makeText(getContext(), getString(R.string.show_accomplished_void), Toast.LENGTH_SHORT).show();
-            }
-            if(cursor.getCount() > 0){
-
-                Toast.makeText(getContext(), getString(R.string.show_accomplished), Toast.LENGTH_SHORT).show();
-
-                do{
-                    String name = cursor.getString(0);
-                    double lat = cursor.getDouble(1);
-                    double lon = cursor.getDouble(2);
-                    String type = cursor.getString(3);
-
-                    LatLng place = new LatLng(lat, lon);
-                    googleMap.addMarker(new MarkerOptions().position(place).title(name)
-                            .snippet(type + "  "+ getString(R.string.i_circle))
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-                }while (cursor.moveToNext());
-
-            }else {
-                Toast.makeText(getContext(), getString(R.string.show_accomplished_void), Toast.LENGTH_SHORT).show();
-            }
-             */
-        }
-
-
-    }
-
     @Override
     public void onInfoWindowClick(Marker marker) {
 
@@ -1064,6 +540,7 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
                                 btn.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
+                                        v.startAnimation(new AlphaAnimation(1F, 0.7F));
                                         myDialog.dismiss();
                                     }
                                 });
@@ -1071,6 +548,7 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
                                 details.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
+                                        v.startAnimation(new AlphaAnimation(1F, 0.7F));
                                         Intent intent = new Intent(mcontext, LandmarkActivity.class);
                                         Bundle args = new Bundle();
                                         args.putString("state", landmark.getState());

@@ -5,6 +5,7 @@ import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -20,10 +21,6 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
-import com.strongties.safarnama.R;
-import com.strongties.safarnama.UserClient;
-import com.strongties.safarnama.user_classes.User;
-import com.strongties.safarnama.user_classes.UserLocation;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -35,6 +32,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
+import com.strongties.safarnama.MainActivity;
+import com.strongties.safarnama.R;
+import com.strongties.safarnama.UserClient;
+import com.strongties.safarnama.user_classes.User;
+import com.strongties.safarnama.user_classes.UserLocation;
 
 import java.util.Objects;
 
@@ -47,6 +49,7 @@ public class LocationService extends Service {
     private final static long UPDATE_INTERVAL = 4 * 1000;  /* 4 secs */
     private final static long FASTEST_INTERVAL = 2000; /* 2 sec */
 
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -58,6 +61,10 @@ public class LocationService extends Service {
         super.onCreate();
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
 
         if (Build.VERSION.SDK_INT >= 26) {
             String CHANNEL_ID = "my_channel_01";
@@ -72,7 +79,7 @@ public class LocationService extends Service {
                     .setSmallIcon(R.drawable.ic_location)
                     .setContentText("Close the application to remove the notification.").build();
 
-            startForeground(1, notification);
+            startForeground(Notification.FLAG_ONGOING_EVENT, notification);
         }
     }
 
@@ -137,11 +144,20 @@ public class LocationService extends Service {
                     }
                 }
             });
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             Log.e(TAG, "saveUserLocation: User instance is null, stopping location service.");
-            Log.e(TAG, "saveUserLocation: NullPointerException: "  + e.getMessage() );
+            Log.e(TAG, "saveUserLocation: NullPointerException: " + e.getMessage());
             stopSelf();
         }
 
     }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.w(getClass().getName(), "Got to stop()!");
+        stopForeground(true);
+    }
+
 }

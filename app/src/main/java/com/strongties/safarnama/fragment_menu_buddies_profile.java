@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -139,6 +140,7 @@ public class fragment_menu_buddies_profile extends Fragment {
         iv_photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                v.startAnimation(new AlphaAnimation(1F, 0.7F));
                 Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
                 getIntent.setType("image/*");
 
@@ -155,7 +157,8 @@ public class fragment_menu_buddies_profile extends Fragment {
         btn_done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((AppCompatActivity)mContext).getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_top,R.anim.exit_to_bottom)
+                v.startAnimation(new AlphaAnimation(1F, 0.7F));
+                ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_top, R.anim.exit_to_bottom)
                         .replace(R.id.fragment_container, new fragment_menu_buddies(), "Buddy Profile Fragment").commit();
             }
         });
@@ -163,6 +166,7 @@ public class fragment_menu_buddies_profile extends Fragment {
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                v.startAnimation(new AlphaAnimation(1F, 0.7F));
                 //Toast.makeText(mContext, "Save ", Toast.LENGTH_SHORT).show();
 
               /*

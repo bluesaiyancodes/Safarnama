@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -54,6 +55,7 @@ public class RecylerViewAdapter_place_images extends RecyclerView.Adapter<Recyle
         holder.imview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                v.startAnimation(new AlphaAnimation(1F, 0.7F));
                 Intent intent = new Intent(mContext, imageViewActivity.class);
                 intent.putExtra("imageUrl", mData[position]);
                 intent.putExtra("name", name);
@@ -90,6 +92,7 @@ public class RecylerViewAdapter_place_images extends RecyclerView.Adapter<Recyle
 
         ViewHolder(View itemView) {
             super(itemView);
+            itemView.startAnimation(new AlphaAnimation(1F, 0.7F));
             imview = itemView.findViewById(R.id.dialog_place_img);
             itemView.setOnClickListener(this);
         }

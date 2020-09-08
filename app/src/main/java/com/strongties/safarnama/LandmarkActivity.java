@@ -1,16 +1,23 @@
 package com.strongties.safarnama;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Html;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,9 +25,12 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -35,20 +45,70 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.strongties.safarnama.user_classes.Landmark;
 import com.strongties.safarnama.user_classes.LandmarkList;
 import com.strongties.safarnama.user_classes.LandmarkMeta;
 import com.strongties.safarnama.user_classes.UserFeed;
 
+import java.text.DecimalFormat;
 import java.util.Objects;
 
-public class LandmarkActivity extends AppCompatActivity{
+public class LandmarkActivity extends AppCompatActivity {
     private static final String TAG = "Landmark->";
+
+    FusedLocationProviderClient mFusedLocationClient;
 
 
     GoogleMap googleMap;
     Context mContext;
     Landmark landmark;
+    Double calDistance;
+
+    TextView dist;
+
+    public static double distance(double lat1, double lon1, double lat2,
+                                  double lon2, double el1, double el2) {
+
+        final int R = 6371; // Radius of the earth
+
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double lonDistance = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double distance = R * c * 1000; // convert to meters
+
+        double height = el1 - el2;
+
+        distance = Math.pow(distance, 2) + Math.pow(height, 2);
+
+        return Math.sqrt(distance);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.enter_from_bottom, R.anim.exit_to_top);
+    }
+
+    public static boolean isLocationEnabled(Context context) {
+        int locationMode = 0;
+        String locationProviders;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            try {
+                locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
+            } catch (Settings.SettingNotFoundException e) {
+                e.printStackTrace();
+            }
+            return locationMode != Settings.Secure.LOCATION_MODE_OFF;
+        } else {
+            locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
+            return !TextUtils.isEmpty(locationProviders);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +116,14 @@ public class LandmarkActivity extends AppCompatActivity{
         setContentView(R.layout.activity_landmark);
 
         mContext = getApplicationContext();
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(Objects.requireNonNull(mContext));
 
         TextView name = findViewById(R.id.landmark_name);
         TextView state = findViewById(R.id.landmark_state);
         TextView district = findViewById(R.id.landmark_district);
         TextView city = findViewById(R.id.landmark_city);
         TextView type = findViewById(R.id.landmark_type);
+        dist = findViewById(R.id.landmark_distance_val);
         TextView fee = findViewById(R.id.landmark_fee);
         //TextView hours;
         TextView short_desc = findViewById(R.id.landmark_description_shrt);
@@ -105,6 +167,25 @@ public class LandmarkActivity extends AppCompatActivity{
                     district.setText(landmark.getDistrict());
                     city.setText(landmark.getCity());
                     type.setText(landmark.getCategory());
+
+
+                    if (getIntent().hasExtra("distance")) {
+                        calDistance = Objects.requireNonNull(getIntent().getExtras()).getDouble("distance");
+                        DecimalFormat df = new DecimalFormat("0.00");
+                        String dist_text = "0";
+                        if (calDistance != null) {
+                            dist_text = df.format(calDistance / 1000.0);
+                        }
+                        dist_text += "KM";
+                        dist.setText(dist_text);
+
+                    } else {
+                        if (isLocationEnabled(mContext)) {
+                            getLastKnownLocation(landmark.getGeo_point());
+                        }
+                    }
+
+
                     fee.setText(landmark.getFee());
                     short_desc.setText(landmark.getShort_desc().replace("\"", ""));
                     long_desc.setText(landmark.getLong_desc().replace("\"", ""));
@@ -210,6 +291,7 @@ public class LandmarkActivity extends AppCompatActivity{
                         img_1.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+                                v.startAnimation(new AlphaAnimation(1F, 0.7F));
                                 Intent intent = new Intent(LandmarkActivity.this, imageViewActivity.class);
                                 intent.putExtra("imageUrl", imgs[0]);
                                 intent.putExtra("name", landmark.getName());
@@ -221,6 +303,7 @@ public class LandmarkActivity extends AppCompatActivity{
                         img_2.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+                                v.startAnimation(new AlphaAnimation(1F, 0.7F));
                                 Intent intent = new Intent(LandmarkActivity.this, imageViewActivity.class);
                                 intent.putExtra("imageUrl", imgs[1]);
                                 intent.putExtra("name", landmark.getName());
@@ -232,6 +315,7 @@ public class LandmarkActivity extends AppCompatActivity{
                         img_3.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+                                v.startAnimation(new AlphaAnimation(1F, 0.7F));
                                 Intent intent = new Intent(LandmarkActivity.this, imageViewActivity.class);
                                 intent.putExtra("imageUrl", imgs[2]);
                                 intent.putExtra("name", landmark.getName());
@@ -262,6 +346,7 @@ public class LandmarkActivity extends AppCompatActivity{
         add_wish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                v.startAnimation(new AlphaAnimation(1F, 0.7F));
                 DocumentReference bucketRef = FirebaseFirestore.getInstance()
                         .collection(mContext.getString(R.string.collection_users))
                         .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
@@ -312,7 +397,7 @@ public class LandmarkActivity extends AppCompatActivity{
         add_accomplish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                v.startAnimation(new AlphaAnimation(1F, 0.7F));
                 DocumentReference bucketRef = FirebaseFirestore.getInstance()
                         .collection(mContext.getString(R.string.collection_users))
                         .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
@@ -401,6 +486,7 @@ public class LandmarkActivity extends AppCompatActivity{
         back_pressed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                v.startAnimation(new AlphaAnimation(1F, 0.7F));
                 onBackPressed();
             }
         });
@@ -408,6 +494,7 @@ public class LandmarkActivity extends AppCompatActivity{
         map_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                v.startAnimation(new AlphaAnimation(1F, 0.7F));
                 Dialog myDialog = new Dialog(LandmarkActivity.this);
                 myDialog.setContentView(R.layout.dialog_map_view);
                 Objects.requireNonNull(myDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -449,6 +536,7 @@ public class LandmarkActivity extends AppCompatActivity{
                 dialogButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        v.startAnimation(new AlphaAnimation(1F, 0.7F));
                         myDialog.dismiss();
                     }
                 });
@@ -462,6 +550,7 @@ public class LandmarkActivity extends AppCompatActivity{
         view_more.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                v.startAnimation(new AlphaAnimation(1F, 0.7F));
                 Intent intent = new Intent(LandmarkActivity.this, placeImagesActivity.class);
                 intent.putExtra("img_urls", landmark.getImg_all_url());
                 intent.putExtra("name", landmark.getName());
@@ -469,16 +558,38 @@ public class LandmarkActivity extends AppCompatActivity{
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
 
 
-
             }
         });
 
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.enter_from_bottom, R.anim.exit_to_top);
+    private void getLastKnownLocation(GeoPoint geoPoint) {
+        Log.d(TAG, "getLastKnownLocation: called.");
+
+
+        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        mFusedLocationClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+            @Override
+            public void onComplete(@NonNull Task<Location> task) {
+                if (task.isSuccessful()) {
+                    Location location = task.getResult();
+                    assert location != null;
+
+                    calDistance = distance(location.getLatitude(), location.getLongitude(), geoPoint.getLatitude(), geoPoint.getLongitude(), 0, 0);
+
+                    DecimalFormat df = new DecimalFormat("0.00");
+                    String dist_text = "0";
+                    if (calDistance != null) {
+                        dist_text = df.format(calDistance / 1000.0);
+                    }
+                    dist_text += "KM";
+                    dist.setText(dist_text);
+                }
+            }
+        });
+
     }
 
 }

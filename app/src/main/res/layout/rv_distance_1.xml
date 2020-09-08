@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.cardview.widget.CardView
-        android:layout_width="200dp"
+        android:layout_width="230dp"
         android:layout_height="110dp"
         app:cardCornerRadius="5dp"
         app:cardMaxElevation="3dp"
@@ -31,7 +31,7 @@
                 android:src="@drawable/loading_image"
                 />
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:text="Menu item1"
                 android:id="@+id/distance_menu_name"
@@ -40,6 +40,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:layout_marginStart="10dp"
+                android:layout_marginEnd="20dp"
                 android:textColor="@color/textItemMenu"
                 android:autoSizeTextType="uniform"
                 android:autoSizeMinTextSize="8sp"

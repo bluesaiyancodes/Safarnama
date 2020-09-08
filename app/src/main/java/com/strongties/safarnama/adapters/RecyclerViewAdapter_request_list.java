@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -131,6 +132,7 @@ public class RecyclerViewAdapter_request_list extends FirestoreRecyclerAdapter<U
         holder.item_request.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v1) {
+                v1.startAnimation(new AlphaAnimation(1F, 0.7F));
 
             }
         });
@@ -139,6 +141,7 @@ public class RecyclerViewAdapter_request_list extends FirestoreRecyclerAdapter<U
         holder.img_accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                v.startAnimation(new AlphaAnimation(1F, 0.7F));
                 //Add to friend list for current User
                 // Toast.makeText(mContext, mData.get(vHolder.getAdapterPosition()).getUserRelation().getUser().getUser_id(), Toast.LENGTH_SHORT).show();
 
@@ -218,6 +221,7 @@ public class RecyclerViewAdapter_request_list extends FirestoreRecyclerAdapter<U
         holder.img_reject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                v.startAnimation(new AlphaAnimation(1F, 0.7F));
                 DocumentReference removerequest = mDb.collection(mContext.getString(R.string.collection_relations))
                         .document(model.getUser_id())
                         .collection(mContext.getString(R.string.collection_requestedlist))

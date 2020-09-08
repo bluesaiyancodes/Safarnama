@@ -207,6 +207,7 @@
     <string name="intro_badges">The more you travel, the more you explore about the world. Why not celebrate this? We introduce badges! Upgrade your badge by traveling to various places and putting them in your accomplished list.</string>
     <string name="normal">Terrain View</string>
     <string name="satellite">Satellite View</string>
+    <string name="distancefromcurent">Distance From Current Location</string>
 
 
 </resources>

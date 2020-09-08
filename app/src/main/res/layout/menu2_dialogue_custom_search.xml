@@ -33,6 +33,7 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/menu2_custom_search_min"
                 android:layout_weight="0.5"
                 android:hint="@string/custom_search_min"
                 android:inputType="numberSigned"
@@ -42,6 +43,7 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/menu2_custom_search_max"
                 android:layout_weight="0.5"
                 android:hint="@string/custom_search_max"
                 android:inputType="numberSigned"

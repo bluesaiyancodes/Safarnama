@@ -26,6 +26,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
@@ -187,6 +188,7 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
         btn_map_type.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                v.startAnimation(new AlphaAnimation(1F, 0.7F));
                 SharedPreferences.Editor editor = pref.edit();
                 if (map_type.equals(getString(R.string.normal))) {
                     if (googleMap != null) {
@@ -210,6 +212,7 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                v.startAnimation(new AlphaAnimation(1F, 0.7F));
                 ((AppCompatActivity) mcontext).getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_top, R.anim.exit_to_bottom)
                         .replace(R.id.fragment_container, new fragment_menu_buddies(), "Menu Buddies").commit();
             }

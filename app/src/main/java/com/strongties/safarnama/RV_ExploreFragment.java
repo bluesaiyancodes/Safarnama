@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -84,6 +85,7 @@ public class RV_ExploreFragment extends Fragment {
         search_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                v.startAnimation(new AlphaAnimation(1F, 0.7F));
                 //Set Progressbar
                 mProgressDialog = ProgressDialog.show(mContext, "Searching", "Fetching Information from Server");
                 mProgressDialog.setCanceledOnTouchOutside(false); // main method that force user cannot click outside
@@ -152,6 +154,7 @@ public class RV_ExploreFragment extends Fragment {
                                 btn_wish.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
+                                        v.startAnimation(new AlphaAnimation(1F, 0.7F));
                                         DocumentReference bucketRef = FirebaseFirestore.getInstance()
                                                 .collection(mContext.getString(R.string.collection_users))
                                                 .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
@@ -164,8 +167,12 @@ public class RV_ExploreFragment extends Fragment {
                                         bucketRef.set(landmarkList).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-                                                if(task.isSuccessful()){
-                                                    Toast.makeText(mContext, mContext.getString(R.string.wishlistadd), Toast.LENGTH_SHORT).show();
+                                                if(task.isSuccessful()) {
+                                                    Toast toast = Toast.makeText(mContext, mContext.getString(R.string.wishlistadd), Toast.LENGTH_SHORT);
+                                                    toast.getView().setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getActivity()), R.drawable.dialog_bg_colored));
+                                                    TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                                                    toastmsg.setTextColor(Color.WHITE);
+                                                    toast.show();
                                                 }
                                             }
                                         });
@@ -177,7 +184,7 @@ public class RV_ExploreFragment extends Fragment {
                                 btn_cmpl.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-
+                                        v.startAnimation(new AlphaAnimation(1F, 0.7F));
 
                                         DocumentReference bucketRef = FirebaseFirestore.getInstance()
                                                 .collection(mContext.getString(R.string.collection_users))
@@ -191,8 +198,12 @@ public class RV_ExploreFragment extends Fragment {
                                         bucketRef.set(landmarkList).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-                                                if(task.isSuccessful()){
-                                                    Toast.makeText(mContext, mContext.getString(R.string.accomplishlistadd), Toast.LENGTH_SHORT).show();
+                                                if(task.isSuccessful()) {
+                                                    Toast toast = Toast.makeText(mContext, mContext.getString(R.string.accomplishlistadd), Toast.LENGTH_SHORT);
+                                                    toast.getView().setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getActivity()), R.drawable.dialog_bg_colored));
+                                                    TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                                                    toastmsg.setTextColor(Color.WHITE);
+                                                    toast.show();
                                                 }
                                             }
                                         });
@@ -253,6 +264,7 @@ public class RV_ExploreFragment extends Fragment {
                                 btn_details.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
+                                        v.startAnimation(new AlphaAnimation(1F, 0.7F));
                                         Intent intent = new Intent(mContext, LandmarkActivity.class);
                                         Bundle args = new Bundle();
                                         args.putString("state", landmarkMeta.getState());
@@ -273,7 +285,11 @@ public class RV_ExploreFragment extends Fragment {
 
                             }
                         }else {
-                            Toast.makeText(mContext, mContext.getString(R.string.place_not_found), Toast.LENGTH_SHORT).show();
+                            Toast toast = Toast.makeText(mContext, mContext.getString(R.string.place_not_found), Toast.LENGTH_SHORT);
+                            toast.getView().setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getActivity()), R.drawable.dialog_bg_colored));
+                            TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                            toastmsg.setTextColor(Color.WHITE);
+                            toast.show();
                             mProgressDialog.dismiss();
                         }
                     }

@@ -1,8 +1,10 @@
 package com.strongties.safarnama;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -19,7 +21,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,9 +43,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.maps.GeoApiContext;
 import com.strongties.safarnama.adapters.RecyclerViewAdaptor_distance_places;
+import com.strongties.safarnama.user_classes.RV_Distance;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -56,13 +62,12 @@ public class fragment_menu_distance extends Fragment {
     FusedLocationProviderClient mFusedLocationClient;
 
     private GeoApiContext geoApiContext = null;
-    ArrayList <String> inside_1, img_inside_1, type_inside_1, id_inside_1;
-    ArrayList <String> inside_5, img_inside_5, type_inside_5, id_inside_5;
-    ArrayList <String> inside_10, img_inside_10, type_inside_10, id_inside_10;
-    ArrayList <String> inside_40, img_inside_40, type_inside_40, id_inside_40;
-    ArrayList <String> inside_100, img_inside_100, type_inside_100, id_inside_100;
-    ArrayList <String> inside_200, img_inside_200, type_inside_200, id_inside_200;
-    ArrayList <String> above_200, img_above_200, type_above_200, id_above_200;
+
+    private List<RV_Distance> list_distance1;
+    private List<RV_Distance> list_distance2;
+    private List<RV_Distance> list_distance3;
+    private List<RV_Distance> list_distance4;
+    private List<RV_Distance> list_distance5;
 
 
     RecyclerView rV_1;
@@ -100,46 +105,15 @@ public class fragment_menu_distance extends Fragment {
         }
 
 
-        inside_1 = new ArrayList<>();
-        inside_5 = new ArrayList<>();
-        inside_10 = new ArrayList<>();
-        inside_40 = new ArrayList<>();
-        inside_100 = new ArrayList<>();
-        inside_200 = new ArrayList<>();
-        above_200 = new ArrayList<>();
-
-        img_inside_1 = new ArrayList<>();
-        img_inside_5 = new ArrayList<>();
-        img_inside_10 = new ArrayList<>();
-        img_inside_40 = new ArrayList<>();
-        img_inside_100 = new ArrayList<>();
-        img_inside_200 = new ArrayList<>();
-        img_above_200 = new ArrayList<>();
-
-
-        type_inside_1 = new ArrayList<>();
-        type_inside_5 = new ArrayList<>();
-        type_inside_10 = new ArrayList<>();
-        type_inside_40 = new ArrayList<>();
-        type_inside_100 = new ArrayList<>();
-        type_inside_200 = new ArrayList<>();
-        type_above_200 = new ArrayList<>();
-
-
-        id_inside_1 = new ArrayList<>();
-        id_inside_5 = new ArrayList<>();
-        id_inside_10 = new ArrayList<>();
-        id_inside_40 = new ArrayList<>();
-        id_inside_100 = new ArrayList<>();
-        id_inside_200 = new ArrayList<>();
-        id_above_200 = new ArrayList<>();
-
-
-
+        list_distance1 = new ArrayList<>();
+        list_distance2 = new ArrayList<>();
+        list_distance3 = new ArrayList<>();
+        list_distance4 = new ArrayList<>();
+        list_distance5 = new ArrayList<>();
 
         //  rV_1 = root.findViewById(R.id.rv_dist_1);
         rV_2 = root.findViewById(R.id.rv_dist_2);
-      //  rV_3 = root.findViewById(R.id.rv_dist_3);
+        //  rV_3 = root.findViewById(R.id.rv_dist_3);
         rV_4 = root.findViewById(R.id.rv_dist_4);
         rV_5 = root.findViewById(R.id.rv_dist_5);
         rV_6 = root.findViewById(R.id.rv_dist_6);
@@ -159,21 +133,53 @@ public class fragment_menu_distance extends Fragment {
         custom_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                v.startAnimation(new AlphaAnimation(1F, 0.7F));
                 //Dialog Initiation
                 Dialog myDialog = new Dialog(mContext);
                 myDialog.setContentView(R.layout.menu2_dialogue_custom_search);
                 Objects.requireNonNull(myDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 myDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
 
+                EditText tv_min = myDialog.findViewById(R.id.menu2_custom_search_min);
+                EditText tv_max = myDialog.findViewById(R.id.menu2_custom_search_max);
+
                 Button search = myDialog.findViewById(R.id.menu2_search_dialog_btn);
                 search.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast toast = Toast.makeText(mContext, "Feature Coming Soon", Toast.LENGTH_SHORT);
+                        v.startAnimation(new AlphaAnimation(1F, 0.7F));
+                        /*Toast toast = Toast.makeText(mContext, "Feature Coming Soon", Toast.LENGTH_SHORT);
                         toast.getView().setBackground(ContextCompat.getDrawable(mContext, R.drawable.dialog_bg_toast_colored));
                         TextView toastmsg = toast.getView().findViewById(android.R.id.message);
                         toastmsg.setTextColor(Color.WHITE);
                         toast.show();
+
+                         */
+
+                        if (tv_min.getText().toString().matches("")) {
+                            Toast toast = Toast.makeText(mContext, "Enter Minimum Distance", Toast.LENGTH_SHORT);
+                            toast.getView().setBackground(ContextCompat.getDrawable(mContext, R.drawable.dialog_bg_toast_colored));
+                            TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                            toastmsg.setTextColor(Color.WHITE);
+                            toast.show();
+                            return;
+                        } else if (tv_max.getText().toString().matches("")) {
+                            Toast toast = Toast.makeText(mContext, "Enter Maximum Distance", Toast.LENGTH_SHORT);
+                            toast.getView().setBackground(ContextCompat.getDrawable(mContext, R.drawable.dialog_bg_toast_colored));
+                            TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                            toastmsg.setTextColor(Color.WHITE);
+                            toast.show();
+                            return;
+                        }
+
+                        Intent intent = new Intent(mContext, distanceSearchActivity.class);
+                        Bundle args = new Bundle();
+                        args.putString("minDist", tv_min.getText().toString());
+                        args.putString("maxDist", tv_max.getText().toString());
+                        intent.putExtras(args);
+                        startActivity(intent);
+                        ((Activity) mContext).overridePendingTransition(R.anim.enter_from_bottom, R.anim.exit_to_top);
+
                     }
                 });
 
@@ -245,7 +251,7 @@ public class fragment_menu_distance extends Fragment {
 
         Cursor cursor;
 
-        cursor = database.rawQuery("SELECT name, lat, lon, url, type, place_id, state FROM LANDMARKS", new String[]{});
+        cursor = database.rawQuery("SELECT name, lat, lon, url, type, place_id, state, city FROM LANDMARKS", new String[]{});
 
         if(cursor != null){
             cursor.moveToFirst();
@@ -266,6 +272,7 @@ public class fragment_menu_distance extends Fragment {
             String type = cursor.getString(4);
             String place_id = cursor.getString(5);
             String state = cursor.getString(6);
+            String city = cursor.getString(7);
 
             // add landmarks in Nearby menu only if they have the same state
             //    Log.d(TAG, "local -> "+ local);
@@ -275,41 +282,23 @@ public class fragment_menu_distance extends Fragment {
                 Log.d(TAG, "placeName -> " + name + ", Nearby -> " + dist);
                 if (dist <= 1000) {
 
-                    inside_1.add(name);
-                    img_inside_1.add(img_url);
-                    type_inside_1.add(type);
-                    id_inside_1.add(place_id);
-                } else if (dist > 1000 && dist <= 5000) {
-                    inside_5.add(name);
-                    img_inside_5.add(img_url);
-                    type_inside_5.add(type);
-                    id_inside_5.add(place_id);
-                } else if (dist > 5000 && dist <= 10000) {
-                    inside_10.add(name);
-                    img_inside_10.add(img_url);
-                    type_inside_10.add(type);
-                    id_inside_10.add(place_id);
-                } else if (dist > 10000 && dist <= 50000) {
-                    inside_40.add(name);
-                    img_inside_40.add(img_url);
-                    type_inside_40.add(type);
-                    id_inside_40.add(place_id);
-                }else if(dist > 50000 && dist <= 100000){
-                    inside_100.add(name);
-                    img_inside_100.add(img_url);
-                    type_inside_100.add(type);
-                    id_inside_100.add(place_id);
-                }else if (dist > 100000 && dist <= 200000) {
-                    inside_200.add(name);
-                    img_inside_200.add(img_url);
-                    type_inside_200.add(type);
-                    id_inside_200.add(place_id);
+
+                } else if (dist > 0 && dist <= 5000) {
+                    Log.d(TAG, "newDebug -> \nPlace -> " + name);
+                    list_distance1.add(new RV_Distance(place_id, name, img_url, type, state, city, dist));
+
+                } else if (dist > 5000 && dist <= 40000) {
+                    list_distance2.add(new RV_Distance(place_id, name, img_url, type, state, city, dist));
+
+                } else if (dist > 40000 && dist <= 100000) {
+                    list_distance3.add(new RV_Distance(place_id, name, img_url, type, state, city, dist));
+
+                } else if (dist > 100000 && dist <= 200000) {
+                    list_distance4.add(new RV_Distance(place_id, name, img_url, type, state, city, dist));
                 } else if (dist > 200000) {
                     Log.d(TAG, "above 200 -> " + name);
-                    above_200.add(name);
-                    img_above_200.add(img_url);
-                    type_above_200.add(type);
-                    id_above_200.add(place_id);
+                    list_distance5.add(new RV_Distance(place_id, name, img_url, type, state, city, dist));
+
                 }
 
             }
@@ -371,33 +360,44 @@ public class fragment_menu_distance extends Fragment {
         return address.toString();
     }
 
-    private void initRecyclerView(){
+    private void sortLists() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            list_distance1.sort(Comparator.comparingDouble(RV_Distance::getDistance));
+            list_distance2.sort(Comparator.comparingDouble(RV_Distance::getDistance));
+            list_distance3.sort(Comparator.comparingDouble(RV_Distance::getDistance));
+            list_distance4.sort(Comparator.comparingDouble(RV_Distance::getDistance));
+            list_distance5.sort(Comparator.comparingDouble(RV_Distance::getDistance));
+        }
+    }
+
+    private void initRecyclerView() {
         Log.d(TAG, "initRecyclerView: init recyclerview");
+        sortLists();
 
 
         LinearLayoutManager layoutManager2 = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
         rV_2.setLayoutManager(layoutManager2);
-        RecyclerViewAdaptor_distance_places adapter2 = new RecyclerViewAdaptor_distance_places(mContext, inside_5, img_inside_5, type_inside_5, id_inside_5);
+        RecyclerViewAdaptor_distance_places adapter2 = new RecyclerViewAdaptor_distance_places(mContext, list_distance1);
         rV_2.setAdapter(adapter2);
 
         LinearLayoutManager layoutManager4 = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
         rV_4.setLayoutManager(layoutManager4);
-        RecyclerViewAdaptor_distance_places adapter4 = new RecyclerViewAdaptor_distance_places(mContext, inside_40, img_inside_40, type_inside_40, id_inside_40);
+        RecyclerViewAdaptor_distance_places adapter4 = new RecyclerViewAdaptor_distance_places(mContext, list_distance2);
         rV_4.setAdapter(adapter4);
 
         LinearLayoutManager layoutManager5 = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
         rV_5.setLayoutManager(layoutManager5);
-        RecyclerViewAdaptor_distance_places adapter5 = new RecyclerViewAdaptor_distance_places(mContext, inside_100, img_inside_100, type_inside_100, id_inside_100);
+        RecyclerViewAdaptor_distance_places adapter5 = new RecyclerViewAdaptor_distance_places(mContext, list_distance3);
         rV_5.setAdapter(adapter5);
 
         LinearLayoutManager layoutManager6 = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
         rV_6.setLayoutManager(layoutManager6);
-        RecyclerViewAdaptor_distance_places adapter6 = new RecyclerViewAdaptor_distance_places(mContext, inside_200, img_inside_200, type_inside_200, id_inside_200);
+        RecyclerViewAdaptor_distance_places adapter6 = new RecyclerViewAdaptor_distance_places(mContext, list_distance4);
         rV_6.setAdapter(adapter6);
 
         LinearLayoutManager layoutManager7 = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
         rV_7.setLayoutManager(layoutManager7);
-        RecyclerViewAdaptor_distance_places adapter7 = new RecyclerViewAdaptor_distance_places(mContext, above_200, img_above_200, type_above_200, id_above_200);
+        RecyclerViewAdaptor_distance_places adapter7 = new RecyclerViewAdaptor_distance_places(mContext, list_distance5);
         rV_7.setAdapter(adapter7);
 
     }

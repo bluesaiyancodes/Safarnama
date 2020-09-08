@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -212,14 +213,14 @@ public class fragment_menu_buddies extends Fragment {
         });
 
 
-
-
         LinearLayout profile_layout = v.findViewById(R.id.menu3_buddies_profile);
+        AlphaAnimation btn_click = new AlphaAnimation(1F, 0.7F);
         profile_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((AppCompatActivity)mcontext).getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_bottom,R.anim.exit_to_top, R.anim.enter_from_top, R.anim.exit_to_bottom)
-                        .replace(R.id.fragment_container, new fragment_menu_buddies_profile(), "Buddy Profile Fragment").addToBackStack( "buddyProfile" ).commit();
+                v.startAnimation(btn_click);
+                ((AppCompatActivity) mcontext).getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_top, R.anim.enter_from_top, R.anim.exit_to_bottom)
+                        .replace(R.id.fragment_container, new fragment_menu_buddies_profile(), "Buddy Profile Fragment").addToBackStack("buddyProfile").commit();
             }
         });
 
@@ -228,9 +229,11 @@ public class fragment_menu_buddies extends Fragment {
 
 
         Button friend_search = v.findViewById(R.id.menu3_btn1);
+
         friend_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                v.startAnimation(new AlphaAnimation(1F, 0.7F));
                 Dialog parentDialog = new Dialog(mcontext);
                 parentDialog.setContentView(R.layout.dialog_friend_search);
                 Objects.requireNonNull(parentDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -262,8 +265,9 @@ public class fragment_menu_buddies extends Fragment {
         friend_map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((AppCompatActivity)mcontext).getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_bottom,R.anim.exit_to_top, R.anim.enter_from_top, R.anim.exit_to_bottom)
-                        .replace(R.id.fragment_container, new fragment_buddy_googleMap(), "Buddy Google map").addToBackStack( "buddyGmap" ).commit();
+                v.startAnimation(new AlphaAnimation(1F, 0.7F));
+                ((AppCompatActivity) mcontext).getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_top, R.anim.enter_from_top, R.anim.exit_to_bottom)
+                        .replace(R.id.fragment_container, new fragment_buddy_googleMap(), "Buddy Google map").addToBackStack("buddyGmap").commit();
             }
         });
 
@@ -352,6 +356,7 @@ public class fragment_menu_buddies extends Fragment {
                                     request_friend.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
+                                            v.startAnimation(new AlphaAnimation(1F, 0.7F));
                                             //Consraints
 
                                             //Check in current user's Requested list

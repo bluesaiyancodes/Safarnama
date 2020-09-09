@@ -18,11 +18,16 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.strongties.safarnama.DatabaseHelper;
 import com.strongties.safarnama.R;
+import com.strongties.safarnama.user_classes.LandmarkList;
 import com.strongties.safarnama.user_classes.UserRelation;
 
 import java.util.Objects;
 
 import static com.strongties.safarnama.MainActivity.RequestList;
+import static com.strongties.safarnama.MainActivity.accomplished_id_list;
+import static com.strongties.safarnama.MainActivity.accomplished_list;
+import static com.strongties.safarnama.MainActivity.bucket_id_list;
+import static com.strongties.safarnama.MainActivity.bucket_list;
 import static com.strongties.safarnama.MainActivity.places_id_list;
 import static com.strongties.safarnama.MainActivity.places_list;
 
@@ -81,6 +86,50 @@ public class OtherBackgroundTask extends AsyncTask<Void, Void, Boolean> {
                         assert relation != null;
                         RequestList.add(relation.getUser_id());
                         Log.d(TAG, "Request List Added");
+                    }
+                }
+            }
+        });
+
+        CollectionReference bucketRef = FirebaseFirestore.getInstance()
+                .collection(mContext.getString(R.string.collection_users))
+                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                .collection(mContext.getString(R.string.collection_bucket_list));
+
+        bucketRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    QuerySnapshot querySnapshot = task.getResult();
+                    assert querySnapshot != null;
+                    for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                        LandmarkList landmarkList = document.toObject(LandmarkList.class);
+                        assert landmarkList != null;
+                        bucket_id_list.add(landmarkList.getLandmarkMeta().getId());
+                        bucket_list.add(landmarkList.getLandmarkMeta().getLandmark().getName());
+                        Log.d(TAG, "Bucket List Added");
+                    }
+                }
+            }
+        });
+
+        CollectionReference accomplishRef = FirebaseFirestore.getInstance()
+                .collection(mContext.getString(R.string.collection_users))
+                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                .collection(mContext.getString(R.string.collection_accomplished_list));
+
+        accomplishRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    QuerySnapshot querySnapshot = task.getResult();
+                    assert querySnapshot != null;
+                    for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                        LandmarkList landmarkList = document.toObject(LandmarkList.class);
+                        assert landmarkList != null;
+                        accomplished_id_list.add(landmarkList.getLandmarkMeta().getId());
+                        accomplished_list.add(landmarkList.getLandmarkMeta().getLandmark().getName());
+                        Log.d(TAG, "Accomplished List Added");
                     }
                 }
             }

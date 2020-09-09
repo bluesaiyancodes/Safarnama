@@ -194,6 +194,8 @@ public class RecyclerViewAdapter_bucketlist extends FirestoreRecyclerAdapter<Lan
                             }
                         });
 
+                        myDialog.cancel();
+
 
                     }
                 });
@@ -225,7 +227,7 @@ public class RecyclerViewAdapter_bucketlist extends FirestoreRecyclerAdapter<Lan
                             }
                         });
 
-                         bucketRef = FirebaseFirestore.getInstance()
+                        bucketRef = FirebaseFirestore.getInstance()
                                 .collection(mContext.getString(R.string.collection_users))
                                 .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
                                 .collection(mContext.getString(R.string.collection_bucket_list))
@@ -234,13 +236,13 @@ public class RecyclerViewAdapter_bucketlist extends FirestoreRecyclerAdapter<Lan
                         bucketRef.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    myDialog.cancel();
+                                if (task.isSuccessful()) {
+
                                 }
                             }
                         });
 
-
+                        myDialog.cancel();
 
 
                         UserFeed userFeed = new UserFeed();

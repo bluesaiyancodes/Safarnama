@@ -108,8 +108,7 @@
                             android:layout_marginRight="10dp"
                             android:layout_weight="0.5"
                             android:background="@drawable/dialog_bg"
-                            android:drawableEnd="@drawable/bucketlistadd"
-                            android:drawablePadding="20dp"
+                            android:drawableStart="@drawable/bucketlistadd"
                             android:text="@string/BucketList"
                             android:textColor="@color/textItemMenu"
                             android:textSize="15sp" />
@@ -123,8 +122,7 @@
 
                             android:layout_weight="0.5"
                             android:background="@drawable/dialog_bg"
-                            android:drawableEnd="@drawable/accomplished_add"
-                            android:drawablePadding="5dp"
+                            android:drawableStart="@drawable/accomplished_add"
                             android:text="@string/accomplished"
                             android:textColor="@color/textItemMenu"
                             android:textSize="15sp" />

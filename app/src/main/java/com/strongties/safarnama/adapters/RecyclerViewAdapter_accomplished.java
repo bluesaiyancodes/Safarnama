@@ -200,13 +200,14 @@ public class RecyclerViewAdapter_accomplished extends FirestoreRecyclerAdapter<L
                         bucketRef.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    myDialog.cancel();
+                                if (task.isSuccessful()) {
+
                                 }
                             }
                         });
 
 
+                        myDialog.cancel();
 
                     }
                 });
@@ -232,9 +233,12 @@ public class RecyclerViewAdapter_accomplished extends FirestoreRecyclerAdapter<L
                                     TextView toastmsg = toast.getView().findViewById(android.R.id.message);
                                     toastmsg.setTextColor(Color.WHITE);
                                     toast.show();
+
                                 }
                             }
                         });
+                        myDialog.cancel();
+
 
                     }
                 });

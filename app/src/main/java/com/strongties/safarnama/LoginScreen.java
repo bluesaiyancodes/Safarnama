@@ -21,6 +21,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -193,16 +194,13 @@ public class LoginScreen extends AppCompatActivity {
                     .collection(getString(R.string.collection_users))
                     .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
 
-
-            newUserRef.set(user_).addOnCompleteListener(new OnCompleteListener<Void>() {
+            newUserRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
-                public void onComplete(@NonNull Task<Void> task) {
-
-                    if(task.isSuccessful()){
-
-                        Log.d(TAG, "Successfull added to DB");
-                    }else{
-                        Log.w(TAG, "Error getting documents.", task.getException());
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    if (documentSnapshot.exists()) {
+                        //do nothing
+                    } else {
+                        newUserRef.set(user_);
                     }
                 }
             });

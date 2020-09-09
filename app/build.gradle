@@ -40,6 +40,9 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
   //  implementation "androidx.coordinatorlayout:coordinatorlayout:1.1.0"
 
+    //For Review System
+    implementation 'com.google.android.play:core:1.8.0'
+
     //recyclerview
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
 
@@ -84,6 +87,10 @@ dependencies {
 
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.19'
 
+    implementation 'com.github.yalantis:ucrop:2.2.2'
+
+    implementation 'com.karumi:dexter:4.2.0'
+
     //Showcase View
-    compile 'com.github.amlcurran.showcaseview:library:5.4.3'
+    //compile 'com.github.amlcurran.showcaseview:library:5.4.3'
 }

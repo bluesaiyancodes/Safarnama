@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -40,6 +42,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -160,8 +163,51 @@ public class LandmarkActivity extends AppCompatActivity {
                     Log.d(TAG, "onComplete: successfully got the landmark details.");
 
                     landmark = Objects.requireNonNull(task.getResult()).toObject(Landmark.class);
-
                     assert landmark != null;
+                    //Check if the landmark is in user's bucketlist
+
+                    DocumentReference documentRef = FirebaseFirestore.getInstance()
+                            .collection(mContext.getString(R.string.collection_users))
+                            .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                            .collection(mContext.getString(R.string.collection_bucket_list))
+                            .document(landmark.getId());
+
+                    documentRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            if (task.isSuccessful() && documentSnapshot.exists()) {
+                                Button btn_add = findViewById(R.id.landmark_add_to_bucket);
+                                btn_add.setText(R.string.wishlistin);
+                                btn_add.setCompoundDrawablesWithIntrinsicBounds(R.drawable.bucketlist_white, 0, 0, 0);
+                                btn_add.setBackgroundResource(R.drawable.dialog_bg_colored);
+                                btn_add.setTextColor(getResources().getColor(R.color.white));
+                            }
+                        }
+                    });
+
+                    //Check if the landmark is in user's Accomplished List
+
+                    documentRef = FirebaseFirestore.getInstance()
+                            .collection(mContext.getString(R.string.collection_users))
+                            .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                            .collection(mContext.getString(R.string.collection_accomplished_list))
+                            .document(landmark.getId());
+
+                    documentRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            if (task.isSuccessful() && documentSnapshot.exists()) {
+                                Log.d(TAG, "Accomplished -> " + documentSnapshot);
+                                Button btn_add = findViewById(R.id.landmark_add_to_accomplish);
+                                btn_add.setText(R.string.accomplishlistin);
+                                btn_add.setCompoundDrawablesWithIntrinsicBounds(R.drawable.accomplished_white, 0, 0, 0);
+                                btn_add.setBackgroundResource(R.drawable.dialog_bg_colored_cyan);
+                                btn_add.setTextColor(getResources().getColor(R.color.white));
+                            }
+                        }
+                    });
+
+
                     name.setText(landmark.getName());
                     state.setText(landmark.getState());
                     district.setText(landmark.getDistrict());
@@ -338,59 +384,44 @@ public class LandmarkActivity extends AppCompatActivity {
         });
 
 
-
-
-
-
-
         add_wish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 v.startAnimation(new AlphaAnimation(1F, 0.7F));
-                DocumentReference bucketRef = FirebaseFirestore.getInstance()
-                        .collection(mContext.getString(R.string.collection_users))
-                        .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
-                        .collection(mContext.getString(R.string.collection_bucket_list))
-                        .document(landmark.getId());
+                Button btn_bucket = findViewById(R.id.landmark_add_to_bucket);
 
-                LandmarkList landmarkList = new LandmarkList();
-                LandmarkMeta landmarkMeta = new LandmarkMeta();
-                landmarkMeta.setLandmark(landmark);
-                landmarkMeta.setGeoPoint(landmark.getGeo_point());
-                landmarkMeta.setState(landmark.getState());
-                landmarkMeta.setCity(landmark.getCity());
-                landmarkMeta.setId(landmark.getId());
+                String btn_state = btn_bucket.getText().toString();
+                if (btn_state.equals(getString(R.string.wishlistin))) {
+                    new AlertDialog.Builder(LandmarkActivity.this)
+                            .setTitle(getString(R.string.confirm))
+                            .setMessage(getString(R.string.wishlistremove_confirmation_msg))
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    bucketlist_remove();
+                                    btn_bucket.setText(R.string.BucketList);
+                                    btn_bucket.setCompoundDrawablesWithIntrinsicBounds(R.drawable.bucketlistadd, 0, 0, 0);
+                                    btn_bucket.setBackgroundResource(R.drawable.dialog_bg);
+                                    btn_bucket.setTextColor(getResources().getColor(R.color.textItemMenu));
+                                }
+                            })
+                            .setNegativeButton(android.R.string.no, null)
+                            .setIcon(R.drawable.app_main_icon)
+                            .show();
+                } else {
+                    bucketlist_add();
+                    btn_bucket.setText(R.string.wishlistin);
+                    btn_bucket.setCompoundDrawablesWithIntrinsicBounds(R.drawable.bucketlist_white, 0, 0, 0);
+                    btn_bucket.setBackgroundResource(R.drawable.dialog_bg_colored);
+                    btn_bucket.setTextColor(getResources().getColor(R.color.white));
 
-                landmarkList.setLandmarkMeta(landmarkMeta);
-
-                bucketRef.set(landmarkList).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            // add to log
-                        }
+                    Button btn_accomplish = findViewById(R.id.landmark_add_to_accomplish);
+                    if (btn_accomplish.getText().toString().equals(getString(R.string.accomplishlistin))) {
+                        btn_accomplish.setText(R.string.Accomplished);
+                        btn_accomplish.setCompoundDrawablesWithIntrinsicBounds(R.drawable.accomplished_add, 0, 0, 0);
+                        btn_accomplish.setBackgroundResource(R.drawable.dialog_bg);
+                        btn_accomplish.setTextColor(getResources().getColor(R.color.textItemMenu));
                     }
-                });
-
-                bucketRef = FirebaseFirestore.getInstance()
-                        .collection(mContext.getString(R.string.collection_users))
-                        .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
-                        .collection(mContext.getString(R.string.collection_accomplished_list))
-                        .document(landmark.getId());
-
-                bucketRef.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Toast toast = Toast.makeText(mContext, mContext.getString(R.string.wishlistadd), Toast.LENGTH_SHORT);
-                            toast.getView().setBackground(ContextCompat.getDrawable(LandmarkActivity.this, R.drawable.dialog_bg_toast_colored));
-                            TextView toastmsg = toast.getView().findViewById(android.R.id.message);
-                            toastmsg.setTextColor(Color.WHITE);
-                            toast.show();
-
-                        }
-                    }
-                });
+                }
             }
         });
 
@@ -398,89 +429,41 @@ public class LandmarkActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 v.startAnimation(new AlphaAnimation(1F, 0.7F));
-                DocumentReference bucketRef = FirebaseFirestore.getInstance()
-                        .collection(mContext.getString(R.string.collection_users))
-                        .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
-                        .collection(mContext.getString(R.string.collection_accomplished_list))
-                        .document(landmark.getId());
+                Button btn_accomplish = findViewById(R.id.landmark_add_to_accomplish);
+                String btn_state = btn_accomplish.getText().toString();
+                if (btn_state.equals(getString(R.string.accomplishlistin))) {
+                    new AlertDialog.Builder(LandmarkActivity.this)
+                            .setTitle(getString(R.string.confirm))
+                            .setMessage(getString(R.string.accomplishlistremove_confirmation_msg))
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    accomplish_remove();
+                                    btn_accomplish.setText(R.string.Accomplished);
+                                    btn_accomplish.setCompoundDrawablesWithIntrinsicBounds(R.drawable.accomplished_add, 0, 0, 0);
+                                    btn_accomplish.setBackgroundResource(R.drawable.dialog_bg);
+                                    btn_accomplish.setTextColor(getResources().getColor(R.color.textItemMenu));
+                                }
+                            })
+                            .setNegativeButton(android.R.string.no, null)
+                            .setIcon(R.drawable.app_main_icon)
+                            .show();
+                } else {
+                    accomplish_add();
+                    btn_accomplish.setText(R.string.accomplishlistin);
+                    btn_accomplish.setCompoundDrawablesWithIntrinsicBounds(R.drawable.accomplished_white, 0, 0, 0);
+                    btn_accomplish.setBackgroundResource(R.drawable.dialog_bg_colored_cyan);
+                    btn_accomplish.setTextColor(getResources().getColor(R.color.white));
 
-                LandmarkList landmarkList = new LandmarkList();
-                LandmarkMeta landmarkMeta = new LandmarkMeta();
-                landmarkMeta.setLandmark(landmark);
-                landmarkMeta.setGeoPoint(landmark.getGeo_point());
-                landmarkMeta.setState(landmark.getState());
-                landmarkMeta.setCity(landmark.getCity());
-                landmarkMeta.setId(landmark.getId());
-
-                landmarkList.setLandmarkMeta(landmarkMeta);
-
-                bucketRef.set(landmarkList).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()) {
-                            Toast toast = Toast.makeText(mContext, mContext.getString(R.string.accomplishlistadd), Toast.LENGTH_SHORT);
-                            toast.getView().setBackground(ContextCompat.getDrawable(LandmarkActivity.this, R.drawable.dialog_bg_toast_colored));
-                            TextView toastmsg = toast.getView().findViewById(android.R.id.message);
-                            toastmsg.setTextColor(Color.WHITE);
-                            toast.show();
-                        }
+                    Button btn_bucket = findViewById(R.id.landmark_add_to_bucket);
+                    if (btn_bucket.getText().toString().equals(getString(R.string.wishlistin))) {
+                        btn_bucket.setText(R.string.BucketList);
+                        btn_bucket.setCompoundDrawablesWithIntrinsicBounds(R.drawable.bucketlistadd, 0, 0, 0);
+                        btn_bucket.setBackgroundResource(R.drawable.dialog_bg);
+                        btn_bucket.setTextColor(getResources().getColor(R.color.textItemMenu));
                     }
-                });
-
-
-
-
-                UserFeed userFeed = new UserFeed();
-                userFeed.setUser_id(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
-                String msgBuilder = mContext.getString(R.string.feed_msg_accomplished) + landmarkMeta.getLandmark().getName();
-                msgBuilder += "\n \n" + landmarkMeta.getLandmark().getLong_desc();
-
-                userFeed.setDatacontent(msgBuilder);
-
-                Long tsLong = System.currentTimeMillis()/1000;
-                String ts = tsLong.toString();
-
-                DocumentReference docRef = FirebaseFirestore.getInstance()
-                        .collection(mContext.getString(R.string.collection_feed))
-                        .document(mContext.getString(R.string.document_global))
-                        .collection(mContext.getString(R.string.collection_posts))
-                        .document(ts);
-
-
-                docRef.set(userFeed).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
-                            Log.d(TAG, "Successfully added to Global feed list ");
-                        }else{
-                            Log.w(TAG, "Error getting documents.", task.getException());
-                        }
-                    }
-                });
-
-                docRef = FirebaseFirestore.getInstance()
-                        .collection(mContext.getString(R.string.collection_feed))
-                        .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
-                        .collection(mContext.getString(R.string.collection_posts))
-                        .document(ts);
-
-                docRef.set(userFeed).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
-                            //  Toast.makeText(mContext, mContext.getString(R.string.feed_post_success), Toast.LENGTH_SHORT).show();
-
-                            Log.d(TAG, "Successfully added to User feed list ");
-                        }else{
-                            Log.w(TAG, "Error getting documents.", task.getException());
-                        }
-                    }
-                });
-
-
+                }
             }
         });
-
 
 
         back_pressed.setOnClickListener(new View.OnClickListener() {
@@ -499,7 +482,6 @@ public class LandmarkActivity extends AppCompatActivity {
                 myDialog.setContentView(R.layout.dialog_map_view);
                 Objects.requireNonNull(myDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 myDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-
 
 
                 MapView mMapView = myDialog.findViewById(R.id.dialog_mapview);
@@ -590,6 +572,188 @@ public class LandmarkActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void bucketlist_add() {
+        DocumentReference bucketRef = FirebaseFirestore.getInstance()
+                .collection(mContext.getString(R.string.collection_users))
+                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                .collection(mContext.getString(R.string.collection_bucket_list))
+                .document(landmark.getId());
+
+        LandmarkList landmarkList = new LandmarkList();
+        LandmarkMeta landmarkMeta = new LandmarkMeta();
+        landmarkMeta.setLandmark(landmark);
+        landmarkMeta.setGeoPoint(landmark.getGeo_point());
+        landmarkMeta.setState(landmark.getState());
+        landmarkMeta.setCity(landmark.getCity());
+        landmarkMeta.setId(landmark.getId());
+
+        landmarkList.setLandmarkMeta(landmarkMeta);
+
+        bucketRef.set(landmarkList).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    // add to log
+                }
+            }
+        });
+
+        bucketRef = FirebaseFirestore.getInstance()
+                .collection(mContext.getString(R.string.collection_users))
+                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                .collection(mContext.getString(R.string.collection_accomplished_list))
+                .document(landmark.getId());
+
+        bucketRef.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Toast toast = Toast.makeText(mContext, mContext.getString(R.string.wishlistadd), Toast.LENGTH_SHORT);
+                    toast.getView().setBackground(ContextCompat.getDrawable(LandmarkActivity.this, R.drawable.dialog_bg_toast_colored));
+                    TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                    toastmsg.setTextColor(Color.WHITE);
+                    toast.show();
+
+                }
+            }
+        });
+    }
+
+    private void bucketlist_remove() {
+        DocumentReference bucketRef = FirebaseFirestore.getInstance()
+                .collection(mContext.getString(R.string.collection_users))
+                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                .collection(mContext.getString(R.string.collection_bucket_list))
+                .document(landmark.getId());
+
+        bucketRef.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Toast toast = Toast.makeText(mContext, mContext.getString(R.string.wishlistremove), Toast.LENGTH_SHORT);
+                    toast.getView().setBackground(ContextCompat.getDrawable(LandmarkActivity.this, R.drawable.dialog_bg_toast_colored));
+                    TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                    toastmsg.setTextColor(Color.WHITE);
+                    toast.show();
+                }
+            }
+        });
+
+    }
+
+    private void accomplish_add() {
+        DocumentReference accomplishRef = FirebaseFirestore.getInstance()
+                .collection(mContext.getString(R.string.collection_users))
+                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                .collection(mContext.getString(R.string.collection_accomplished_list))
+                .document(landmark.getId());
+
+        LandmarkList landmarkList = new LandmarkList();
+        LandmarkMeta landmarkMeta = new LandmarkMeta();
+        landmarkMeta.setLandmark(landmark);
+        landmarkMeta.setGeoPoint(landmark.getGeo_point());
+        landmarkMeta.setState(landmark.getState());
+        landmarkMeta.setCity(landmark.getCity());
+        landmarkMeta.setId(landmark.getId());
+
+        landmarkList.setLandmarkMeta(landmarkMeta);
+
+        accomplishRef.set(landmarkList).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+            }
+        });
+
+        accomplishRef = FirebaseFirestore.getInstance()
+                .collection(mContext.getString(R.string.collection_users))
+                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                .collection(mContext.getString(R.string.collection_bucket_list))
+                .document(landmark.getId());
+
+        accomplishRef.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Toast toast = Toast.makeText(mContext, mContext.getString(R.string.accomplishlistadd), Toast.LENGTH_SHORT);
+                    toast.getView().setBackground(ContextCompat.getDrawable(LandmarkActivity.this, R.drawable.dialog_bg_toast_colored));
+                    TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                    toastmsg.setTextColor(Color.WHITE);
+                    toast.show();
+                }
+            }
+        });
+
+
+        UserFeed userFeed = new UserFeed();
+        userFeed.setUser_id(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
+        String msgBuilder = mContext.getString(R.string.feed_msg_accomplished) + landmarkMeta.getLandmark().getName();
+        msgBuilder += "\n \n" + landmarkMeta.getLandmark().getLong_desc();
+
+        userFeed.setDatacontent(msgBuilder);
+
+        Long tsLong = System.currentTimeMillis() / 1000;
+        String ts = tsLong.toString();
+
+        DocumentReference docRef = FirebaseFirestore.getInstance()
+                .collection(mContext.getString(R.string.collection_feed))
+                .document(mContext.getString(R.string.document_global))
+                .collection(mContext.getString(R.string.collection_posts))
+                .document(ts);
+
+
+        docRef.set(userFeed).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "Successfully added to Global feed list ");
+                } else {
+                    Log.w(TAG, "Error getting documents.", task.getException());
+                }
+            }
+        });
+
+        docRef = FirebaseFirestore.getInstance()
+                .collection(mContext.getString(R.string.collection_feed))
+                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                .collection(mContext.getString(R.string.collection_posts))
+                .document(ts);
+
+        docRef.set(userFeed).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    //  Toast.makeText(mContext, mContext.getString(R.string.feed_post_success), Toast.LENGTH_SHORT).show();
+
+                    Log.d(TAG, "Successfully added to User feed list ");
+                } else {
+                    Log.w(TAG, "Error getting documents.", task.getException());
+                }
+            }
+        });
+    }
+
+    private void accomplish_remove() {
+        DocumentReference accomplishRef = FirebaseFirestore.getInstance()
+                .collection(mContext.getString(R.string.collection_users))
+                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                .collection(mContext.getString(R.string.collection_accomplished_list))
+                .document(landmark.getId());
+
+        accomplishRef.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Toast toast = Toast.makeText(mContext, mContext.getString(R.string.accomplishlistremove), Toast.LENGTH_SHORT);
+                    toast.getView().setBackground(ContextCompat.getDrawable(LandmarkActivity.this, R.drawable.dialog_bg_toast_colored));
+                    TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                    toastmsg.setTextColor(Color.WHITE);
+                    toast.show();
+                }
+            }
+        });
     }
 
 }

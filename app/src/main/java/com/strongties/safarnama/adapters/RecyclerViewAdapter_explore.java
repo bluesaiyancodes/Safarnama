@@ -198,6 +198,14 @@ public class RecyclerViewAdapter_explore extends FirestoreRecyclerAdapter<Landma
                             }
                         });
 
+                        bucketRef = FirebaseFirestore.getInstance()
+                                .collection(mContext.getString(R.string.collection_users))
+                                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                                .collection(mContext.getString(R.string.collection_accomplished_list))
+                                .document(model.getId());
+
+                        bucketRef.delete();
+
                     }
 
                 });
@@ -230,7 +238,13 @@ public class RecyclerViewAdapter_explore extends FirestoreRecyclerAdapter<Landma
                             }
                         });
 
+                        bucketRef = FirebaseFirestore.getInstance()
+                                .collection(mContext.getString(R.string.collection_users))
+                                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                                .collection(mContext.getString(R.string.collection_bucket_list))
+                                .document(model.getId());
 
+                        bucketRef.delete();
 
 
                         UserFeed userFeed = new UserFeed();

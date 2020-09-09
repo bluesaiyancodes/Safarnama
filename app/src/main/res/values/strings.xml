@@ -9,7 +9,7 @@
     <string name="support_sub">Support Email from Safarnama - </string>
     <string name="support_title">Contacting Support</string>
 
-    <string name="contact_us">Contact Us</string>
+    <string name="contact_us">Review</string>
     <string name="mode_light">Light Mode</string>
     <string name="mode_dark">Dark Mode</string>
     <string name="contact_title">Contact Us - Submit through Email</string>
@@ -87,13 +87,17 @@
 
 
     <string name="wishlistadd">Added to Bucket List</string>
+    <string name="wishlistin">In Bucket List</string>
     <string name="wishlistreadd">Already in Bucket List</string>
     <string name="wishlistremove">Removed from Bucket List</string>
     <string name="wishlistreremove">Not in Bucket List</string>
+    <string name="wishlistremove_confirmation_msg">Are you sure you want to remove this place from your Bucket List?</string>
     <string name="accomplishlistadd">Added to Accomplished</string>
+    <string name="accomplishlistin">In Accomplished</string>
     <string name="accomplishlistreadd">Already in Accomplished</string>
     <string name="accomplishlistremove">Removed from Accomplished</string>
     <string name="accomplishlistreremove">Not in Accomplished</string>
+    <string name="accomplishlistremove_confirmation_msg">Are you sure you want to remove this place from your Accomplished List?</string>
 
     <string name="show_all">Showing all Places</string>
     <string name="show_all_void">There are no places</string>
@@ -180,7 +184,9 @@
     <string name="details">Details</string>
     <string name="download">Download</string>
     <string name="walkthrough">Walk Through</string>
-    <string name="search_place">Search Place</string>
+    <string name="search_place">Search a Place</string>
+    <string name="search_bucket">Search in Bucket List</string>
+    <string name="search_accomplish">Search in Accomplished List</string>
     <string name="place_not_found">Place Not Found !</string>
 
 
@@ -208,6 +214,14 @@
     <string name="normal">Terrain View</string>
     <string name="satellite">Satellite View</string>
     <string name="distancefromcurent">Distance From Current Location</string>
+    <string name="bucketlistcount">Bucket List Count</string>
+    <string name="accomplishlistcount">Accomplished Count</string>
+    <string name="label_set_dp">Set Display Picture</string>
+    <string name="label_take_camera_picture">Select Picture from Camera</string>
+    <string name="label_choose_from_gallery">Select Picture from Gallery</string>
+    <string name="dialog_permission_title">Grant Permissions</string>
+    <string name="dialog_permission_message">This app needs permission to use this feature. You can grant them in app settings.</string>
+    <string name="go_to_settings">GOTO SETTINGS</string>
 
 
 </resources>

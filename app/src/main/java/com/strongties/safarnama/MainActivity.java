@@ -1,6 +1,6 @@
 package com.strongties.safarnama;
 
-import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,15 +8,13 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,21 +26,20 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.amlcurran.showcaseview.ShowcaseView;
-import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.play.core.review.ReviewInfo;
+import com.google.android.play.core.review.ReviewManager;
+import com.google.android.play.core.review.ReviewManagerFactory;
 import com.google.firebase.auth.FirebaseAuth;
 import com.strongties.safarnama.adapters.RecyclerViewAdaptor_menu;
 import com.strongties.safarnama.background_tasks.AvatarBackgroundTask;
 import com.strongties.safarnama.background_tasks.OtherBackgroundTask;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -61,6 +58,10 @@ public class MainActivity extends AppCompatActivity {
     public static ArrayList<String> places_list;
     private ArrayList<String> mImageUrls = new ArrayList<>();
     public static ArrayList<String> places_id_list;
+    public static ArrayList<String> bucket_id_list;
+    public static ArrayList<String> bucket_list;
+    public static ArrayList<String> accomplished_id_list;
+    public static ArrayList<String> accomplished_list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +93,10 @@ public class MainActivity extends AppCompatActivity {
         RequestList = new ArrayList<>();
         places_list = new ArrayList<>();
         places_id_list = new ArrayList<>();
+        bucket_list = new ArrayList<>();
+        accomplished_list = new ArrayList<>();
+        bucket_id_list = new ArrayList<>();
+        accomplished_id_list = new ArrayList<>();
 
         //add places into places ArrayList
         OtherBackgroundTask otherBackgroundTask = new OtherBackgroundTask(context);
@@ -126,51 +131,7 @@ public class MainActivity extends AppCompatActivity {
         lps.setMargins(margin, margin, margin, margin+250);
 
 
-        //This creates the first showcase.
-        ShowcaseView showCase = new ShowcaseView.Builder(this)
-                .withMaterialShowcase()
-                .setTarget(new ViewTarget( findViewById(R.id.menu1_mixed)))
-                .setContentTitle("Mixed Map Filter")
-                .setContentText("Show all the markers from Bucket List, Acomplished Lists, and also many Known-Unknown places")
-                .setStyle(R.style.CustomShowcaseTheme)
-                .build();
-        showCase.setButtonText("next");
-        showCase.setButtonPosition(lps);
 
-
-        //When the button is clicked then the switch statement will check the counter and make the new showcase.
-        showCase.overrideButtonClick(new View.OnClickListener() {
-                                         int count1 = 0;
-
-                                         @Override
-                                         public void onClick(View v) {
-                                             count1++;
-                                             switch (count1) {
-                                                 default:
-                                                     showCase.hide();
-                                                     break;
-                                                 case 1:
-                                                     showCase.setTarget(new ViewTarget(findViewById(R.id.menu1_explore)));
-                                                     showCase.setContentTitle("Explore Map Filter");
-                                                     showCase.setContentText("This Filter shows new places that you have not visited before. The places that are not present in your Bucket List or Accomplished List.");
-                                                     showCase.setButtonText("next");
-                                                     break;
-                                                 case 2:
-                                                     showCase.setTarget(new ViewTarget(findViewById(R.id.menu1_wish)));
-                                                     showCase.setContentTitle("Bucket List Map Filter");
-                                                     showCase.setContentText("This filter shows all the places that you have in your bucket list.");
-                                                     showCase.setButtonText("next");
-                                                     break;
-                                                 case 3:
-                                                     showCase.setTarget(new ViewTarget(findViewById(R.id.menu1_accomplish)));
-                                                     showCase.setContentTitle("Accomplished List Map Filter");
-                                                     showCase.setContentText("This filter shows all the places that the user has already visited. These are the places that are present in the Accomplished List.");
-                                                     showCase.setButtonText("Close");
-                                                     break;
-
-                                             }
-                                         }
-        });
 
         SharedPreferences pref = getApplicationContext().getSharedPreferences("myPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
@@ -264,6 +225,7 @@ public class MainActivity extends AppCompatActivity {
                 overridePendingTransition(R.anim.enter_from_top, R.anim.exit_to_bottom);
                 return true;
             case R.id.contactus:
+                /*
                 Dialog myDialog = new Dialog(MainActivity.this);
                 myDialog.setContentView(R.layout.dialog_contact_us);
                 Objects.requireNonNull(myDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -295,6 +257,31 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
                 myDialog.show();
+                 */
+                ReviewManager manager = ReviewManagerFactory.create(context);
+                com.google.android.play.core.tasks.Task<ReviewInfo> request = manager.requestReviewFlow();
+                SharedPreferences prefs = getApplicationContext().getSharedPreferences("myPrefs", MODE_PRIVATE);
+                int count = prefs.getInt("reviewcount", 0);
+                request.addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        ReviewInfo reviewInfo = task.getResult();
+                        com.google.android.play.core.tasks.Task<Void> flow = manager.launchReviewFlow(MainActivity.this, reviewInfo);
+                        flow.addOnSuccessListener(task1 -> {
+                            //return
+
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putInt("reviewcount", count + 1);
+                            editor.apply();
+                            if (count > 0) {
+                                rateApp();
+                            }
+
+                        });
+                    } else {
+                        // There was some problem
+                    }
+                });
+
                 return super.onOptionsItemSelected(item);
             case R.id.logout:
                 googleSignInClient.signOut()
@@ -382,5 +369,28 @@ public class MainActivity extends AppCompatActivity {
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
 
+    }
+
+    public void rateApp() {
+        try {
+            Intent rateIntent = rateIntentForUrl("market://details");
+            startActivity(rateIntent);
+        } catch (ActivityNotFoundException e) {
+            Intent rateIntent = rateIntentForUrl("https://play.google.com/store/apps/details");
+            startActivity(rateIntent);
+        }
+    }
+
+    private Intent rateIntentForUrl(String url) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(String.format("%s?id=%s", url, getPackageName())));
+        int flags = Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_MULTIPLE_TASK;
+        if (Build.VERSION.SDK_INT >= 21) {
+            flags |= Intent.FLAG_ACTIVITY_NEW_DOCUMENT;
+        } else {
+            //noinspection deprecation
+            flags |= Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET;
+        }
+        intent.addFlags(flags);
+        return intent;
     }
 }

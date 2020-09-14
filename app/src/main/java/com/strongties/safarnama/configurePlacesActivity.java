@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +29,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class configurePlacesActivity extends AppCompatActivity {
 
@@ -61,14 +67,45 @@ public class configurePlacesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-         setContentView(R.layout.activity_configure_places_v2);
+        setContentView(R.layout.activity_configure_places_v2);
 
         mContext = getApplicationContext();
 
-
-
-
+        ImageView iv_dev = findViewById(R.id.config_v2_dev_img);
+        Button btn_crash = findViewById(R.id.config_v2_crash);
         Button btn_upload = findViewById(R.id.config_v2_upload);
+
+        Button btn_update_version_btn = findViewById(R.id.config_v2_version_update_btn);
+        Button btn_update_version_submit = findViewById(R.id.config_v2_version_submit);
+        EditText et_version = findViewById(R.id.config_v2_version_ET);
+
+        AtomicReference<Boolean> iv_dev_clicked = new AtomicReference<>();
+        iv_dev_clicked.set(Boolean.FALSE);
+
+        iv_dev.setOnClickListener(view -> {
+            if (!iv_dev_clicked.get()) {
+                iv_dev_clicked.set(Boolean.TRUE);
+
+                btn_crash.setVisibility(View.VISIBLE);
+                btn_upload.setVisibility(View.VISIBLE);
+                btn_update_version_btn.setVisibility(View.VISIBLE);
+            } else {
+                iv_dev_clicked.set(Boolean.FALSE);
+
+                btn_crash.setVisibility(View.GONE);
+                btn_upload.setVisibility(View.GONE);
+                btn_update_version_btn.setVisibility(View.GONE);
+            }
+        });
+
+
+        btn_crash.setText("Crash!");
+        btn_crash.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                throw new RuntimeException("Test Crash"); // Force a crash
+            }
+        });
+
 
         btn_upload.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,7 +180,7 @@ public class configurePlacesActivity extends AppCompatActivity {
                         docRef = FirebaseFirestore.getInstance()
                                 .collection(getString(R.string.collection_landmarks))
                                 .document(landmark.getState())
-                                .collection(landmark.getCity())
+                                .collection(landmark.getDistrict())
                                 .document(landmark.getId());
 
                         docRef.set(landmark).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -160,7 +197,7 @@ public class configurePlacesActivity extends AppCompatActivity {
 
                         LandmarkMeta landmarkMeta = new LandmarkMeta();
                         landmarkMeta.setId(landmark.getId());
-                        landmarkMeta.setCity(landmark.getCity());
+                        landmarkMeta.setdistrict(landmark.getDistrict());
                         landmarkMeta.setState(landmark.getState());
                         landmarkMeta.setGeoPoint(landmark.getGeo_point());
                         landmarkMeta.setLandmark(landmark);
@@ -195,6 +232,59 @@ public class configurePlacesActivity extends AppCompatActivity {
                 toast.show();
 
             }
+        });
+
+
+        AtomicReference<Boolean> btn_update_clicked = new AtomicReference<>();
+        btn_update_clicked.set(Boolean.FALSE);
+
+        btn_update_version_btn.setOnClickListener(view -> {
+
+            if (!btn_update_clicked.get()) {
+                btn_update_clicked.set(Boolean.TRUE);
+
+                btn_update_version_submit.setVisibility(View.VISIBLE);
+
+                DocumentReference documentReference = FirebaseFirestore.getInstance()
+                        .collection("Version")
+                        .document("version-id");
+
+                documentReference.get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        et_version.setHint(Objects.requireNonNull(Objects.requireNonNull(task.getResult()).get("id")).toString());
+                    }
+                });
+
+                et_version.setVisibility(View.VISIBLE);
+
+
+                btn_update_version_submit.setOnClickListener(view1 -> {
+                    DocumentReference docRef = FirebaseFirestore.getInstance()
+                            .collection("Version")
+                            .document("version-id");
+
+                    Map<String, Object> version_map = new HashMap<>();
+                    version_map.put("id", Integer.parseInt(et_version.getText().toString()));
+
+                    docRef.set(version_map).addOnSuccessListener(aVoid -> {
+                        Toast toast = Toast.makeText(mContext, "Updated!", Toast.LENGTH_SHORT);
+                        toast.getView().setBackground(ContextCompat.getDrawable(this, R.drawable.dialog_bg_toast_colored));
+                        TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                        toastmsg.setTextColor(Color.WHITE);
+                        toast.show();
+
+                        et_version.setVisibility(View.GONE);
+                        btn_update_version_submit.setVisibility(View.GONE);
+                    });
+                });
+            } else {
+                btn_update_clicked.set(Boolean.FALSE);
+
+                btn_update_version_submit.setVisibility(View.GONE);
+                et_version.setVisibility(View.GONE);
+            }
+
+
         });
 
 

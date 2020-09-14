@@ -2,28 +2,33 @@ package com.strongties.safarnama.user_classes;
 
 import com.google.firebase.firestore.ServerTimestamp;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Date;
 
 public class UserFeed {
     private String user_id;
     private String datacontent;
+    private String type;
+    private Boolean imgIncluded;
+    private String imgUrl;
+    private Boolean landmarkIncluded;
+    private String landmarkId;
     private @ServerTimestamp
     Date timestamp;
 
-    public UserFeed(String user_id, String datacontent, Date timestamp) {
+    public UserFeed(String user_id, String datacontent, Date timestamp, String type, Boolean imgIncluded, String imgUrl, Boolean landmarkIncluded, String landmarkId) {
         this.user_id = user_id;
         this.datacontent = datacontent;
         this.timestamp = timestamp;
+        this.type = type;
+        this.imgIncluded = imgIncluded;
+        this.imgUrl = imgUrl;
+        this.landmarkIncluded = landmarkIncluded;
+        this.landmarkId = landmarkId;
     }
 
     public UserFeed() {
 
     }
-
-
-    // Getters and Setters
 
 
     public String getDatacontent() {
@@ -50,16 +55,59 @@ public class UserFeed {
         this.timestamp = timestamp;
     }
 
-    @NotNull
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Boolean getLandmarkIncluded() {
+        return landmarkIncluded;
+    }
+
+    public void setLandmarkIncluded(Boolean landmarkIncluded) {
+        this.landmarkIncluded = landmarkIncluded;
+    }
+
+    public String getLandmarkId() {
+        return landmarkId;
+    }
+
+    public void setLandmarkId(String landmarkId) {
+        this.landmarkId = landmarkId;
+    }
+
+    public Boolean getImgIncluded() {
+        return imgIncluded;
+    }
+
+    public void setImgIncluded(Boolean imgIncluded) {
+        this.imgIncluded = imgIncluded;
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
+
     @Override
     public String toString() {
-        return "UserLocation{" +
-                "user_id=" + user_id +
-                ", dataContent=" + datacontent +
+        return "UserFeed{" +
+                "user_id='" + user_id + '\'' +
+                ", datacontent='" + datacontent + '\'' +
+                ", type='" + type + '\'' +
+                ", imgIncluded=" + imgIncluded +
+                ", imgUrl='" + imgUrl + '\'' +
+                ", landmarkIncluded=" + landmarkIncluded +
+                ", landmarkId='" + landmarkId + '\'' +
                 ", timestamp=" + timestamp +
                 '}';
     }
-
 
 
 }

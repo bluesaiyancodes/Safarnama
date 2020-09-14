@@ -3,7 +3,10 @@
     <string name="menu_1">Wander</string>
     <string name="menu_2">Nearby</string>
     <string name="menu_3">Travel Buddies</string>
-    <string name="menu_4">Journeys</string>
+    <string name="menu_4">Feed</string>
+    <string name="menu_5">Journey</string>
+    <string name="menu_6">Delicacies</string>
+    <string name="menu_7">Profile</string>
 
     <string name="support_email">strongtieschannel@gmail.com</string>
     <string name="support_sub">Support Email from Safarnama - </string>
@@ -222,6 +225,19 @@
     <string name="dialog_permission_title">Grant Permissions</string>
     <string name="dialog_permission_message">This app needs permission to use this feature. You can grant them in app settings.</string>
     <string name="go_to_settings">GOTO SETTINGS</string>
+    <string name="collection_stats">Stats</string>
+    <string name="collection_lists">Lists</string>
+    <string name="document_accomplished">Accomplished</string>
+    <string name="document_bucketlist">Bucket List</string>
+    <string name="collection_version">Version</string>
+    <string name="document_version_id">version-id</string>
+    <string name="outdated_version">Outdated Version</string>
+    <string name="outdated_version_message">Download the latest version from Playstore or Request the Developers for updated version.</string>
+    <string name="playstore">PlayStore</string>
+    <string name="dev_support">Dev Support</string>
+    <string name="select_image">Attach Image</string>
+    <string name="uploading">Uploading</string>
+    <string name="upload_post">Please wait while your Post is being Synced.</string>
 
 
 </resources>

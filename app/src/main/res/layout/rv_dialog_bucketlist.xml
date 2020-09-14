@@ -93,23 +93,23 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:weightSum="1">
-            <Button
+            <ImageButton
                 android:id="@+id/dialog_bucketlist_removewishlist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/dialog_bg"
                 android:layout_marginTop="20dp"
                 android:layout_weight="0.5"
-                android:drawableTop="@drawable/bucketlistremove"/>
+                android:src="@drawable/bucketlistremove" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/dialog_bucketlist_addtocompletelist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/dialog_bg"
                 android:layout_marginTop="20dp"
                 android:layout_weight="0.5"
-                android:drawableTop="@drawable/accomplished_add"/>
+                android:src="@drawable/accomplished_add" />
 
         </LinearLayout>
 

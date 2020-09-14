@@ -21,7 +21,9 @@ import java.util.List;
 
 public class IntroViewPagerAdapter extends PagerAdapter {
 
-    Context mContext ;
+
+    // Initialize
+    Context mContext;
     List<ScreenItem> mListScreen;
 
     public IntroViewPagerAdapter(Context mContext, List<ScreenItem> mListScreen) {
@@ -37,10 +39,12 @@ public class IntroViewPagerAdapter extends PagerAdapter {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View layoutScreen = inflater.inflate(R.layout.layout_screen, null);
 
+        //Declaration
         ImageView imgSlide = layoutScreen.findViewById(R.id.intro_img);
         TextView title = layoutScreen.findViewById(R.id.intro_title);
         TextView description = layoutScreen.findViewById(R.id.intro_description);
 
+        // Set Titles, Images and Descriptions for the walkthrough Activity Adapter
         if (position == 0) {
             title.setText(mListScreen.get(position).getTitle());
             description.setText(mListScreen.get(position).getDescription());

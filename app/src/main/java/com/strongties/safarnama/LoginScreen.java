@@ -28,7 +28,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -189,6 +188,8 @@ public class LoginScreen extends AppCompatActivity {
             user_.setPhoto(photo);
             user_.setUser_id(uid);
             user_.setAvatar(getString(R.string.avatar_0));
+            user_.setDateofjoin(null);
+            user_.setLastlogin(null);
 
             DocumentReference newUserRef = db
                     .collection(getString(R.string.collection_users))
@@ -199,6 +200,18 @@ public class LoginScreen extends AppCompatActivity {
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     if (documentSnapshot.exists()) {
                         //do nothing
+                        User user1 = documentSnapshot.toObject(User.class);
+                        assert user1 != null;
+                        user1.setLastlogin(null);
+                        DocumentReference docRef = db
+                                .collection(getString(R.string.collection_users))
+                                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
+                        docRef.set(user1).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                // do nothing
+                            }
+                        });
                     } else {
                         newUserRef.set(user_);
                     }
@@ -213,21 +226,11 @@ public class LoginScreen extends AppCompatActivity {
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if(task.isSuccessful()){
                         Log.d(TAG, "onComplete: successfully set the user client.");
-                        User user = task.getResult().toObject(User.class);
+                        User user = Objects.requireNonNull(task.getResult()).toObject(User.class);
                         ((UserClient)(getApplicationContext())).setUser(user);
                     }
                 }
             });
-
-            //to be reused
-
-            CollectionReference usercollectionRef = db.collection(getString(R.string.collection_relations))
-                    .document(user.getUid())
-                    .collection(getString(R.string.collection_friendlist));
-
-            usercollectionRef = db.collection(getString(R.string.collection_relations))
-                    .document(user.getUid())
-                    .collection(getString(R.string.collection_requestlist));
 
 
             //to load image into an image view

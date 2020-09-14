@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -29,17 +30,23 @@ import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.strongties.safarnama.LandmarkActivity;
 import com.strongties.safarnama.R;
 import com.strongties.safarnama.user_classes.LandmarkList;
 import com.strongties.safarnama.user_classes.LandmarkMeta;
+import com.strongties.safarnama.user_classes.LandmarkStat;
 import com.strongties.safarnama.user_classes.UserFeed;
 
 import java.util.Objects;
+
+import static com.strongties.safarnama.MainActivity.accomplished_id_list;
+import static com.strongties.safarnama.MainActivity.bucket_id_list;
 
 public class RecyclerViewAdapter_explore extends FirestoreRecyclerAdapter<LandmarkMeta, RecyclerViewAdapter_explore.MyViewHolder> {
 
@@ -74,7 +81,7 @@ public class RecyclerViewAdapter_explore extends FirestoreRecyclerAdapter<Landma
         Log.d(TAG, "PlaceName ->" + model.getLandmark().getCity());
 
         holder.tv_placename.setText(model.getLandmark().getName());
-        holder.tv_location.setText(model.getCity());
+        holder.tv_location.setText(model.getLandmark().getDistrict());
         holder.tv_district.setText(model.getState());
         // holder.img.setImageResource(mData.get(position).getPhoto());
 
@@ -84,20 +91,7 @@ public class RecyclerViewAdapter_explore extends FirestoreRecyclerAdapter<Landma
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(holder.img);
 
-        /*
-        *
-        * Todo -> Change the list type dynamically
-        *
 
-        if (mData.get(position).getVisit().equals("tovisit")){
-            holder.img_heart.setImageResource(R.drawable.bucketlist);
-        }else if(mData.get(position).getVisit().equals("visited")){
-            holder.img_heart.setImageResource(R.drawable.accomplished);
-        }else{
-            holder.img_heart.setImageResource(R.drawable.add_icon);
-        }
-
-         */
 
         switch (model.getLandmark().getCategory()) {
             case "Dams & Water Reservoirs":
@@ -148,13 +142,15 @@ public class RecyclerViewAdapter_explore extends FirestoreRecyclerAdapter<Landma
             @Override
             public void onClick(View v1) {
                 v1.startAnimation(new AlphaAnimation(1F, 0.7F));
+
+
                 TextView dialog_placename_tv = myDialog.findViewById(R.id.dialog_explore_place_name);
                 TextView dialog_description_tv = myDialog.findViewById(R.id.dialog_explore_description);
                 TextView dialog_type_tv = myDialog.findViewById(R.id.dialog_explore_type);
                 ImageView dialog_img = myDialog.findViewById(R.id.dialog_explore_img);
 
-                Button btn_wish = myDialog.findViewById(R.id.dialog_explore_addtowishlist);
-                Button btn_cmpl = myDialog.findViewById(R.id.dialog_explore_addtocompletelist);
+                ImageButton btn_wish = myDialog.findViewById(R.id.dialog_explore_addtowishlist);
+                ImageButton btn_cmpl = myDialog.findViewById(R.id.dialog_explore_addtocompletelist);
                 Button btn_details = myDialog.findViewById(R.id.dialog_explore_btn_details);
 
                 dialog_placename_tv.setText(model.getLandmark().getName());
@@ -168,133 +164,299 @@ public class RecyclerViewAdapter_explore extends FirestoreRecyclerAdapter<Landma
                         .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
                         .into(dialog_img);
 
-                //dialog_img.setImageResource(mData.get(vHolder.getAdapterPosition()).getPhoto());
 
-
-                btn_wish.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        v.startAnimation(new AlphaAnimation(1F, 0.7F));
-                        DocumentReference bucketRef = FirebaseFirestore.getInstance()
+                if (bucket_id_list.contains(model.getId())) {
+                    btn_wish.setImageResource(R.drawable.bucketlist);
+                } else {
+                    btn_wish.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            v.startAnimation(new AlphaAnimation(1F, 0.7F));
+                            DocumentReference bucketRef = FirebaseFirestore.getInstance()
                                     .collection(mContext.getString(R.string.collection_users))
-                                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
-                                .collection(mContext.getString(R.string.collection_bucket_list))
-                                .document(model.getId());
+                                    .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                                    .collection(mContext.getString(R.string.collection_bucket_list))
+                                    .document(model.getId());
 
-                        LandmarkList landmarkList = new LandmarkList();
-                        landmarkList.setLandmarkMeta(model);
+                            LandmarkList landmarkList = new LandmarkList();
+                            landmarkList.setLandmarkMeta(model);
 
-                        bucketRef.set(landmarkList).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()) {
-                                    Toast toast = Toast.makeText(mContext, mContext.getString(R.string.wishlistadd), Toast.LENGTH_SHORT);
-                                    toast.getView().setBackground(ContextCompat.getDrawable(mContext, R.drawable.dialog_bg_toast_colored));
-                                    TextView toastmsg = toast.getView().findViewById(android.R.id.message);
-                                    toastmsg.setTextColor(Color.WHITE);
-                                    toast.show();
-                                    myDialog.cancel();
+                            bucketRef.set(landmarkList).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast toast = Toast.makeText(mContext, mContext.getString(R.string.wishlistadd), Toast.LENGTH_SHORT);
+                                        toast.getView().setBackground(ContextCompat.getDrawable(mContext, R.drawable.dialog_bg_toast_colored));
+                                        TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                                        toastmsg.setTextColor(Color.WHITE);
+                                        toast.show();
+                                        myDialog.cancel();
+                                    }
                                 }
-                            }
-                        });
+                            });
 
-                        bucketRef = FirebaseFirestore.getInstance()
-                                .collection(mContext.getString(R.string.collection_users))
-                                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
-                                .collection(mContext.getString(R.string.collection_accomplished_list))
-                                .document(model.getId());
+                            bucketRef = FirebaseFirestore.getInstance()
+                                    .collection(mContext.getString(R.string.collection_users))
+                                    .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                                    .collection(mContext.getString(R.string.collection_accomplished_list))
+                                    .document(model.getId());
 
-                        bucketRef.delete();
+                            bucketRef.delete();
 
-                    }
 
-                });
+                            DocumentReference docRef = FirebaseFirestore.getInstance()
+                                    .collection(mContext.getString(R.string.collection_stats))
+                                    .document(mContext.getString(R.string.collection_landmarks))
+                                    .collection(mContext.getString(R.string.collection_lists))
+                                    .document(mContext.getString(R.string.document_bucketlist))
+                                    .collection(mContext.getString(R.string.document_meta))
+                                    .document(model.getId());
 
-                btn_cmpl.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        v.startAnimation(new AlphaAnimation(1F, 0.7F));
+                            DocumentReference docRef1 = FirebaseFirestore.getInstance()
+                                    .collection(mContext.getString(R.string.collection_stats))
+                                    .document(mContext.getString(R.string.collection_landmarks))
+                                    .collection(mContext.getString(R.string.collection_lists))
+                                    .document(mContext.getString(R.string.document_bucketlist))
+                                    .collection(model.getState())
+                                    .document(model.getId());
 
-                        DocumentReference bucketRef = FirebaseFirestore.getInstance()
-                                .collection(mContext.getString(R.string.collection_users))
-                                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
-                                .collection(mContext.getString(R.string.collection_accomplished_list))
-                                .document(model.getId());
 
-                        LandmarkList landmarkList = new LandmarkList();
-                        landmarkList.setLandmarkMeta(model);
+                            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    if (documentSnapshot.exists()) {
+                                        LandmarkStat landmarkStat = documentSnapshot.toObject(LandmarkStat.class);
+                                        assert landmarkStat != null;
+                                        landmarkStat.setLandmarkCounter(landmarkStat.getLandmarkCounter() + 1);
 
-                        bucketRef.set(landmarkList).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()) {
-                                    Toast toast = Toast.makeText(mContext, mContext.getString(R.string.accomplishlistadd), Toast.LENGTH_SHORT);
-                                    toast.getView().setBackground(ContextCompat.getDrawable(mContext, R.drawable.dialog_bg_toast_colored));
-                                    TextView toastmsg = toast.getView().findViewById(android.R.id.message);
-                                    toastmsg.setTextColor(Color.WHITE);
-                                    toast.show();
-                                    myDialog.cancel();
+                                        DocumentReference documentReference = FirebaseFirestore.getInstance()
+                                                .collection(mContext.getString(R.string.collection_stats))
+                                                .document(mContext.getString(R.string.collection_landmarks))
+                                                .collection(mContext.getString(R.string.collection_lists))
+                                                .document(mContext.getString(R.string.document_bucketlist))
+                                                .collection(mContext.getString(R.string.document_meta))
+                                                .document(model.getId());
+
+                                        documentReference.set(landmarkStat).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                //do nothing
+                                            }
+                                        });
+
+                                        docRef1.set(landmarkStat).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                //do nothing
+                                            }
+                                        });
+
+                                    } else {
+                                        LandmarkStat landmarkStat = new LandmarkStat();
+                                        landmarkStat.setLandmark(model.getLandmark());
+                                        landmarkStat.setLandmarkCounter(1);
+                                        DocumentReference documentReference = FirebaseFirestore.getInstance()
+                                                .collection(mContext.getString(R.string.collection_stats))
+                                                .document(mContext.getString(R.string.collection_landmarks))
+                                                .collection(mContext.getString(R.string.collection_lists))
+                                                .document(mContext.getString(R.string.document_bucketlist))
+                                                .collection(mContext.getString(R.string.document_meta))
+                                                .document(model.getId());
+
+                                        documentReference.set(landmarkStat).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                //do nothing
+                                            }
+                                        });
+                                        docRef1.set(landmarkStat).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                //do nothing
+                                            }
+                                        });
+                                    }
                                 }
-                            }
-                        });
-
-                        bucketRef = FirebaseFirestore.getInstance()
-                                .collection(mContext.getString(R.string.collection_users))
-                                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
-                                .collection(mContext.getString(R.string.collection_bucket_list))
-                                .document(model.getId());
-
-                        bucketRef.delete();
+                            });
 
 
-                        UserFeed userFeed = new UserFeed();
-                        userFeed.setUser_id(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
-                        String msgBuilder = mContext.getString(R.string.feed_msg_accomplished) + model.getLandmark().getName();
-                        msgBuilder += "\n \n" + model.getLandmark().getLong_desc();
+                        }
 
-                        userFeed.setDatacontent(msgBuilder);
-
-                        Long tsLong = System.currentTimeMillis()/1000;
-                        String ts = tsLong.toString();
-
-                        DocumentReference docRef = FirebaseFirestore.getInstance()
-                                .collection(mContext.getString(R.string.collection_feed))
-                                .document(mContext.getString(R.string.document_global))
-                                .collection(mContext.getString(R.string.collection_posts))
-                                .document(ts);
+                    });
+                }
 
 
-                        docRef.set(userFeed).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    Log.d(TAG, "Successfully added to Global feed list ");
-                                }else{
-                                    Log.w(TAG, "Error getting documents.", task.getException());
+                if (accomplished_id_list.contains(model.getId())) {
+                    btn_cmpl.setImageResource(R.drawable.accomplished);
+                } else {
+                    btn_cmpl.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            v.startAnimation(new AlphaAnimation(1F, 0.7F));
+
+                            DocumentReference bucketRef = FirebaseFirestore.getInstance()
+                                    .collection(mContext.getString(R.string.collection_users))
+                                    .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                                    .collection(mContext.getString(R.string.collection_accomplished_list))
+                                    .document(model.getId());
+
+                            LandmarkList landmarkList = new LandmarkList();
+                            landmarkList.setLandmarkMeta(model);
+
+                            bucketRef.set(landmarkList).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast toast = Toast.makeText(mContext, mContext.getString(R.string.accomplishlistadd), Toast.LENGTH_SHORT);
+                                        toast.getView().setBackground(ContextCompat.getDrawable(mContext, R.drawable.dialog_bg_toast_colored));
+                                        TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                                        toastmsg.setTextColor(Color.WHITE);
+                                        toast.show();
+                                        myDialog.cancel();
+                                    }
                                 }
-                            }
-                        });
+                            });
 
-                        docRef = FirebaseFirestore.getInstance()
-                                .collection(mContext.getString(R.string.collection_feed))
-                                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
-                                .collection(mContext.getString(R.string.collection_posts))
-                                .document(ts);
+                            bucketRef = FirebaseFirestore.getInstance()
+                                    .collection(mContext.getString(R.string.collection_users))
+                                    .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                                    .collection(mContext.getString(R.string.collection_bucket_list))
+                                    .document(model.getId());
 
-                        docRef.set(userFeed).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    //  Toast.makeText(mContext, mContext.getString(R.string.feed_post_success), Toast.LENGTH_SHORT).show();
+                            bucketRef.delete();
 
-                                    Log.d(TAG, "Successfully added to User feed list ");
-                                }else{
-                                    Log.w(TAG, "Error getting documents.", task.getException());
+
+                            UserFeed userFeed = new UserFeed();
+                            userFeed.setUser_id(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
+                            String msgBuilder = mContext.getString(R.string.feed_msg_accomplished) + model.getLandmark().getName();
+                            msgBuilder += "\n \n" + model.getLandmark().getShort_desc();
+
+                            userFeed.setDatacontent(msgBuilder);
+
+                            userFeed.setType(mContext.getString(R.string.public_feed));
+                            userFeed.setImgIncluded(Boolean.TRUE);
+                            userFeed.setImgUrl(model.getLandmark().getImg_url());
+                            userFeed.setLandmarkIncluded(Boolean.TRUE);
+                            userFeed.setLandmarkId(model.getId());
+
+                            Long tsLong = System.currentTimeMillis() / 1000;
+                            String ts = tsLong.toString();
+
+                            DocumentReference docRef = FirebaseFirestore.getInstance()
+                                    .collection(mContext.getString(R.string.collection_feed))
+                                    .document(mContext.getString(R.string.document_global))
+                                    .collection(mContext.getString(R.string.collection_posts))
+                                    .document(ts);
+
+
+                            docRef.set(userFeed).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Log.d(TAG, "Successfully added to Global feed list ");
+                                    } else {
+                                        Log.w(TAG, "Error getting documents.", task.getException());
+                                    }
                                 }
-                            }
-                        });
+                            });
 
-                        /*
+                            docRef = FirebaseFirestore.getInstance()
+                                    .collection(mContext.getString(R.string.collection_feed))
+                                    .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                                    .collection(mContext.getString(R.string.collection_posts))
+                                    .document(ts);
+
+                            docRef.set(userFeed).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        //  Toast.makeText(mContext, mContext.getString(R.string.feed_post_success), Toast.LENGTH_SHORT).show();
+
+                                        Log.d(TAG, "Successfully added to User feed list ");
+                                    } else {
+                                        Log.w(TAG, "Error getting documents.", task.getException());
+                                    }
+                                }
+                            });
+
+
+                            docRef = FirebaseFirestore.getInstance()
+                                    .collection(mContext.getString(R.string.collection_stats))
+                                    .document(mContext.getString(R.string.collection_landmarks))
+                                    .collection(mContext.getString(R.string.collection_lists))
+                                    .document(mContext.getString(R.string.document_accomplished))
+                                    .collection(mContext.getString(R.string.document_meta))
+                                    .document(model.getId());
+
+                            DocumentReference docRef1 = FirebaseFirestore.getInstance()
+                                    .collection(mContext.getString(R.string.collection_stats))
+                                    .document(mContext.getString(R.string.collection_landmarks))
+                                    .collection(mContext.getString(R.string.collection_lists))
+                                    .document(mContext.getString(R.string.document_accomplished))
+                                    .collection(model.getState())
+                                    .document(model.getId());
+
+
+                            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    if (documentSnapshot.exists()) {
+                                        LandmarkStat landmarkStat = documentSnapshot.toObject(LandmarkStat.class);
+                                        assert landmarkStat != null;
+                                        landmarkStat.setLandmarkCounter(landmarkStat.getLandmarkCounter() + 1);
+
+                                        DocumentReference documentReference = FirebaseFirestore.getInstance()
+                                                .collection(mContext.getString(R.string.collection_stats))
+                                                .document(mContext.getString(R.string.collection_landmarks))
+                                                .collection(mContext.getString(R.string.collection_lists))
+                                                .document(mContext.getString(R.string.document_accomplished))
+                                                .collection(mContext.getString(R.string.document_meta))
+                                                .document(model.getId());
+
+                                        documentReference.set(landmarkStat).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                //do nothing
+                                            }
+                                        });
+
+                                        docRef1.set(landmarkStat).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                //do nothing
+                                            }
+                                        });
+
+                                    } else {
+                                        LandmarkStat landmarkStat = new LandmarkStat();
+                                        landmarkStat.setLandmark(model.getLandmark());
+                                        landmarkStat.setLandmarkCounter(1);
+                                        DocumentReference documentReference = FirebaseFirestore.getInstance()
+                                                .collection(mContext.getString(R.string.collection_stats))
+                                                .document(mContext.getString(R.string.collection_landmarks))
+                                                .collection(mContext.getString(R.string.collection_lists))
+                                                .document(mContext.getString(R.string.document_accomplished))
+                                                .collection(mContext.getString(R.string.document_meta))
+                                                .document(model.getId());
+
+                                        documentReference.set(landmarkStat).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                //do nothing
+                                            }
+                                        });
+                                        docRef1.set(landmarkStat).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                //do nothing
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+
+
+                        /*getCity
                         DatabaseHelper dbhelper = new DatabaseHelper(mContext);
                         SQLiteDatabase database = dbhelper.getWritableDatabase();
 
@@ -326,8 +488,10 @@ public class RecyclerViewAdapter_explore extends FirestoreRecyclerAdapter<Landma
 
                          */
 
-                    }
-                });
+                        }
+                    });
+                }
+
 
                 btn_details.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -336,7 +500,7 @@ public class RecyclerViewAdapter_explore extends FirestoreRecyclerAdapter<Landma
                         Intent intent = new Intent(mContext, LandmarkActivity.class);
                         Bundle args = new Bundle();
                         args.putString("state", model.getState());
-                        args.putString("city", model.getCity());
+                        args.putString("district", model.getdistrict());
                         args.putString("id", model.getId());
                         intent.putExtras(args);
                         mContext.startActivity(intent);

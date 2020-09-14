@@ -169,7 +169,7 @@ public class fragment_menu_buddies_profile extends Fragment {
         }
 
 
-        Intent intent = Objects.requireNonNull(getActivity()).getIntent();
+        Intent intent = requireActivity().getIntent();
         ImagePickerActivity.clearCache(mContext);
 
         iv_photo.setOnClickListener(new View.OnClickListener() {
@@ -247,13 +247,14 @@ public class fragment_menu_buddies_profile extends Fragment {
 
 
                 //Upload Image to Firebase Storage
-                ProgressDialog mProgressDialog = ProgressDialog.show(mContext, "Uploading", "Uploading Information to Server");
-                mProgressDialog.setCanceledOnTouchOutside(false);
+
 
                 if (imageChanged) {
+                    ProgressDialog mProgressDialog = ProgressDialog.show(mContext, "Uploading", "Uploading Information to Server");
+                    mProgressDialog.setCanceledOnTouchOutside(false);
                     storageRef = FirebaseStorage.getInstance()
                             .getReference()
-                            .child("images/" + FirebaseAuth.getInstance().getUid() + "/dp.jpg");
+                            .child("android/images/dp/" + FirebaseAuth.getInstance().getUid() + "/dp.jpg");
 
                     storageRef.putFile(imgurl).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -277,7 +278,7 @@ public class fragment_menu_buddies_profile extends Fragment {
                                                 dRef.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void aVoid) {
-                                                        Toast.makeText(mContext, "Image Uploaded", Toast.LENGTH_SHORT).show();
+                                                        // Toast.makeText(mContext, "Image Uploaded", Toast.LENGTH_SHORT).show();
                                                     }
                                                 });
                                             }
@@ -298,7 +299,7 @@ public class fragment_menu_buddies_profile extends Fragment {
 
                     DocumentReference docRef = FirebaseFirestore.getInstance()
                             .collection(getString(R.string.collection_users))
-                            .document(FirebaseAuth.getInstance().getUid());
+                            .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
 
                     User user = new User();
                     user.setUser_id(currentuser.getUser_id());
@@ -312,7 +313,7 @@ public class fragment_menu_buddies_profile extends Fragment {
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()) {
                                 Toast toast = Toast.makeText(mContext, getString(R.string.change_success), Toast.LENGTH_SHORT);
-                                toast.getView().setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getActivity()), R.drawable.dialog_bg_toast_colored));
+                                toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_toast_colored));
                                 TextView toastmsg = toast.getView().findViewById(android.R.id.message);
                                 toastmsg.setTextColor(Color.WHITE);
                                 toast.show();
@@ -386,7 +387,7 @@ public class fragment_menu_buddies_profile extends Fragment {
                 Uri uri = data.getParcelableExtra("path");
                 try {
                     // You can update this bitmap to your server
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(Objects.requireNonNull(getActivity()).getContentResolver(), uri);
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), uri);
 
                     // loading profile image from local cache
                     assert uri != null;
@@ -416,7 +417,7 @@ public class fragment_menu_buddies_profile extends Fragment {
     // navigating user to app settings
     private void openSettings() {
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        Uri uri = Uri.fromParts("package", Objects.requireNonNull(getActivity()).getPackageName(), null);
+        Uri uri = Uri.fromParts("package", requireActivity().getPackageName(), null);
         intent.setData(uri);
         startActivityForResult(intent, 101);
     }

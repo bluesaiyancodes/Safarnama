@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -15,6 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,9 +22,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -35,11 +34,15 @@ import com.google.android.play.core.review.ReviewInfo;
 import com.google.android.play.core.review.ReviewManager;
 import com.google.android.play.core.review.ReviewManagerFactory;
 import com.google.firebase.auth.FirebaseAuth;
-import com.strongties.safarnama.adapters.RecyclerViewAdaptor_menu;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.strongties.safarnama.background_tasks.AvatarBackgroundTask;
 import com.strongties.safarnama.background_tasks.OtherBackgroundTask;
+import com.strongties.safarnama.user_classes.RV_Distance;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -62,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
     public static ArrayList<String> bucket_list;
     public static ArrayList<String> accomplished_id_list;
     public static ArrayList<String> accomplished_list;
+    public static List<RV_Distance> list_hot;
+    public static String localState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,9 +90,6 @@ public class MainActivity extends AppCompatActivity {
 
         super.onStart();
 
-
-        getImages();
-
         FriendList = new ArrayList<>();
         RequestedList = new ArrayList<>();
         RequestList = new ArrayList<>();
@@ -97,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
         accomplished_list = new ArrayList<>();
         bucket_id_list = new ArrayList<>();
         accomplished_id_list = new ArrayList<>();
+        list_hot = new ArrayList<>();
 
         //add places into places ArrayList
         OtherBackgroundTask otherBackgroundTask = new OtherBackgroundTask(context);
@@ -115,6 +118,36 @@ public class MainActivity extends AppCompatActivity {
             //  showcaseViewer();
         }
 
+
+        CardView menu1 = findViewById(R.id.menu1);
+        CardView menu2 = findViewById(R.id.menu2);
+        CardView menu3 = findViewById(R.id.menu3);
+        CardView menu4 = findViewById(R.id.menu4);
+
+
+        menu1.setOnClickListener(view -> {
+            view.startAnimation(new AlphaAnimation(1F, 0.7F));
+            getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right)
+                    .replace(R.id.fragment_container, new fragment_menu_googleMap(), "Menu Google map").commit();
+        });
+
+        menu2.setOnClickListener(view -> {
+            view.startAnimation(new AlphaAnimation(1F, 0.7F));
+            getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
+                    .replace(R.id.fragment_container, new fragment_menu_distance(), "Menu Distance").commit();
+        });
+
+        menu3.setOnClickListener(view -> {
+            view.startAnimation(new AlphaAnimation(1F, 0.7F));
+            getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
+                    .replace(R.id.fragment_container, new fragment_menu_buddies(), "Menu Buddies").commit();
+        });
+
+        menu4.setOnClickListener(view -> {
+            view.startAnimation(new AlphaAnimation(1F, 0.7F));
+            getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
+                    .replace(R.id.fragment_container, new fragment_menu_feed(), "Menu Feed").commit();
+        });
 
     }
 
@@ -176,6 +209,28 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
 
+        CollectionReference colRef = FirebaseFirestore.getInstance()
+                .collection("Dev")
+                .document("developers")
+                .collection("admin");
+
+        colRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                ArrayList<String> dev_emails = new ArrayList<>();
+                for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                    Log.d(TAG, "devs - > " + document.get("email"));
+                    dev_emails.add(Objects.requireNonNull(document.get("email")).toString());
+                }
+                if (dev_emails.contains(email)) {
+                    insert_FBFS.setEnabled(true);
+                    insert_FBFS.getIcon().setAlpha(255);
+                } else {
+                    insert_FBFS.setEnabled(false);
+                    insert_FBFS.getIcon().setAlpha(0);
+                }
+            }
+        });
+/*
         if (!(email.equals("bluebishal@gmail.com") || email.equals("jeevanjyotisahoo1@gmail.com"))) {
             insert_FBFS.setEnabled(false);
             insert_FBFS.getIcon().setAlpha(0);
@@ -183,6 +238,8 @@ public class MainActivity extends AppCompatActivity {
             insert_FBFS.setEnabled(true);
             insert_FBFS.getIcon().setAlpha(255);
         }
+
+ */
         return true;
     }
 
@@ -299,55 +356,6 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
-
-    private void getImages() {
-        Log.d(TAG, "initImageBitmaps: preparing bitmaps.");
-
-
-        mImageUrls.add("https://i.redd.it/tpsnoz5bzo501.jpg");
-        mNames.add(getString(R.string.menu_1));
-
-        mImageUrls.add("https://i.redd.it/qn7f9oqu7o501.jpg");
-        mNames.add(getString(R.string.menu_2));
-
-        mImageUrls.add("https://i.redd.it/j6myfqglup501.jpg");
-        mNames.add(getString(R.string.menu_3));
-
-        mImageUrls.add("https://i.redd.it/k98uzl68eh501.jpg");
-        mNames.add("Feed");
-
-        mImageUrls.add("https://i.redd.it/0h2gm1ix6p501.jpg");
-        mNames.add(getString(R.string.menu_4));
-
-
-        initRecyclerView();
-
-    }
-
-    private void initRecyclerView() {
-        Log.d(TAG, "initRecyclerView: init recyclerview");
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(layoutManager);
-        RecyclerViewAdaptor_menu adapter = new RecyclerViewAdaptor_menu(this, mNames, mImageUrls);
-        recyclerView.setAdapter(adapter);
-
-        Log.d(TAG, "Screen Height: " + getScreenWidth());
-
-
-    }
-
-
-    public static float getScreenWidth() {
-        return Resources.getSystem().getDisplayMetrics().widthPixels / Resources.getSystem().getDisplayMetrics().density;
-    }
-
-    public static float getScreenHeight() {
-        return Resources.getSystem().getDisplayMetrics().heightPixels / Resources.getSystem().getDisplayMetrics().density;
-    }
-
 
     @Override
     public void onBackPressed() {

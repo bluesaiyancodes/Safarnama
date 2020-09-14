@@ -4,19 +4,19 @@ import com.google.firebase.firestore.GeoPoint;
 
 public class LandmarkMeta {
 
-private String id;
-private String state;
-private String city;
-private GeoPoint geoPoint;
-private Landmark landmark;
+    private String id;
+    private String state;
+    private String district;
+    private GeoPoint geoPoint;
+    private Landmark landmark;
 
     public LandmarkMeta() {
     }
 
-    public LandmarkMeta(String id, String state, String city, GeoPoint geoPoint, Landmark landmark) {
+    public LandmarkMeta(String id, String state, String district, GeoPoint geoPoint, Landmark landmark) {
         this.id = id;
         this.state = state;
-        this.city = city;
+        this.district = district;
         this.geoPoint = geoPoint;
         this.landmark = landmark;
     }
@@ -37,12 +37,12 @@ private Landmark landmark;
         this.state = state;
     }
 
-    public String getCity() {
-        return city;
+    public String getdistrict() {
+        return district;
     }
 
-    public void setCity(String city) {
-        this.city = city;
+    public void setdistrict(String district) {
+        this.district = district;
     }
 
     public GeoPoint getGeoPoint() {
@@ -66,7 +66,7 @@ private Landmark landmark;
         return "LandmarkMeta{" +
                 "id='" + id + '\'' +
                 ", state='" + state + '\'' +
-                ", city='" + city + '\'' +
+                ", district='" + district + '\'' +
                 ", geoPoint=" + geoPoint + '\'' +
                 ", landmark=" + landmark +
                 '}';

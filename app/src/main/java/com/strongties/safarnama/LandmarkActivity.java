@@ -52,6 +52,7 @@ import com.google.firebase.firestore.GeoPoint;
 import com.strongties.safarnama.user_classes.Landmark;
 import com.strongties.safarnama.user_classes.LandmarkList;
 import com.strongties.safarnama.user_classes.LandmarkMeta;
+import com.strongties.safarnama.user_classes.LandmarkStat;
 import com.strongties.safarnama.user_classes.UserFeed;
 
 import java.text.DecimalFormat;
@@ -152,7 +153,7 @@ public class LandmarkActivity extends AppCompatActivity {
         DocumentReference documentReference = FirebaseFirestore.getInstance()
                 .collection(getString(R.string.collection_landmarks))
                 .document(Objects.requireNonNull(getIntent().getExtras().getString("state")))
-                .collection(Objects.requireNonNull(getIntent().getExtras().getString("city")))
+                .collection(Objects.requireNonNull(getIntent().getExtras().getString("district")))
                 .document(Objects.requireNonNull(getIntent().getExtras().getString("id")));
 
 
@@ -586,7 +587,7 @@ public class LandmarkActivity extends AppCompatActivity {
         landmarkMeta.setLandmark(landmark);
         landmarkMeta.setGeoPoint(landmark.getGeo_point());
         landmarkMeta.setState(landmark.getState());
-        landmarkMeta.setCity(landmark.getCity());
+        landmarkMeta.setdistrict(landmark.getDistrict());
         landmarkMeta.setId(landmark.getId());
 
         landmarkList.setLandmarkMeta(landmarkMeta);
@@ -619,6 +620,83 @@ public class LandmarkActivity extends AppCompatActivity {
                 }
             }
         });
+
+        DocumentReference docRef = FirebaseFirestore.getInstance()
+                .collection(mContext.getString(R.string.collection_stats))
+                .document(mContext.getString(R.string.collection_landmarks))
+                .collection(mContext.getString(R.string.collection_lists))
+                .document(mContext.getString(R.string.document_bucketlist))
+                .collection(mContext.getString(R.string.document_meta))
+                .document(landmarkMeta.getId());
+
+        DocumentReference docRef1 = FirebaseFirestore.getInstance()
+                .collection(mContext.getString(R.string.collection_stats))
+                .document(mContext.getString(R.string.collection_landmarks))
+                .collection(mContext.getString(R.string.collection_lists))
+                .document(mContext.getString(R.string.document_bucketlist))
+                .collection(landmarkMeta.getState())
+                .document(landmarkMeta.getId());
+
+
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    LandmarkStat landmarkStat = documentSnapshot.toObject(LandmarkStat.class);
+                    assert landmarkStat != null;
+                    landmarkStat.setLandmarkCounter(landmarkStat.getLandmarkCounter() + 1);
+
+                    DocumentReference documentReference = FirebaseFirestore.getInstance()
+                            .collection(mContext.getString(R.string.collection_stats))
+                            .document(mContext.getString(R.string.collection_landmarks))
+                            .collection(mContext.getString(R.string.collection_lists))
+                            .document(mContext.getString(R.string.document_bucketlist))
+                            .collection(mContext.getString(R.string.document_meta))
+                            .document(landmarkMeta.getId());
+
+                    documentReference.set(landmarkStat).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            //do nothing
+                        }
+                    });
+
+                    docRef1.set(landmarkStat).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            //do nothing
+                        }
+                    });
+
+                } else {
+                    LandmarkStat landmarkStat = new LandmarkStat();
+                    landmarkStat.setLandmark(landmarkMeta.getLandmark());
+                    landmarkStat.setLandmarkCounter(1);
+                    DocumentReference documentReference = FirebaseFirestore.getInstance()
+                            .collection(mContext.getString(R.string.collection_stats))
+                            .document(mContext.getString(R.string.collection_landmarks))
+                            .collection(mContext.getString(R.string.collection_lists))
+                            .document(mContext.getString(R.string.document_bucketlist))
+                            .collection(mContext.getString(R.string.document_meta))
+                            .document(landmarkMeta.getId());
+
+                    documentReference.set(landmarkStat).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            //do nothing
+                        }
+                    });
+                    docRef1.set(landmarkStat).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            //do nothing
+                        }
+                    });
+                }
+            }
+        });
+
+
     }
 
     private void bucketlist_remove() {
@@ -655,7 +733,7 @@ public class LandmarkActivity extends AppCompatActivity {
         landmarkMeta.setLandmark(landmark);
         landmarkMeta.setGeoPoint(landmark.getGeo_point());
         landmarkMeta.setState(landmark.getState());
-        landmarkMeta.setCity(landmark.getCity());
+        landmarkMeta.setdistrict(landmark.getDistrict());
         landmarkMeta.setId(landmark.getId());
 
         landmarkList.setLandmarkMeta(landmarkMeta);
@@ -690,9 +768,16 @@ public class LandmarkActivity extends AppCompatActivity {
         UserFeed userFeed = new UserFeed();
         userFeed.setUser_id(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
         String msgBuilder = mContext.getString(R.string.feed_msg_accomplished) + landmarkMeta.getLandmark().getName();
-        msgBuilder += "\n \n" + landmarkMeta.getLandmark().getLong_desc();
+        msgBuilder += "\n \n" + landmarkMeta.getLandmark().getShort_desc();
 
         userFeed.setDatacontent(msgBuilder);
+
+        userFeed.setType(mContext.getString(R.string.public_feed));
+        userFeed.setImgIncluded(Boolean.TRUE);
+        userFeed.setImgUrl(landmarkMeta.getLandmark().getImg_url());
+        userFeed.setLandmarkIncluded(Boolean.TRUE);
+        userFeed.setLandmarkId(landmarkMeta.getId());
+
 
         Long tsLong = System.currentTimeMillis() / 1000;
         String ts = tsLong.toString();
@@ -733,6 +818,83 @@ public class LandmarkActivity extends AppCompatActivity {
                 }
             }
         });
+
+        docRef = FirebaseFirestore.getInstance()
+                .collection(mContext.getString(R.string.collection_stats))
+                .document(mContext.getString(R.string.collection_landmarks))
+                .collection(mContext.getString(R.string.collection_lists))
+                .document(mContext.getString(R.string.document_accomplished))
+                .collection(mContext.getString(R.string.document_meta))
+                .document(landmarkMeta.getId());
+
+        DocumentReference docRef1 = FirebaseFirestore.getInstance()
+                .collection(mContext.getString(R.string.collection_stats))
+                .document(mContext.getString(R.string.collection_landmarks))
+                .collection(mContext.getString(R.string.collection_lists))
+                .document(mContext.getString(R.string.document_accomplished))
+                .collection(landmarkMeta.getState())
+                .document(landmarkMeta.getId());
+
+
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    LandmarkStat landmarkStat = documentSnapshot.toObject(LandmarkStat.class);
+                    assert landmarkStat != null;
+                    landmarkStat.setLandmarkCounter(landmarkStat.getLandmarkCounter() + 1);
+
+                    DocumentReference documentReference = FirebaseFirestore.getInstance()
+                            .collection(mContext.getString(R.string.collection_stats))
+                            .document(mContext.getString(R.string.collection_landmarks))
+                            .collection(mContext.getString(R.string.collection_lists))
+                            .document(mContext.getString(R.string.document_accomplished))
+                            .collection(mContext.getString(R.string.document_meta))
+                            .document(landmarkMeta.getId());
+
+                    documentReference.set(landmarkStat).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            //do nothing
+                        }
+                    });
+
+                    docRef1.set(landmarkStat).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            //do nothing
+                        }
+                    });
+
+                } else {
+                    LandmarkStat landmarkStat = new LandmarkStat();
+                    landmarkStat.setLandmark(landmarkMeta.getLandmark());
+                    landmarkStat.setLandmarkCounter(1);
+                    DocumentReference documentReference = FirebaseFirestore.getInstance()
+                            .collection(mContext.getString(R.string.collection_stats))
+                            .document(mContext.getString(R.string.collection_landmarks))
+                            .collection(mContext.getString(R.string.collection_lists))
+                            .document(mContext.getString(R.string.document_accomplished))
+                            .collection(mContext.getString(R.string.document_meta))
+                            .document(landmarkMeta.getId());
+
+                    documentReference.set(landmarkStat).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            //do nothing
+                        }
+                    });
+                    docRef1.set(landmarkStat).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            //do nothing
+                        }
+                    });
+                }
+            }
+        });
+
+
     }
 
     private void accomplish_remove() {

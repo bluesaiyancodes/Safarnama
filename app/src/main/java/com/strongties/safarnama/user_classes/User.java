@@ -3,6 +3,11 @@ package com.strongties.safarnama.user_classes;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.firebase.firestore.ServerTimestamp;
+
+import java.util.Date;
+
+
 public class User implements Parcelable {
 
     private String email;
@@ -10,13 +15,19 @@ public class User implements Parcelable {
     private String username;
     private String photo;
     private String avatar;
+    @ServerTimestamp
+    private Date dateofjoin;
+    @ServerTimestamp
+    private Date lastlogin;
 
-    public User(String email, String username, String photo, String user_id, String avatar) {
+    public User(String email, String username, String photo, String user_id, String avatar, Date dateofjoin, Date lastlogin) {
         this.email = email;
         this.user_id = user_id;
         this.username = username;
         this.photo = photo;
         this.avatar = avatar;
+        this.dateofjoin = dateofjoin;
+        this.lastlogin = lastlogin;
     }
 
     public User() {
@@ -87,14 +98,32 @@ public class User implements Parcelable {
         this.avatar = avatar;
     }
 
+    public Date getDateofjoin() {
+        return dateofjoin;
+    }
+
+    public void setDateofjoin(Date dateofjoin) {
+        this.dateofjoin = dateofjoin;
+    }
+
+    public Date getLastlogin() {
+        return lastlogin;
+    }
+
+    public void setLastlogin(Date lastlogin) {
+        this.lastlogin = lastlogin;
+    }
+
     @Override
     public String toString() {
         return "User{" +
                 "email='" + email + '\'' +
                 ", user_id='" + user_id + '\'' +
                 ", username='" + username + '\'' +
-                ", Photo='" + photo + '\'' +
+                ", photo='" + photo + '\'' +
                 ", avatar='" + avatar + '\'' +
+                ", dateofjoin=" + dateofjoin +
+                ", lastlogin=" + lastlogin +
                 '}';
     }
 

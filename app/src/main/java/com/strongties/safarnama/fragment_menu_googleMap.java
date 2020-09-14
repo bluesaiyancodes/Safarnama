@@ -180,7 +180,7 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
 
 
         mDb = FirebaseFirestore.getInstance();
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(Objects.requireNonNull(getContext()));
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext());
         checkLocationPermission();
 
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
@@ -207,7 +207,7 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
                         .replace(R.id.fragment_container, new fragment_menu_googleMap("all"), "Google Map Fragment").commit();
 
                 Toast toast = Toast.makeText(getContext(), getString(R.string.show_all), Toast.LENGTH_SHORT);
-                toast.getView().setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getActivity()), R.drawable.dialog_bg_toast_colored));
+                toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_toast_colored));
                 TextView toastmsg = toast.getView().findViewById(android.R.id.message);
                 toastmsg.setTextColor(Color.WHITE);
                 toast.show();
@@ -224,7 +224,7 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
                         .replace(R.id.fragment_container, new fragment_menu_googleMap("new"), "Google Map Fragment").commit();
 
                 Toast toast = Toast.makeText(getContext(), getString(R.string.show_new), Toast.LENGTH_SHORT);
-                toast.getView().setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getActivity()), R.drawable.dialog_bg_colored));
+                toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_colored));
                 TextView toastmsg = toast.getView().findViewById(android.R.id.message);
                 toastmsg.setTextColor(Color.WHITE);
                 toast.show();
@@ -241,7 +241,7 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
                         .replace(R.id.fragment_container, new fragment_menu_googleMap("wish"), "Google Map Fragment").commit();
 
                 Toast toast = Toast.makeText(getContext(), getString(R.string.show_bucket), Toast.LENGTH_SHORT);
-                toast.getView().setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getActivity()), R.drawable.dialog_bg_colored));
+                toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_colored));
                 TextView toastmsg = toast.getView().findViewById(android.R.id.message);
                 toastmsg.setTextColor(Color.WHITE);
                 toast.show();
@@ -259,7 +259,7 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
                         .replace(R.id.fragment_container, new fragment_menu_googleMap("accomplish"), "Google Map Fragment").commit();
 
                 Toast toast = Toast.makeText(getContext(), getString(R.string.show_accomplished), Toast.LENGTH_SHORT);
-                toast.getView().setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getActivity()), R.drawable.dialog_bg_colored));
+                toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_colored));
                 TextView toastmsg = toast.getView().findViewById(android.R.id.message);
                 toastmsg.setTextColor(Color.WHITE);
                 toast.show();
@@ -338,7 +338,7 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getContext()),
+            if (ContextCompat.checkSelfPermission(requireContext(),
                     Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
                 //Location Permission already granted
@@ -380,24 +380,24 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
     }
 
     private void checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
             // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+            if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(),
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
 
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
-                new AlertDialog.Builder(getContext())
+                new AlertDialog.Builder(requireContext())
                         .setTitle("Location Permission Needed")
                         .setMessage("This app needs the Location permission, please accept to use location functionality")
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 //Prompt the user once explanation has been shown
-                                ActivityCompat.requestPermissions(getActivity(),
+                                ActivityCompat.requestPermissions(requireActivity(),
                                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                                         MY_PERMISSIONS_REQUEST_LOCATION);
                             }
@@ -408,7 +408,7 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
 
             } else {
                 // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(getActivity(),
+                ActivityCompat.requestPermissions(requireActivity(),
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_LOCATION);
             }
@@ -478,17 +478,19 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
 
+                assert queryDocumentSnapshots != null;
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     LandmarkMeta landmarkMeta = doc.toObject(LandmarkMeta.class);
                     CollectionReference placeRef = mDb
                             .collection(getString(R.string.collection_landmarks))
                             .document(landmarkMeta.getState())
-                            .collection(landmarkMeta.getCity());
+                            .collection(landmarkMeta.getdistrict());
 
 
                     placeRef.whereEqualTo("geo_point", Landmark_geoPoint).addSnapshotListener(new EventListener<QuerySnapshot>() {
                         @Override
                         public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                            assert queryDocumentSnapshots != null;
                             for (QueryDocumentSnapshot doc1 : queryDocumentSnapshots) {
                                 Landmark landmark = doc1.toObject(Landmark.class);
                                 Log.d(TAG, "Fetched Geopoint -> " + landmark.getGeo_point());
@@ -554,7 +556,7 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
                                         Intent intent = new Intent(mcontext, LandmarkActivity.class);
                                         Bundle args = new Bundle();
                                         args.putString("state", landmark.getState());
-                                        args.putString("city", landmark.getCity());
+                                        args.putString("district", landmark.getDistrict());
                                         args.putString("id", landmark.getId());
                                         intent.putExtras(args);
                                         startActivity(intent);
@@ -735,7 +737,7 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
 
-                Objects.requireNonNull(getContext()).startForegroundService(serviceIntent);
+                requireContext().startForegroundService(serviceIntent);
             } else {
                 mcontext.startService(serviceIntent);
             }

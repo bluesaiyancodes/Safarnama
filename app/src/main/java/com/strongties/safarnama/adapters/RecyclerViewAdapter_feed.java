@@ -1,12 +1,20 @@
 package com.strongties.safarnama.adapters;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -22,20 +31,21 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.strongties.safarnama.LandmarkActivity;
 import com.strongties.safarnama.R;
+import com.strongties.safarnama.user_classes.LandmarkMeta;
 import com.strongties.safarnama.user_classes.User;
 import com.strongties.safarnama.user_classes.UserFeed;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.List;
+import java.util.Objects;
 
 public class RecyclerViewAdapter_feed extends FirestoreRecyclerAdapter<UserFeed, RecyclerViewAdapter_feed.MyViewHolder>{
 
     public static final String TAG = "FeedFragAdap";
 
     Context mContext;
-    List<UserFeed> mData;
     Dialog myDialog;
     String mode;
 
@@ -63,38 +73,106 @@ public class RecyclerViewAdapter_feed extends FirestoreRecyclerAdapter<UserFeed,
     protected void onBindViewHolder(@NonNull MyViewHolder holder, int position, @NonNull UserFeed model) {
 
 
+        holder.tv_feed_body.setText(model.getDatacontent());
 
-            holder.tv_feed_body.setText(model.getDatacontent());
-
-            String pattern = "dd-MM-YYYY";
-            DateFormat df = new SimpleDateFormat(pattern);
-            String dateasstring;
-            try {
-                dateasstring = df.format(model.getTimestamp());
-            }catch (NullPointerException e){
-                dateasstring = "";
-            }
-            holder.tv_date.setText(dateasstring);
-
-
-            DocumentReference docRef = FirebaseFirestore.getInstance()
-                    .collection(mContext.getString(R.string.collection_users))
-                    .document(model.getUser_id());
+        String pattern = "dd-MM-YYYY";
+        DateFormat df = new SimpleDateFormat(pattern);
+        String dateasstring;
+        try {
+            dateasstring = df.format(model.getTimestamp());
+        } catch (NullPointerException e) {
+            dateasstring = "";
+        }
+        holder.tv_date.setText(dateasstring);
 
 
-            final User[] user = new User[1];
-            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
-                        assert document != null;
-                        user[0] = document.toObject(User.class);
-                        if (document.exists()) {
-                            Log.d(TAG, "User Info Retrieved, Name: " + user[0].getUsername());
+        if (model.getImgIncluded()) {
+            holder.feed_img.setVisibility(View.VISIBLE);
+            Glide.with(mContext)
+                    .load(model.getImgUrl())
+                    .placeholder(R.drawable.loading_image)
+                    .centerCrop()
+                    .into(holder.feed_img);
+            if (model.getLandmarkIncluded()) {
+                holder.feed_img.setOnClickListener(v -> {
+                    //Dialog Initiation
+                    myDialog = new Dialog(mContext);
+                    myDialog.setContentView(R.layout.rv_dialog_explore);
+                    Objects.requireNonNull(myDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    myDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+
+                    TextView dialog_placename_tv = myDialog.findViewById(R.id.dialog_explore_place_name);
+                    TextView dialog_description_tv = myDialog.findViewById(R.id.dialog_explore_description);
+                    TextView dialog_type_tv = myDialog.findViewById(R.id.dialog_explore_type);
+                    ImageView dialog_img = myDialog.findViewById(R.id.dialog_explore_img);
+
+                    ImageButton btn_wish = myDialog.findViewById(R.id.dialog_explore_addtowishlist);
+                    ImageButton btn_cmpl = myDialog.findViewById(R.id.dialog_explore_addtocompletelist);
+                    Button btn_details = myDialog.findViewById(R.id.dialog_explore_btn_details);
+
+                    btn_cmpl.setVisibility(View.GONE);
+                    btn_wish.setVisibility(View.GONE);
+
+                    DocumentReference docRef = FirebaseFirestore.getInstance()
+                            .collection(mContext.getString(R.string.collection_landmarks))
+                            .document(mContext.getString(R.string.document_meta))
+                            .collection(mContext.getString(R.string.collection_all))
+                            .document(model.getLandmarkId());
+
+                    docRef.get().addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            LandmarkMeta landmarkMeta = documentSnapshot.toObject(LandmarkMeta.class);
+                            dialog_placename_tv.setText(landmarkMeta.getLandmark().getName());
+                            dialog_description_tv.setText(landmarkMeta.getLandmark().getLong_desc());
+                            dialog_type_tv.setText(landmarkMeta.getLandmark().getCategory());
+
+
                             Glide.with(mContext)
-                                    .load(user[0].getPhoto())
+                                    .load(landmarkMeta.getLandmark().getImg_url())
                                     .placeholder(R.drawable.loading_image)
+                                    .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
+                                    .into(dialog_img);
+
+                            btn_details.setOnClickListener(view -> {
+                                Intent intent = new Intent(mContext, LandmarkActivity.class);
+                                Bundle args = new Bundle();
+                                args.putString("state", landmarkMeta.getState());
+                                args.putString("district", landmarkMeta.getdistrict());
+                                args.putString("id", landmarkMeta.getId());
+                                intent.putExtras(args);
+                                mContext.startActivity(intent);
+                                ((Activity) mContext).overridePendingTransition(R.anim.enter_from_top, R.anim.exit_to_bottom);
+                            });
+                        }
+                    });
+
+                    myDialog.show();
+
+
+                });
+            }
+        }
+
+
+        DocumentReference docRef = FirebaseFirestore.getInstance()
+                .collection(mContext.getString(R.string.collection_users))
+                .document(model.getUser_id());
+
+
+        final User[] user = new User[1];
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    assert document != null;
+                    user[0] = document.toObject(User.class);
+                    if (document.exists()) {
+                        Log.d(TAG, "User Info Retrieved, Name: " + user[0].getUsername());
+
+                        Glide.with(mContext)
+                                .load(user[0].getPhoto())
+                                .placeholder(R.drawable.loading_image)
                                     .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                                     .into(holder.profile_img);
                             holder.tv_name.setText(user[0].getUsername());
@@ -137,13 +215,16 @@ public class RecyclerViewAdapter_feed extends FirestoreRecyclerAdapter<UserFeed,
 
     }
 
-    public static class MyViewHolder extends RecyclerView.ViewHolder{
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         private TextView tv_feed_body;
         private TextView tv_date;
         private TextView tv_name;
         private TextView tv_avatar_lvl;
         private ImageView profile_img;
+        private ImageView feed_img;
+
+        private LinearLayout itemlayout;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -153,6 +234,9 @@ public class RecyclerViewAdapter_feed extends FirestoreRecyclerAdapter<UserFeed,
             tv_name = itemView.findViewById(R.id.menu_feed_name);
             tv_avatar_lvl = itemView.findViewById(R.id.menu_feed_avatar_lvl);
             profile_img = itemView.findViewById(R.id.menu_feed_profile);
+            feed_img = itemView.findViewById(R.id.menu_feed_img);
+
+            itemlayout = itemView.findViewById(R.id.feed_layout);
         }
     }
 

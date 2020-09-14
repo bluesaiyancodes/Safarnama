@@ -104,7 +104,7 @@ public class MapBackgroundTask extends AsyncTask<Void, Void, Boolean> {
                             CollectionReference collRef = mDb
                                     .collection(mContext.getString(R.string.collection_landmarks))
                                     .document(landmarkMeta.getState())
-                                    .collection(landmarkMeta.getCity());
+                                    .collection(landmarkMeta.getdistrict());
 
                             collRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
                                 @Override
@@ -128,43 +128,44 @@ public class MapBackgroundTask extends AsyncTask<Void, Void, Boolean> {
                                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                                     if (task.isSuccessful()) {
                                                         DocumentSnapshot document = task.getResult();
+                                                        assert document != null;
                                                         if (document.exists()) {
                                                             Log.d(TAG, "Landmark exists in Bucket List");
                                                             LatLng place = new LatLng(landmark.getGeo_point().getLatitude(), landmark.getGeo_point().getLongitude());
                                                             googleMap.addMarker(new MarkerOptions().position(place).title(landmark.getName())
                                                                     .snippet(landmark.getCategory() + "  " + mContext.getString(R.string.i_circle))
                                                                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-                                                        }
-                                                    }
-                                                }
-                                            });
-
-
-
-                                            Log.d(TAG, "Landmark does not exist in BL");
-                                            DocumentReference accomplishedRef = mDb
-                                                    .collection(mContext.getString(R.string.collection_users))
-                                                    .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
-                                                    .collection(mContext.getString(R.string.collection_accomplished_list))
-                                                    .document(landmark.getId());
-
-                                            accomplishedRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                    if (task.isSuccessful()) {
-                                                        DocumentSnapshot documentSnapshot = task.getResult();
-                                                        if (documentSnapshot.exists()) {
-                                                            Log.d(TAG, "Landmark exists in Accomplished List");
-                                                            LatLng place = new LatLng(landmark.getGeo_point().getLatitude(), landmark.getGeo_point().getLongitude());
-                                                            googleMap.addMarker(new MarkerOptions().position(place).title(landmark.getName())
-                                                                    .snippet(landmark.getCategory() + "  " + mContext.getString(R.string.i_circle))
-                                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
                                                         } else {
-                                                            Log.d(TAG, "Landmark does not exist in Accomplished List");
-                                                            LatLng place = new LatLng(landmark.getGeo_point().getLatitude(), landmark.getGeo_point().getLongitude());
-                                                            googleMap.addMarker(new MarkerOptions().position(place).title(landmark.getName())
-                                                                    .snippet(landmark.getCategory() + "  " + mContext.getString(R.string.i_circle))
-                                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+
+                                                            Log.d(TAG, "Landmark does not exist in BL");
+                                                            DocumentReference accomplishedRef = mDb
+                                                                    .collection(mContext.getString(R.string.collection_users))
+                                                                    .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                                                                    .collection(mContext.getString(R.string.collection_accomplished_list))
+                                                                    .document(landmark.getId());
+
+                                                            accomplishedRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                                    if (task.isSuccessful()) {
+                                                                        DocumentSnapshot documentSnapshot = task.getResult();
+                                                                        if (documentSnapshot.exists()) {
+                                                                            Log.d(TAG, "Landmark exists in Accomplished List");
+                                                                            LatLng place = new LatLng(landmark.getGeo_point().getLatitude(), landmark.getGeo_point().getLongitude());
+                                                                            googleMap.addMarker(new MarkerOptions().position(place).title(landmark.getName())
+                                                                                    .snippet(landmark.getCategory() + "  " + mContext.getString(R.string.i_circle))
+                                                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
+                                                                        } else {
+                                                                            Log.d(TAG, "Landmark does not exist in Accomplished List");
+                                                                            LatLng place = new LatLng(landmark.getGeo_point().getLatitude(), landmark.getGeo_point().getLongitude());
+                                                                            googleMap.addMarker(new MarkerOptions().position(place).title(landmark.getName())
+                                                                                    .snippet(landmark.getCategory() + "  " + mContext.getString(R.string.i_circle))
+                                                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                                                                        }
+                                                                    }
+                                                                }
+                                                            });
+
                                                         }
                                                     }
                                                 }
@@ -242,62 +243,43 @@ public class MapBackgroundTask extends AsyncTask<Void, Void, Boolean> {
                         for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                             LandmarkMeta landmarkMeta = doc.toObject(LandmarkMeta.class);
 
-                            CollectionReference collRef = mDb
-                                    .collection(mContext.getString(R.string.collection_landmarks))
-                                    .document(landmarkMeta.getState())
-                                    .collection(landmarkMeta.getCity());
+                            Landmark landmark = landmarkMeta.getLandmark();
 
-                            collRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                            DocumentReference bucketRef = mDb
+                                    .collection(mContext.getString(R.string.collection_users))
+                                    .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                                    .collection(mContext.getString(R.string.collection_accomplished_list))
+                                    .document(landmark.getId());
+
+                            bucketRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                 @Override
-                                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                                    if (e != null) {
-                                        Log.e(TAG, "onEvent: Listen failed.", e);
-                                    }
-
-                                    if (queryDocumentSnapshots != null) {
-                                        for (QueryDocumentSnapshot places : queryDocumentSnapshots) {
-                                            Landmark landmark = places.toObject(Landmark.class);
-
-                                            DocumentReference bucketRef = mDb
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        DocumentSnapshot document = task.getResult();
+                                        assert document != null;
+                                        if (document.exists()) {
+                                            Log.d(TAG, "Landmark exists in Bucket List");
+                                        } else {
+                                            Log.d(TAG, "Landmark does not exist in Bucket List");
+                                            DocumentReference accomplishedRef = mDb
                                                     .collection(mContext.getString(R.string.collection_users))
                                                     .document(mContext.getString(R.string.document_lists))
-                                                    .collection(mContext.getString(R.string.collection_bucket_list))
+                                                    .collection(mContext.getString(R.string.collection_accomplished_list))
                                                     .document(landmark.getId());
 
-                                            bucketRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            accomplishedRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                 @Override
                                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                                     if (task.isSuccessful()) {
-                                                        DocumentSnapshot document = task.getResult();
+                                                        DocumentSnapshot documentSnapshot = task.getResult();
                                                         if (document.exists()) {
-                                                            Log.d(TAG, "Landmark exists in Bucket List");
+                                                            Log.d(TAG, "Landmark exists in Accomplished List");
                                                         } else {
-                                                            Log.d(TAG, "Landmark does not exist in Bucket List");
-                                                            DocumentReference accomplishedRef = mDb
-                                                                    .collection(mContext.getString(R.string.collection_users))
-                                                                    .document(mContext.getString(R.string.document_lists))
-                                                                    .collection(mContext.getString(R.string.collection_accomplished_list))
-                                                                    .document(landmark.getId());
-
-                                                            accomplishedRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                                @Override
-                                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                                    if (task.isSuccessful()) {
-                                                                        DocumentSnapshot documentSnapshot = task.getResult();
-                                                                        if (document.exists()) {
-                                                                            Log.d(TAG, "Landmark exists in Accomplished List");
-                                                                        } else {
-                                                                            Log.d(TAG, "Landmark does not exist in Accomplished List");
-                                                                            LatLng place = new LatLng(landmark.getGeo_point().getLatitude(), landmark.getGeo_point().getLongitude());
-                                                                            googleMap.addMarker(new MarkerOptions().position(place).title(landmark.getName())
-                                                                                    .snippet(landmark.getCategory() + "  " + mContext.getString(R.string.i_circle))
-                                                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-                                                                        }
-                                                                    }
-                                                                }
-                                                            });
-
-
+                                                            Log.d(TAG, "Landmark does not exist in Accomplished List");
+                                                            LatLng place = new LatLng(landmark.getGeo_point().getLatitude(), landmark.getGeo_point().getLongitude());
+                                                            googleMap.addMarker(new MarkerOptions().position(place).title(landmark.getName())
+                                                                    .snippet(landmark.getCategory() + "  " + mContext.getString(R.string.i_circle))
+                                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
                                                         }
                                                     }
                                                 }
@@ -375,7 +357,7 @@ public class MapBackgroundTask extends AsyncTask<Void, Void, Boolean> {
                             CollectionReference collRef = mDb
                                     .collection(mContext.getString(R.string.collection_landmarks))
                                     .document(landmarkMeta.getState())
-                                    .collection(landmarkMeta.getCity());
+                                    .collection(landmarkMeta.getdistrict());
 
                             collRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
                                 @Override
@@ -482,7 +464,7 @@ public class MapBackgroundTask extends AsyncTask<Void, Void, Boolean> {
                             CollectionReference collRef = mDb
                                     .collection(mContext.getString(R.string.collection_landmarks))
                                     .document(landmarkMeta.getState())
-                                    .collection(landmarkMeta.getCity());
+                                    .collection(landmarkMeta.getdistrict());
 
                             collRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
                                 @Override

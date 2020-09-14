@@ -100,7 +100,7 @@ public class RecyclerViewAdaptor_distance_search extends RecyclerView.Adapter<Re
                             args.putString("id", mData.get(position).getId());
                             assert landmarkMeta != null;
                             args.putString("state", landmarkMeta.getState());
-                            args.putString("city", landmarkMeta.getCity());
+                            args.putString("district", landmarkMeta.getdistrict());
                             intent.putExtras(args);
                             mContext.startActivity(intent);
                             ((Activity) mContext).overridePendingTransition(R.anim.enter_from_top, R.anim.exit_to_bottom);

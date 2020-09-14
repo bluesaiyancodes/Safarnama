@@ -28,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -81,6 +82,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
     GoogleMap googleMap;
+    View mapView;
 
     LocationRequest mLocationRequest;
     Location mLastLocation;
@@ -141,7 +143,7 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
 
 
         if (!isLocationEnabled(getContext())) {
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Objects.requireNonNull(getContext()));
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(requireContext());
             alertDialogBuilder.setTitle(getString(R.string.get_loc_check));
             alertDialogBuilder.setMessage(getString(R.string.get_loc_msg));
             alertDialogBuilder.setIcon(R.drawable.location);
@@ -159,7 +161,7 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
 
 
         mDb = FirebaseFirestore.getInstance();
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(Objects.requireNonNull(getContext()));
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext());
         currentuser = ((UserClient) (mcontext.getApplicationContext())).getUser();
 
         if (isLocationEnabled(getContext())) {
@@ -169,6 +171,7 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.buddy_gmapview);
         assert mapFragment != null;
+        mapView = mapFragment.getView();
         mapFragment.getMapAsync(this);
 
 
@@ -249,6 +252,20 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
                 break;
         }
 
+
+        if (mapView != null &&
+                mapView.findViewById(Integer.parseInt("1")) != null) {
+            // Get the button view
+            View locationButton = ((View) mapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
+            // and next place it
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
+            // position
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, 0);
+            layoutParams.setMargins(0, 150, 0, 0);
+        }
+
+
         //addMarkers();
 
 
@@ -278,7 +295,7 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getContext()),
+            if (ContextCompat.checkSelfPermission(requireContext(),
                     Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
                 //Location Permission already granted

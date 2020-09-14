@@ -16,6 +16,7 @@ import android.view.animation.AlphaAnimation;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +33,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -42,6 +44,7 @@ import com.google.firebase.firestore.Query;
 import com.strongties.safarnama.adapters.RecyclerViewAdapter_bucketlist;
 import com.strongties.safarnama.user_classes.LandmarkList;
 import com.strongties.safarnama.user_classes.LandmarkMeta;
+import com.strongties.safarnama.user_classes.LandmarkStat;
 import com.strongties.safarnama.user_classes.UserFeed;
 
 import java.util.Objects;
@@ -96,7 +99,7 @@ public class RV_BucketlistFragment extends Fragment {
                     inputPlaceID = bucket_id_list.get(bucket_list.indexOf(inputPlace));
                 } catch (ArrayIndexOutOfBoundsException e) {
                     Toast toast = Toast.makeText(mContext, mContext.getString(R.string.place_not_found), Toast.LENGTH_SHORT);
-                    toast.getView().setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getActivity()), R.drawable.dialog_bg_colored));
+                    toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_colored));
                     TextView toastmsg = toast.getView().findViewById(android.R.id.message);
                     toastmsg.setTextColor(Color.WHITE);
                     toast.show();
@@ -121,19 +124,19 @@ public class RV_BucketlistFragment extends Fragment {
 
                                 //Dialog Initiation
                                 Dialog myDialog = new Dialog(mContext);
-                                myDialog.setContentView(R.layout.rv_dialog_explore);
+                                myDialog.setContentView(R.layout.rv_dialog_bucketlist);
                                 Objects.requireNonNull(myDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                                 myDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
 
 
-                                TextView dialog_placename_tv = myDialog.findViewById(R.id.dialog_explore_place_name);
-                                TextView dialog_description_tv = myDialog.findViewById(R.id.dialog_explore_description);
-                                TextView dialog_type_tv = myDialog.findViewById(R.id.dialog_explore_type);
-                                ImageView dialog_img = myDialog.findViewById(R.id.dialog_explore_img);
+                                TextView dialog_placename_tv = myDialog.findViewById(R.id.dialog_bucketlist_place_name);
+                                TextView dialog_description_tv = myDialog.findViewById(R.id.dialog_bucketlist_description);
+                                TextView dialog_type_tv = myDialog.findViewById(R.id.dialog_bucketlist_type);
+                                ImageView dialog_img = myDialog.findViewById(R.id.dialog_bucketlist_img);
 
-                                Button btn_wish = myDialog.findViewById(R.id.dialog_explore_addtowishlist);
-                                Button btn_cmpl = myDialog.findViewById(R.id.dialog_explore_addtocompletelist);
-                                Button btn_details = myDialog.findViewById(R.id.dialog_explore_btn_details);
+                                ImageButton btn_wish = myDialog.findViewById(R.id.dialog_bucketlist_removewishlist);
+                                ImageButton btn_cmpl = myDialog.findViewById(R.id.dialog_bucketlist_addtocompletelist);
+                                Button btn_details = myDialog.findViewById(R.id.dialog_bucketlist_btn_details);
 
                                 assert landmarkMeta != null;
                                 dialog_placename_tv.setText(landmarkMeta.getLandmark().getName());
@@ -168,7 +171,7 @@ public class RV_BucketlistFragment extends Fragment {
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 if (task.isSuccessful()) {
                                                     Toast toast = Toast.makeText(mContext, mContext.getString(R.string.wishlistadd), Toast.LENGTH_SHORT);
-                                                    toast.getView().setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getActivity()), R.drawable.dialog_bg_colored));
+                                                    toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_colored));
                                                     TextView toastmsg = toast.getView().findViewById(android.R.id.message);
                                                     toastmsg.setTextColor(Color.WHITE);
                                                     toast.show();
@@ -199,7 +202,7 @@ public class RV_BucketlistFragment extends Fragment {
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 if (task.isSuccessful()) {
                                                     Toast toast = Toast.makeText(mContext, mContext.getString(R.string.accomplishlistadd), Toast.LENGTH_SHORT);
-                                                    toast.getView().setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getActivity()), R.drawable.dialog_bg_colored));
+                                                    toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_colored));
                                                     TextView toastmsg = toast.getView().findViewById(android.R.id.message);
                                                     toastmsg.setTextColor(Color.WHITE);
                                                     toast.show();
@@ -217,6 +220,13 @@ public class RV_BucketlistFragment extends Fragment {
 
                                         Long tsLong = System.currentTimeMillis() / 1000;
                                         String ts = tsLong.toString();
+
+                                        userFeed.setType(mContext.getString(R.string.public_feed));
+                                        userFeed.setImgIncluded(Boolean.TRUE);
+                                        userFeed.setImgUrl(landmarkMeta.getLandmark().getImg_url());
+                                        userFeed.setLandmarkIncluded(Boolean.TRUE);
+                                        userFeed.setLandmarkId(landmarkMeta.getId());
+
 
                                         DocumentReference docRef = FirebaseFirestore.getInstance()
                                                 .collection(mContext.getString(R.string.collection_feed))
@@ -255,6 +265,83 @@ public class RV_BucketlistFragment extends Fragment {
                                             }
                                         });
 
+
+                                        docRef = FirebaseFirestore.getInstance()
+                                                .collection(mContext.getString(R.string.collection_stats))
+                                                .document(mContext.getString(R.string.collection_landmarks))
+                                                .collection(mContext.getString(R.string.collection_lists))
+                                                .document(mContext.getString(R.string.document_accomplished))
+                                                .collection(mContext.getString(R.string.document_meta))
+                                                .document(landmarkMeta.getId());
+
+                                        DocumentReference docRef1 = FirebaseFirestore.getInstance()
+                                                .collection(mContext.getString(R.string.collection_stats))
+                                                .document(mContext.getString(R.string.collection_landmarks))
+                                                .collection(mContext.getString(R.string.collection_lists))
+                                                .document(mContext.getString(R.string.document_accomplished))
+                                                .collection(landmarkMeta.getState())
+                                                .document(landmarkMeta.getId());
+
+
+                                        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                                if (documentSnapshot.exists()) {
+                                                    LandmarkStat landmarkStat = documentSnapshot.toObject(LandmarkStat.class);
+                                                    assert landmarkStat != null;
+                                                    landmarkStat.setLandmarkCounter(landmarkStat.getLandmarkCounter() + 1);
+
+                                                    DocumentReference documentReference = FirebaseFirestore.getInstance()
+                                                            .collection(mContext.getString(R.string.collection_stats))
+                                                            .document(mContext.getString(R.string.collection_landmarks))
+                                                            .collection(mContext.getString(R.string.collection_lists))
+                                                            .document(mContext.getString(R.string.document_accomplished))
+                                                            .collection(mContext.getString(R.string.document_meta))
+                                                            .document(landmarkMeta.getId());
+
+                                                    documentReference.set(landmarkStat).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            //do nothing
+                                                        }
+                                                    });
+
+                                                    docRef1.set(landmarkStat).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            //do nothing
+                                                        }
+                                                    });
+
+                                                } else {
+                                                    LandmarkStat landmarkStat = new LandmarkStat();
+                                                    landmarkStat.setLandmark(landmarkMeta.getLandmark());
+                                                    landmarkStat.setLandmarkCounter(1);
+                                                    DocumentReference documentReference = FirebaseFirestore.getInstance()
+                                                            .collection(mContext.getString(R.string.collection_stats))
+                                                            .document(mContext.getString(R.string.collection_landmarks))
+                                                            .collection(mContext.getString(R.string.collection_lists))
+                                                            .document(mContext.getString(R.string.document_accomplished))
+                                                            .collection(mContext.getString(R.string.document_meta))
+                                                            .document(landmarkMeta.getId());
+
+                                                    documentReference.set(landmarkStat).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            //do nothing
+                                                        }
+                                                    });
+                                                    docRef1.set(landmarkStat).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            //do nothing
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                        });
+
+
                                     }
                                 });
 
@@ -265,7 +352,7 @@ public class RV_BucketlistFragment extends Fragment {
                                         Intent intent = new Intent(mContext, LandmarkActivity.class);
                                         Bundle args = new Bundle();
                                         args.putString("state", landmarkMeta.getState());
-                                        args.putString("city", landmarkMeta.getCity());
+                                        args.putString("district", landmarkMeta.getdistrict());
                                         args.putString("id", landmarkMeta.getId());
                                         intent.putExtras(args);
                                         mContext.startActivity(intent);
@@ -282,7 +369,7 @@ public class RV_BucketlistFragment extends Fragment {
                             }
                         } else {
                             Toast toast = Toast.makeText(mContext, mContext.getString(R.string.place_not_found), Toast.LENGTH_SHORT);
-                            toast.getView().setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getActivity()), R.drawable.dialog_bg_colored));
+                            toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_colored));
                             TextView toastmsg = toast.getView().findViewById(android.R.id.message);
                             toastmsg.setTextColor(Color.WHITE);
                             toast.show();

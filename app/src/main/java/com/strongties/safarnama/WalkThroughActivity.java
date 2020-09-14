@@ -62,6 +62,7 @@ public class WalkThroughActivity extends AppCompatActivity {
     FusedLocationProviderClient mFusedLocationClient;
     LocationRequest mLocationRequest;
     Context mcontext;
+
     private ViewPager screenPager;
     private UserLocation mUserLocation;
     private FirebaseFirestore mDb;
@@ -105,6 +106,7 @@ public class WalkThroughActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         // make the activity on full screen
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -125,8 +127,8 @@ public class WalkThroughActivity extends AppCompatActivity {
         assert forced_show != null;
         if (restorePrefData() && forced_show.equals("true")) {
 
-            Intent mainActivity = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(mainActivity);
+            Intent versionCheck = new Intent(getApplicationContext(), VersionCheckActivity.class);
+            startActivity(versionCheck);
             finish();
 
         }
@@ -336,6 +338,7 @@ public class WalkThroughActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
@@ -413,6 +416,8 @@ public class WalkThroughActivity extends AppCompatActivity {
                     GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
                     mUserLocation.setGeo_point(geoPoint);
                     mUserLocation.setTimestamp(null);
+
+
                     saveUserLocation();
                 }
             }

@@ -54,23 +54,24 @@
             android:orientation="horizontal"
             android:weightSum="1">
 
-            <Button
+
+            <ImageButton
                 android:id="@+id/dialog_explore_addtowishlist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_weight="0.5"
                 android:background="@color/dialog_bg"
-                android:drawableTop="@drawable/bucketlistadd" />
+                android:src="@drawable/bucketlistadd" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/dialog_explore_addtocompletelist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_weight="0.5"
                 android:background="@color/dialog_bg"
-                android:drawableTop="@drawable/accomplished_add" />
+                android:src="@drawable/accomplished_add" />
 
         </LinearLayout>
 

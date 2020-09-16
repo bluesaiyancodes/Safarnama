@@ -221,7 +221,7 @@ public class fragment_menu_buddies_profile extends Fragment {
             public void onClick(View v) {
                 v.startAnimation(new AlphaAnimation(1F, 0.7F));
                 ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_top, R.anim.exit_to_bottom)
-                        .replace(R.id.fragment_container, new fragment_menu_buddies(), "Buddy Profile Fragment").commit();
+                        .replace(R.id.fragment_container, new fragment_menu_googleMap(), "Profile Fragment").commit();
             }
         });
 

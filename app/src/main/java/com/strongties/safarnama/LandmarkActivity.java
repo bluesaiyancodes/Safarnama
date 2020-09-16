@@ -156,6 +156,8 @@ public class LandmarkActivity extends AppCompatActivity {
                 .collection(Objects.requireNonNull(getIntent().getExtras().getString("district")))
                 .document(Objects.requireNonNull(getIntent().getExtras().getString("id")));
 
+        Log.d(TAG, "Doc Ref -> " + documentReference.getPath());
+
 
         documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -695,6 +697,7 @@ public class LandmarkActivity extends AppCompatActivity {
                 }
             }
         });
+
 
 
     }

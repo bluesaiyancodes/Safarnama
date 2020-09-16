@@ -1,20 +1,16 @@
 package com.strongties.safarnama;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,19 +23,12 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.GeoPoint;
-import com.google.maps.GeoApiContext;
 import com.strongties.safarnama.adapters.RecyclerViewAdaptor_distance_places;
 import com.strongties.safarnama.user_classes.RV_Distance;
 
@@ -48,8 +37,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
+import static android.content.Context.MODE_PRIVATE;
+import static com.strongties.safarnama.MainActivity.current_location;
 import static com.strongties.safarnama.MainActivity.list_hot;
-import static com.strongties.safarnama.MainActivity.localState;
 
 public class fragment_menu_distance extends Fragment {
 
@@ -58,9 +48,6 @@ public class fragment_menu_distance extends Fragment {
     Context mContext;
     DatabaseHelper dbhelper;
 
-    FusedLocationProviderClient mFusedLocationClient;
-
-    private GeoApiContext geoApiContext = null;
 
     private List<RV_Distance> list_distance1;
     private List<RV_Distance> list_distance2;
@@ -79,30 +66,14 @@ public class fragment_menu_distance extends Fragment {
 
     TextView tv_label_hot;
 
-    String address;
-
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_menu_distance, container, false);
 
         mContext = getContext();
 
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext());
 
         Log.d(TAG, "Fragment Started");
-
-
-        if (isLocationEnabled(getContext())) {
-            //    User user = ((UserClient) (mContext.getApplicationContext())).getUser();
-//            Log.d(TAG, "Current User -> " + user.getUsername());
-            getLastKnownLocation();
-        }
-
-        if (geoApiContext == null) {
-            geoApiContext = new GeoApiContext.Builder()
-                    .apiKey(getString(R.string.google_api_key))
-                    .build();
-        }
 
 
         list_distance1 = new ArrayList<>();
@@ -122,11 +93,11 @@ public class fragment_menu_distance extends Fragment {
 
 
         tv_label_hot = root.findViewById(R.id.rv_dist_label_hot);
-        // calculateDirections(place);
 
 
-        ///Log.d(TAG, "Show coordinates: current user: " + currentUserLocation.getGeo_point().getLatitude() +  ", " + currentUserLocation.getGeo_point().getLongitude());
-        //currentUserLocation.getGeo_point();
+        LatLng latLng = new LatLng(current_location.getLatitude(), current_location.getLongitude());
+
+        addtoLists(latLng);
 
 
         // Custom Search
@@ -150,13 +121,6 @@ public class fragment_menu_distance extends Fragment {
                     @Override
                     public void onClick(View v) {
                         v.startAnimation(new AlphaAnimation(1F, 0.7F));
-                        /*Toast toast = Toast.makeText(mContext, "Feature Coming Soon", Toast.LENGTH_SHORT);
-                        toast.getView().setBackground(ContextCompat.getDrawable(mContext, R.drawable.dialog_bg_toast_colored));
-                        TextView toastmsg = toast.getView().findViewById(android.R.id.message);
-                        toastmsg.setTextColor(Color.WHITE);
-                        toast.show();
-
-                         */
 
                         if (tv_min.getText().toString().matches("")) {
                             Toast toast = Toast.makeText(mContext, "Enter Minimum Distance", Toast.LENGTH_SHORT);
@@ -193,56 +157,11 @@ public class fragment_menu_distance extends Fragment {
         return root;
     }
 
-    public static boolean isLocationEnabled(Context context) {
-        int locationMode = 0;
-        String locationProviders;
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            try {
-                locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
-            } catch (Settings.SettingNotFoundException e) {
-                e.printStackTrace();
-            }
-            return locationMode != Settings.Secure.LOCATION_MODE_OFF;
-        } else {
-            locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
-            return !TextUtils.isEmpty(locationProviders);
-        }
-    }
-
-    private void getLastKnownLocation() {
-        Log.d(TAG, "getLastKnownLocation: called.");
-
-
-        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        mFusedLocationClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
-            @Override
-            public void onComplete(@NonNull Task<Location> task) {
-                if (task.isSuccessful()) {
-                    Location location = task.getResult();
-                    assert location != null;
-                    GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
-                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                    //currentUserLocation.setGeo_point(geoPoint);
-
-                    // LatLng place = new LatLng(20.233721,85.838676);
-
-                    addtoLists(latLng);
-                    //
-                    // calculateDirections(latLng, place);
-                    // Double dist = Nearby(latLng.latitude, place.latitude, latLng.longitude, place.longitude, 0, 0);
-                    // Log.d(TAG, "calculateDirections: Nearby: " + Double.toString(dist));
-                }
-            }
-        });
-
-    }
 
     private void addtoLists(LatLng current_loc) {
 
-        String local = localState;
+        SharedPreferences pref = mContext.getSharedPreferences("myPrefs", MODE_PRIVATE);
+        String local = pref.getString("localState", "Odisha");
 
 
         dbhelper = new DatabaseHelper(getContext());
@@ -250,11 +169,11 @@ public class fragment_menu_distance extends Fragment {
 
         Cursor cursor;
 
-        cursor = database.rawQuery("SELECT name, lat, lon, url, type, place_id, state, city FROM LANDMARKS", new String[]{});
+        cursor = database.rawQuery("SELECT name, lat, lon, url, type, place_id, district,city FROM LANDMARKS WHERE state = ?", new String[]{local});
 
         if (cursor != null) {
             cursor.moveToFirst();
-        }else {
+        } else {
             Toast toast = Toast.makeText(getContext(), getString(R.string.error_fetching), Toast.LENGTH_SHORT);
             toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_toast_colored));
             TextView toastmsg = toast.getView().findViewById(android.R.id.message);
@@ -270,39 +189,48 @@ public class fragment_menu_distance extends Fragment {
             String img_url = cursor.getString(3);
             String type = cursor.getString(4);
             String place_id = cursor.getString(5);
-            String state = cursor.getString(6);
+            String district = cursor.getString(6);
             String city = cursor.getString(7);
 
             // add landmarks in Nearby menu only if they have the same state
             //    Log.d(TAG, "local -> "+ local);
             //   Log.d(TAG, "state -> "+ state);
 
-                double dist = distance(current_loc.latitude, current_loc.longitude, place_lat, place_lon, 0, 0);
-                Log.d(TAG, "placeName -> " + name + ", Nearby -> " + dist);
-                if (dist <= 1000) {
+            double dist = distance(current_loc.latitude, current_loc.longitude, place_lat, place_lon, 0, 0);
+            Log.d(TAG, "placeName -> " + name + ", Nearby -> " + dist);
+            if (dist <= 1000) {
 
 
-                } else if (dist > 0 && dist <= 5000) {
-                    Log.d(TAG, "newDebug -> \nPlace -> " + name);
-                    list_distance1.add(new RV_Distance(place_id, name, img_url, type, state, city, dist));
+            } else if (dist > 0 && dist <= 5000) {
+                Log.d(TAG, "newDebug -> \nPlace -> " + name);
 
-                } else if (dist > 5000 && dist <= 40000) {
-                    list_distance2.add(new RV_Distance(place_id, name, img_url, type, state, city, dist));
+                list_distance1.add(new RV_Distance(place_id, name, img_url, type, local, district, city, dist, getString(R.string.inside_5)));
 
-                } else if (dist > 40000 && dist <= 100000) {
-                    list_distance3.add(new RV_Distance(place_id, name, img_url, type, state, city, dist));
 
-                } else if (dist > 100000 && dist <= 200000) {
-                    list_distance4.add(new RV_Distance(place_id, name, img_url, type, state, city, dist));
-                } else if (dist > 200000) {
-                    if (state.equals(local)) {
-                        Log.d(TAG, "above 200 -> " + name);
-                        list_distance5.add(new RV_Distance(place_id, name, img_url, type, state, city, dist));
-                    }
+            } else if (dist > 5000 && dist <= 40000) {
 
-                }
+                list_distance2.add(new RV_Distance(place_id, name, img_url, type, local, district, city, dist, getString(R.string.inside_40)));
 
-        }while (cursor.moveToNext());
+
+            } else if (dist > 40000 && dist <= 100000) {
+
+                list_distance3.add(new RV_Distance(place_id, name, img_url, type, local, district, city, dist, getString(R.string.inside_100)));
+
+
+            } else if (dist > 100000 && dist <= 200000) {
+
+                list_distance4.add(new RV_Distance(place_id, name, img_url, type, local, district, city, dist, getString(R.string.inside_200)));
+
+            } else if (dist > 200000) {
+
+                Log.d(TAG, "above 200 -> " + name);
+
+                list_distance5.add(new RV_Distance(place_id, name, img_url, type, local, district, city, dist, getString(R.string.above_200)));
+
+
+            }
+
+        } while (cursor.moveToNext());
 
         cursor.close();
 
@@ -333,7 +261,6 @@ public class fragment_menu_distance extends Fragment {
     }
 
 
-
     private void sortLists() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             list_distance1.sort(Comparator.comparingDouble(RV_Distance::getDistance));
@@ -343,6 +270,7 @@ public class fragment_menu_distance extends Fragment {
             list_distance5.sort(Comparator.comparingDouble(RV_Distance::getDistance));
         }
     }
+
 
     private void initRecyclerView() {
         Log.d(TAG, "initRecyclerView: init recyclerview");

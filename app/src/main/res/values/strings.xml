@@ -12,7 +12,7 @@
     <string name="support_sub">Support Email from Safarnama - </string>
     <string name="support_title">Contacting Support</string>
 
-    <string name="contact_us">Review</string>
+    <string name="contact_us">Contact Us</string>
     <string name="mode_light">Light Mode</string>
     <string name="mode_dark">Dark Mode</string>
     <string name="contact_title">Contact Us - Submit through Email</string>
@@ -238,6 +238,14 @@
     <string name="select_image">Attach Image</string>
     <string name="uploading">Uploading</string>
     <string name="upload_post">Please wait while your Post is being Synced.</string>
+    <string name="hot_places">Hot Places</string>
+    <string name="profile_glance">Profile at a Glance</string>
+    <string name="view_profile">View Profile</string>
+    <string name="view_lists">View Your Lists</string>
+    <string name="review">Give Ratings</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="terms_of_service">Terms of Service</string>
+    <string name="developer_options">Developer Options</string>
 
 
 </resources>

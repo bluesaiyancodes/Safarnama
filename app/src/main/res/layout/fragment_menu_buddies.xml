@@ -28,11 +28,24 @@
                     android:layout_weight="0"
                     android:orientation="vertical">
 
+                    <TextView
+                        android:id="@+id/menu3_profile_glance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginEnd="30dp"
+                        android:background="@drawable/dialog_bg_colored"
+                        android:gravity="center"
+                        android:text="@string/profile_glance"
+                        android:textColor="@color/white" />
+
                     <LinearLayout
                         android:id="@+id/menu3_buddies_profile"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="20dp"
+                        android:visibility="gone"
                         android:background="@drawable/dialog_bg_colored"
                         android:orientation="horizontal"
                         android:weightSum="1">
@@ -169,7 +182,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
-                        android:layout_marginTop="20dp"
+                        android:layout_marginTop="10dp"
                         android:layout_marginEnd="40dp"
                         android:layout_marginBottom="30dp"
                         android:background="@drawable/dialog_bg_colored"

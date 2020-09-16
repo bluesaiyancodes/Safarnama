@@ -53,6 +53,7 @@ import com.strongties.safarnama.user_classes.UserRelation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class fragment_menu_buddies extends Fragment {
 
@@ -114,10 +115,12 @@ public class fragment_menu_buddies extends Fragment {
                 .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
 
 
-        currentuser = ((UserClient)(mcontext.getApplicationContext())).getUser();
+        currentuser = ((UserClient) (mcontext.getApplicationContext())).getUser();
 
 
-        //Set the user information
+        //Set Profile at a Glance
+        TextView profile_glance = v.findViewById(R.id.menu3_profile_glance);
+
         TextView tv_profile_name = v.findViewById(R.id.menu3_buddies_profile_name);
         TextView tv_profile_email = v.findViewById(R.id.menu3_buddies_profile_email);
         TextView tv_profile_badge = v.findViewById(R.id.menu3_buddies_profile_badge);
@@ -212,8 +215,24 @@ public class fragment_menu_buddies extends Fragment {
             }
         });
 
-
         LinearLayout profile_layout = v.findViewById(R.id.menu3_buddies_profile);
+
+        AtomicReference<Boolean> glance_clicked = new AtomicReference<>();
+        glance_clicked.set(Boolean.FALSE);
+
+        profile_glance.setOnClickListener(view -> {
+            view.startAnimation(new AlphaAnimation(1F, 0.7F));
+            if (!glance_clicked.get()) {
+                glance_clicked.set(Boolean.TRUE);
+                profile_layout.setVisibility(View.VISIBLE);
+            } else {
+                glance_clicked.set(Boolean.FALSE);
+                profile_layout.setVisibility(View.GONE);
+            }
+        });
+
+
+/*
         AlphaAnimation btn_click = new AlphaAnimation(1F, 0.7F);
         profile_layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -223,7 +242,7 @@ public class fragment_menu_buddies extends Fragment {
                         .replace(R.id.fragment_container, new fragment_menu_buddies_profile(), "Buddy Profile Fragment").addToBackStack("buddyProfile").commit();
             }
         });
-
+ */
 
 
 

@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static String DBname = "wander";
-    private static int version = 17;
+    private static int version = 18;
     private Context context;
 
     public DatabaseHelper(Context context) {

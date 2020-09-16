@@ -213,7 +213,7 @@
             android:id="@+id/profile_done"
             android:background="@drawable/dialog_bg_colored"
             android:layout_toEndOf="@id/profile_save_changes"
-            android:text="@string/done"
+            android:text="@string/back"
             android:textSize="15sp"
             android:textColor="@color/white"
             android:layout_marginBottom="10dp"

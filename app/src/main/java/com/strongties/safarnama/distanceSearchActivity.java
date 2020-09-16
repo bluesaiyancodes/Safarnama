@@ -1,69 +1,44 @@
 package com.strongties.safarnama;
 
-import android.Manifest;
-import android.content.Context;
-import android.content.pm.PackageManager;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.strongties.safarnama.adapters.RecyclerViewAdaptor_distance_search;
 import com.strongties.safarnama.user_classes.RV_DistanceSearch;
 
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
+
+import static com.strongties.safarnama.MainActivity.current_location;
 
 public class distanceSearchActivity extends AppCompatActivity {
 
     private static final String TAG = "SearchDistance Activity";
 
-
-    FusedLocationProviderClient mFusedLocationClient;
     RecyclerViewAdaptor_distance_search recyclerAdapter;
     Double minDist;
     Double maxDist;
     private List<RV_DistanceSearch> list_DistanceSearch;
 
-    public static boolean isLocationEnabled(Context context) {
-        int locationMode = 0;
-        String locationProviders;
-
-        try {
-            locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
-        } catch (Settings.SettingNotFoundException e) {
-            e.printStackTrace();
-        }
-        return locationMode != Settings.Secure.LOCATION_MODE_OFF;
-    }
 
     public static double distance(double lat1, double lon1, double lat2,
                                   double lon2, double el1, double el2) {
@@ -103,8 +78,6 @@ public class distanceSearchActivity extends AppCompatActivity {
         });
 
 
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
         RecyclerView myrecyclerview = findViewById(R.id.distanceSearch_recyclerview);
         myrecyclerview.setHasFixedSize(true);
 
@@ -123,84 +96,35 @@ public class distanceSearchActivity extends AppCompatActivity {
         Log.d(TAG, "Distance => Max -> " + maxDist);
 
         list_DistanceSearch = new ArrayList<>();
+        recyclerAdapter = new RecyclerViewAdaptor_distance_search(this, list_DistanceSearch);
 
-        if (isLocationEnabled(this)) {
-            getLastKnownLocation();
-        }
+
+        LatLng latLng = new LatLng(current_location.getLatitude(), current_location.getLongitude());
+
+        addtoLists(latLng);
 
 
         Log.d(TAG, "List Size => " + list_DistanceSearch.size());
-        recyclerAdapter = new RecyclerViewAdaptor_distance_search(this, list_DistanceSearch);
 
         myrecyclerview.setAdapter(recyclerAdapter);
+        recyclerAdapter.notifyDataSetChanged();
 
 
     }
 
-    public String getaddres(Location loc) {
 
-        StringBuffer address = new StringBuffer();
-        Geocoder gcd = new Geocoder(this, Locale.getDefault());
-        List<Address> addresses;
-        try {
-            addresses = gcd.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
+    private void addtoLists(LatLng current_loc) {
 
-            if (addresses.size() > 0)
-                System.out.println(addresses.get(0).getLocality());
-            address.append(addresses.get(0).getAddressLine(0)).append("\n");
+        SharedPreferences pref = getSharedPreferences("myPrefs", MODE_PRIVATE);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        String[] tokens = address.toString().split(",");
-        Log.d(TAG, "Address -> " + address.toString());
-        Log.d(TAG, "Address Local -> " + tokens[1]);
-        Log.d(TAG, "Address City -> " + tokens[2]);
-        Log.d(TAG, "Address State -> " + tokens[3]);
-        Log.d(TAG, "Address State -> " + tokens[tokens.length - 2]);
-
-        return address.toString();
-    }
-
-
-    private void getLastKnownLocation() {
-        Log.d(TAG, "getLastKnownLocation: called.");
-
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        mFusedLocationClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
-            @Override
-            public void onComplete(@NonNull Task<Location> task) {
-                if (task.isSuccessful()) {
-                    Location location = task.getResult();
-                    assert location != null;
-                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                    String address = getaddres(location);
-
-                    addtoLists(latLng, address);
-
-                }
-            }
-        });
-
-    }
-
-    private void addtoLists(LatLng current_loc, String address) {
-
-        String[] tokens = address.split(",");
-        String[] stateToken = tokens[tokens.length - 2].split(" ");
-        String local = stateToken[1];
-        Log.d(TAG, "local -> " + stateToken[1]);
+        String local = pref.getString("localState", "Odisha");
 
         DatabaseHelper dbhelper = new DatabaseHelper(this);
         SQLiteDatabase database = dbhelper.getReadableDatabase();
 
         Cursor cursor;
 
-        cursor = database.rawQuery("SELECT name, lat, lon, url, type, place_id, district, state, city FROM LANDMARKS", new String[]{});
+        cursor = database.rawQuery("SELECT name, lat, lon, url, type, place_id, district, city FROM LANDMARKS WHERE state = ?", new String[]{local});
 
         if (cursor != null) {
             cursor.moveToFirst();
@@ -225,24 +149,21 @@ public class distanceSearchActivity extends AppCompatActivity {
             String type = cursor.getString(4);
             String place_id = cursor.getString(5);
             String district = cursor.getString(6);
-            String state = cursor.getString(7);
-            String city = cursor.getString(8);
+            String city = cursor.getString(7);
 
 
-            if (state.equals(local)) {
-                double dist = distance(current_loc.latitude, current_loc.longitude, place_lat, place_lon, 0, 0);
-                Log.d(TAG, "placeName -> " + name + ", Nearby -> " + dist);
-                if (dist >= minDist && dist <= maxDist) {
+            double dist = distance(current_loc.latitude, current_loc.longitude, place_lat, place_lon, 0, 0);
+            Log.d(TAG, "placeName -> " + name + ", Nearby -> " + dist);
+            if (dist >= minDist && dist <= maxDist) {
 
 
-                    String dist_text = df.format(dist / 1000.0);
-                    dist_text += "KM (Approx.)";
+                String dist_text = df.format(dist / 1000.0);
+                dist_text += "KM (Approx.)";
 
-                    list_DistanceSearch.add(new RV_DistanceSearch(place_id, name, city, district, type, img_url, dist_text, dist));
-                    Log.d(TAG, "Added to List, Name -> " + name);
-                }
-
+                list_DistanceSearch.add(new RV_DistanceSearch(place_id, name, city, district, type, img_url, dist_text, dist));
+                Log.d(TAG, "Added to List, Name -> " + name);
             }
+
 
         } while (cursor.moveToNext());
 
@@ -255,15 +176,13 @@ public class distanceSearchActivity extends AppCompatActivity {
         }
 
 
-        recyclerAdapter.notifyDataSetChanged();
-
 
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.enter_from_top, R.anim.exit_to_bottom);
+        overridePendingTransition(R.anim.enter_from_bottom, R.anim.exit_to_top);
     }
 
 

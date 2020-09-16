@@ -21,6 +21,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.strongties.safarnama.MainActivity;
 
 import java.io.IOException;
 import java.util.List;
@@ -97,6 +98,7 @@ public class preBackgroundTask extends AsyncTask<Void, Void, Boolean> {
                     assert location != null;
 
                     String address = getaddres(location);
+                    MainActivity.current_location = location;
 
                     String[] tokens = address.split(",");
                     String[] stateToken = tokens[tokens.length - 2].split(" ");

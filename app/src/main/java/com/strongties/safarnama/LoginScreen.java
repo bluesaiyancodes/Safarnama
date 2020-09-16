@@ -176,7 +176,8 @@ public class LoginScreen extends AppCompatActivity {
     private void writeFirebase(FirebaseUser user) {
         if(user != null){
             String email = user.getEmail();
-            String name = email.substring(0, email.indexOf("@"));
+            //String name = email.substring(0, email.indexOf("@"));
+            String name = user.getDisplayName();
             String photo = String.valueOf(user.getPhotoUrl());
             String uid = user.getUid();
 

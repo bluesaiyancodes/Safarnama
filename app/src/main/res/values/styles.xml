@@ -30,5 +30,10 @@
         <item name="android:windowExitAnimation">@anim/slide_down</item>
     </style>
 
+    <style name="DialogAnimation_profile">
+        <item name="android:windowEnterAnimation">@anim/menu_slide_down</item>
+        <item name="android:windowExitAnimation">@anim/menu_slide_up</item>
+    </style>
+
 
 </resources>

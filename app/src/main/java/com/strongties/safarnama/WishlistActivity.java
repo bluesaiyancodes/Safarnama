@@ -2,13 +2,10 @@ package com.strongties.safarnama;
 
 import android.os.Bundle;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
-
-import java.util.Objects;
 
 public class WishlistActivity extends AppCompatActivity {
 
@@ -38,16 +35,6 @@ public class WishlistActivity extends AppCompatActivity {
 
         //Set Icon For tabs
         //tabLayout.getTabAt(0).setIcon(R.drawable.);
-
-        //Remove Shadow from the action bar
-        ActionBar actionBar = getSupportActionBar();
-        assert actionBar != null;
-        actionBar.setElevation(0);
-
-        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
-        Objects.requireNonNull(getSupportActionBar()).setHomeAsUpIndicator(R.drawable.ic_app_name);// set drawable icon
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
 
 
 

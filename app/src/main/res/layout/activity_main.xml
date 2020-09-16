@@ -4,16 +4,114 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
     android:orientation="vertical"
     tools:context=".MainActivity">
+
+    <RelativeLayout
+        android:id="@+id/main_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/curvature"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="5dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/main_menu_title_icon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="5dp"
+                    android:src="@drawable/app_main_icon"
+                    android:visibility="visible" />
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/main_menu_title_back"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="10dp"
+                    android:src="@drawable/ic_back"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/main_menu_title_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="-15dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:src="@drawable/ic_app_name"
+                    android:visibility="visible" />
+
+                <AutoCompleteTextView
+                    android:id="@+id/main_menu_actv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_toEndOf="@id/main_menu_title_icon"
+                    android:backgroundTint="@android:color/transparent"
+                    android:dropDownHorizontalOffset="-20dp"
+                    android:dropDownVerticalOffset="10dp"
+                    android:hint="@string/search_place"
+                    android:paddingEnd="60dp"
+                    android:visibility="invisible" />
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/main_menu_title_profile"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="20dp"
+                    android:src="@drawable/profile_pic_placeholder"
+                    android:visibility="visible" />
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/main_menu_title_reset"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="20dp"
+                    android:src="@drawable/ic_cross"
+                    android:visibility="gone" />
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/main_menu_fill_screen"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/layout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginBottom="10dp"
         android:orientation="vertical">
 
         <FrameLayout
@@ -43,7 +141,10 @@
                     android:id="@+id/menu5"
                     android:layout_width="100dp"
                     android:layout_height="110dp"
-                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginBottom="5dp"
                     android:layout_weight="0.25"
                     android:background="@color/colorPrimaryDark"
                     app:cardCornerRadius="5dp"
@@ -86,7 +187,10 @@
                     android:id="@+id/menu6"
                     android:layout_width="100dp"
                     android:layout_height="110dp"
-                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginBottom="5dp"
                     android:layout_weight="0.25"
                     android:background="@color/colorPrimaryDark"
                     android:visibility="visible"
@@ -130,7 +234,10 @@
                     android:id="@+id/menu7"
                     android:layout_width="100dp"
                     android:layout_height="110dp"
-                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginBottom="5dp"
                     android:layout_weight="0.25"
                     android:background="@color/colorPrimaryDark"
                     android:visibility="visible"
@@ -174,7 +281,10 @@
                     android:id="@+id/menu8"
                     android:layout_width="100dp"
                     android:layout_height="110dp"
-                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginBottom="5dp"
                     android:layout_weight="0.25"
                     android:background="@color/colorPrimaryDark"
                     android:visibility="invisible"
@@ -239,7 +349,7 @@
                         android:id="@+id/menu1"
                         android:layout_width="100dp"
                         android:layout_height="110dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_margin="4dp"
                         android:layout_weight="0.25"
                         android:background="@color/colorPrimaryDark"
                         app:cardCornerRadius="5dp"
@@ -283,7 +393,7 @@
                         android:id="@+id/menu2"
                         android:layout_width="100dp"
                         android:layout_height="110dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_margin="4dp"
                         android:layout_weight="0.25"
                         android:background="@color/colorPrimaryDark"
                         app:cardCornerRadius="5dp"
@@ -327,7 +437,7 @@
                         android:id="@+id/menu3"
                         android:layout_width="100dp"
                         android:layout_height="110dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_margin="4dp"
                         android:layout_weight="0.25"
                         android:background="@color/colorPrimaryDark"
                         app:cardCornerRadius="5dp"
@@ -372,6 +482,7 @@
                         android:layout_width="100dp"
                         android:layout_height="110dp"
                         android:layout_weight="0.25"
+                        android:layout_margin="4dp"
                         android:background="@color/colorPrimaryDark"
                         app:cardCornerRadius="5dp"
                         app:cardElevation="2dp"

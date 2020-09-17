@@ -93,6 +93,20 @@ public class LoginScreen extends AppCompatActivity {
             TextView toastmsg = toast.getView().findViewById(android.R.id.message);
             toastmsg.setTextColor(Color.WHITE);
             // toast.show();
+
+            DocumentReference oldUserRef = FirebaseFirestore.getInstance()
+                    .collection(getString(R.string.collection_users))
+                    .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
+
+            oldUserRef.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    User user1 = Objects.requireNonNull(task.getResult()).toObject(User.class);
+                    assert user1 != null;
+                    user1.setLastlogin(null);
+                    oldUserRef.set(user1);
+                }
+            });
+
             Intent myIntent = new Intent(LoginScreen.this, WalkThroughActivity.class);
             // myIntent.putExtra("key", value); //Optional parameters
             LoginScreen.this.startActivity(myIntent);

@@ -290,7 +290,7 @@ public class fragment_buddy_googleMap extends Fragment implements OnMapReadyCall
 
         mLocationRequest = new LocationRequest();
 
-        mLocationRequest.setInterval(5000); // Five sec interval
+        mLocationRequest.setInterval(10000); // Ten sec interval
         mLocationRequest.setFastestInterval(3000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 

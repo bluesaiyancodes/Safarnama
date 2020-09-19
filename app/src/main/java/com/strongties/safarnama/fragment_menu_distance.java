@@ -1,14 +1,17 @@
 package com.strongties.safarnama;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,11 +26,14 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.strongties.safarnama.adapters.RecyclerViewAdaptor_distance_places;
 import com.strongties.safarnama.user_classes.RV_Distance;
@@ -95,9 +101,12 @@ public class fragment_menu_distance extends Fragment {
         tv_label_hot = root.findViewById(R.id.rv_dist_label_hot);
 
 
-        LatLng latLng = new LatLng(current_location.getLatitude(), current_location.getLongitude());
-
-        addtoLists(latLng);
+        try {
+            LatLng latLng = new LatLng(current_location.getLatitude(), current_location.getLongitude());
+            addtoLists(latLng);
+        } catch (NullPointerException e) {
+            retrieveLocationandAddtoLists();
+        }
 
 
         // Custom Search
@@ -310,6 +319,35 @@ public class fragment_menu_distance extends Fragment {
         rV_7.setLayoutManager(layoutManager7);
         RecyclerViewAdaptor_distance_places adapter7 = new RecyclerViewAdaptor_distance_places(mContext, list_distance5);
         rV_7.setAdapter(adapter7);
+
+    }
+
+    private void retrieveLocationandAddtoLists() {
+        Log.d(TAG, "retrieveLocationandAddtoLists: called.");
+        FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mContext);
+
+
+        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Toast toast = Toast.makeText(mContext, "Location Permission Denied", Toast.LENGTH_SHORT);
+            toast.getView().setBackground(ContextCompat.getDrawable(mContext, R.drawable.dialog_bg_toast_colored));
+            TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+            toastmsg.setTextColor(Color.WHITE);
+            toast.show();
+        }
+
+        mFusedLocationClient.getLastLocation().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Location location = task.getResult();
+                assert location != null;
+
+                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                addtoLists(latLng);
+                //Log.d(TAG, "Location Check 1->" + location.toString());
+
+            }
+        });
+
+//        Log.d(TAG, "Location Check 2->" + locationObject.getLocation().toString());
 
     }
 

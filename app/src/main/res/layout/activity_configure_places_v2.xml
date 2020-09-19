@@ -82,4 +82,62 @@
 
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/config_v2_coord_loc"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_below="@id/layout_version"
+        android:layout_margin="10dp"
+        android:src="@drawable/ic_location_on_map" />
+
+    <LinearLayout
+        android:id="@+id/config_v2_coord_loc_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_version"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@id/config_v2_coord_loc"
+        android:weightSum="1">
+
+        <EditText
+            android:id="@+id/config_v2_coord_loc_lat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp"
+            android:layout_weight="0.5"
+            android:hint="Latitude"
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/config_v2_coord_loc_lon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp"
+            android:layout_weight="0.5"
+            android:hint="Longitude"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/config_v2_coord_loc_submit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/config_v2_coord_loc_ll"
+        android:layout_margin="5dp"
+        android:layout_toEndOf="@id/config_v2_coord_loc"
+        android:background="@drawable/dialog_bg_colored"
+        android:text="Get Address"
+        android:textColor="@color/white"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/config_v2_coord_result"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/config_v2_coord_loc"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:visibility="gone" />
+
+
 </RelativeLayout>

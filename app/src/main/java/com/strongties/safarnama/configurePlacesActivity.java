@@ -2,6 +2,8 @@ package com.strongties.safarnama;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
@@ -30,6 +33,8 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
@@ -288,6 +293,42 @@ public class configurePlacesActivity extends AppCompatActivity {
         });
 
 
+        ImageView iv_coor_address = findViewById(R.id.config_v2_coord_loc);
+        EditText et_coor_lat = findViewById(R.id.config_v2_coord_loc_lat);
+        EditText et_coor_lon = findViewById(R.id.config_v2_coord_loc_lon);
+        TextView tv_coor_submit = findViewById(R.id.config_v2_coord_loc_submit);
+        TextView tv_coor_result = findViewById(R.id.config_v2_coord_result);
+
+        AtomicReference<Boolean> iv_coor_address_clicked = new AtomicReference<>();
+        iv_coor_address_clicked.set(Boolean.FALSE);
+
+        iv_coor_address.setOnClickListener(view -> {
+            if (!iv_coor_address_clicked.get()) {
+                iv_coor_address_clicked.set(Boolean.TRUE);
+
+                et_coor_lat.setVisibility(View.VISIBLE);
+                et_coor_lon.setVisibility(View.VISIBLE);
+                tv_coor_submit.setVisibility(View.VISIBLE);
+                tv_coor_result.setVisibility(View.VISIBLE);
+            } else {
+                iv_coor_address_clicked.set(Boolean.FALSE);
+
+                et_coor_lat.setVisibility(View.GONE);
+                et_coor_lon.setVisibility(View.GONE);
+                tv_coor_submit.setVisibility(View.GONE);
+                tv_coor_result.setVisibility(View.GONE);
+            }
+        });
+
+        tv_coor_submit.setOnClickListener(view -> {
+            tv_coor_result.setText(getaddres(new LatLng(Double.parseDouble(et_coor_lat.getText().toString()), Double.parseDouble(et_coor_lon.getText().toString()))));
+        });
+
+
+
+
+
+
 /*
         //Configure_places_v1
         Button submit = findViewById(R.id.config_places_submit);
@@ -358,9 +399,25 @@ public class configurePlacesActivity extends AppCompatActivity {
  */
 
 
-
-
     }
 
+    public String getaddres(LatLng loc) {
+
+        StringBuffer address = new StringBuffer();
+        Geocoder gcd = new Geocoder(mContext, Locale.getDefault());
+        List<Address> addresses;
+        try {
+            addresses = gcd.getFromLocation(loc.latitude, loc.longitude, 1);
+            System.out.println(addresses);
+
+            if (addresses.size() > 0)
+                System.out.println(addresses.get(0).getLocality());
+            address.append(addresses.get(0).getAddressLine(0)).append("\n");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return address.toString();
+    }
 
 }

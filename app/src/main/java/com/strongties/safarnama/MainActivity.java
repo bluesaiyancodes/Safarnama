@@ -59,8 +59,10 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.strongties.safarnama.background_tasks.AvatarBackgroundTask;
 import com.strongties.safarnama.background_tasks.OtherBackgroundTask;
+import com.strongties.safarnama.user_classes.FirebaseToken;
 import com.strongties.safarnama.user_classes.LandmarkMeta;
 import com.strongties.safarnama.user_classes.RV_Distance;
 import com.strongties.safarnama.user_classes.User;
@@ -134,6 +136,23 @@ public class MainActivity extends AppCompatActivity {
         // Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
         //Objects.requireNonNull(getSupportActionBar()).setHomeAsUpIndicator(R.drawable.ic_app_name);// set drawable icon
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        //FireBase Cloud Messaging Initialization
+
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.w(TAG, "getInstanceId failed", task.getException());
+                    } else {
+                        Log.d(TAG, "token - " + task.getResult().getToken());
+                        DocumentReference docRef = FirebaseFirestore.getInstance()
+                                .collection(getString(R.string.collection_fcm_tokens))
+                                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
+
+                        FirebaseToken firebaseToken = new FirebaseToken(task.getResult().getToken());
+                        docRef.set(firebaseToken);
+                    }
+                });
 
 
         //Title Bar Related Tasks

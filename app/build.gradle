@@ -69,7 +69,7 @@ dependencies {
 
     //Firebase Implemenatation
     implementation 'com.google.firebase:firebase-analytics:17.5.0'
-    implementation 'com.google.firebase:firebase-auth:19.3.2'
+    implementation 'com.google.firebase:firebase-auth:19.4.0'
     implementation 'com.google.firebase:firebase-database:19.4.0'
     implementation 'com.google.android.gms:play-services-auth:18.1.0'
     implementation 'com.firebaseui:firebase-ui-firestore:6.2.1'
@@ -77,6 +77,12 @@ dependencies {
 
 // Recommended: Add the Firebase SDK for Google Analytics.
     implementation 'com.google.firebase:firebase-analytics:17.5.0'
+
+    // Add Firebase Messaging
+    implementation 'com.google.firebase:firebase-messaging:20.2.4'
+
+    //Firebase In-App Messaging
+    implementation 'com.google.firebase:firebase-inappmessaging-display:19.0.0'
 
     // Add the Firebase Crashlytics SDK.
     implementation 'com.google.firebase:firebase-crashlytics:17.2.1'

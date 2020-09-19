@@ -246,6 +246,7 @@
     <string name="privacy_policy">Privacy Policy</string>
     <string name="terms_of_service">Terms of Service</string>
     <string name="developer_options">Developer Options</string>
+    <string name="collection_fcm_tokens">Firebase Tokens</string>
 
 
 </resources>

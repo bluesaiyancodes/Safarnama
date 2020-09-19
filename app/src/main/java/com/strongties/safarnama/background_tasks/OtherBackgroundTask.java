@@ -8,9 +8,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.AsyncTask;
-import android.os.Build;
-import android.provider.Settings;
-import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -81,22 +78,7 @@ public class OtherBackgroundTask extends AsyncTask<Void, Void, Boolean> {
         return Math.sqrt(distance);
     }
 
-    public static boolean isLocationEnabled(Context context) {
-        int locationMode = 0;
-        String locationProviders;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            try {
-                locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
-            } catch (Settings.SettingNotFoundException e) {
-                e.printStackTrace();
-            }
-            return locationMode != Settings.Secure.LOCATION_MODE_OFF;
-        } else {
-            locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
-            return !TextUtils.isEmpty(locationProviders);
-        }
-    }
 
     @Override
     protected void onPostExecute(final Boolean result) {
@@ -251,18 +233,17 @@ public class OtherBackgroundTask extends AsyncTask<Void, Void, Boolean> {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
                 if (task.isSuccessful()) {
-                    if (current_location == null) {
-                        if (isLocationEnabled(mContext)) {
-                            getLastKnownLocation();
-                        }
-                    }
+
                     for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                         LandmarkStat landmarkStat = document.toObject(LandmarkStat.class);
-                        Double dist = distance(current_location.getLatitude(), current_location.getLongitude(), landmarkStat.getLandmark().getGeo_point().getLatitude(), landmarkStat.getLandmark().getGeo_point().getLongitude(), 0, 0);
+                        try {
+                            Double dist = distance(current_location.getLatitude(), current_location.getLongitude(), landmarkStat.getLandmark().getGeo_point().getLatitude(), landmarkStat.getLandmark().getGeo_point().getLongitude(), 0, 0);
 
-                        list_hot.add(new RV_Distance(landmarkStat.getLandmark().getId(), landmarkStat.getLandmark().getName(), landmarkStat.getLandmark().getImg_url(),
-                                landmarkStat.getLandmark().getCategory(), landmarkStat.getLandmark().getState(), landmarkStat.getLandmark().getDistrict(), landmarkStat.getLandmark().getCity(), dist, mContext.getString(R.string.hot_places)));
-
+                            list_hot.add(new RV_Distance(landmarkStat.getLandmark().getId(), landmarkStat.getLandmark().getName(), landmarkStat.getLandmark().getImg_url(),
+                                    landmarkStat.getLandmark().getCategory(), landmarkStat.getLandmark().getState(), landmarkStat.getLandmark().getDistrict(), landmarkStat.getLandmark().getCity(), dist, mContext.getString(R.string.hot_places)));
+                        } catch (NullPointerException e) {
+                            retrieveLocationandAddtoList(landmarkStat);
+                        }
                     }
                 }
             }
@@ -297,7 +278,7 @@ public class OtherBackgroundTask extends AsyncTask<Void, Void, Boolean> {
 
     }
 
-    private void getLastKnownLocation() {
+    private void retrieveLocationandAddtoList(LandmarkStat landmarkStat) {
         Log.d(TAG, "getLastKnownLocation: called.");
 
 
@@ -311,6 +292,10 @@ public class OtherBackgroundTask extends AsyncTask<Void, Void, Boolean> {
 
                 current_location = location;
 
+                Double dist = distance(location.getLatitude(), location.getLongitude(), landmarkStat.getLandmark().getGeo_point().getLatitude(), landmarkStat.getLandmark().getGeo_point().getLongitude(), 0, 0);
+
+                list_hot.add(new RV_Distance(landmarkStat.getLandmark().getId(), landmarkStat.getLandmark().getName(), landmarkStat.getLandmark().getImg_url(),
+                        landmarkStat.getLandmark().getCategory(), landmarkStat.getLandmark().getState(), landmarkStat.getLandmark().getDistrict(), landmarkStat.getLandmark().getCity(), dist, mContext.getString(R.string.hot_places)));
 
             }
         });

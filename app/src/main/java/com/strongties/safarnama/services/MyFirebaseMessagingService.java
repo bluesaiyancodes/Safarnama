@@ -4,21 +4,16 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.strongties.safarnama.MainActivity;
 import com.strongties.safarnama.R;
-import com.strongties.safarnama.user_classes.FirebaseToken;
-
-import java.util.Objects;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = "FB Message Service";
@@ -31,7 +26,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // If you want to send messages to this application instance or
         // manage this apps subscriptions on the server side, send the
         // Instance ID token to your app server.
-        //  sendRegistrationToServer(token);
+
+
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("myPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("token", token);
+        editor.apply();
+
+
+        //   sendRegistrationToServer(token);
     }
 
 
@@ -54,12 +57,4 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         manager.notify(0, builder.build());
     }
 
-    public void sendRegistrationToServer(String token) {
-        DocumentReference docRef = FirebaseFirestore.getInstance()
-                .collection(getString(R.string.collection_fcm_tokens))
-                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
-
-        FirebaseToken firebaseToken = new FirebaseToken(token);
-        docRef.set(firebaseToken);
-    }
 }

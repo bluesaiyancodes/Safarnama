@@ -240,7 +240,7 @@
                         android:layout_margin="4dp"
                         android:layout_weight="0.25"
                         android:background="@color/colorPrimaryDark"
-                        android:visibility="invisible"
+                        android:visibility="visible"
                         app:cardCornerRadius="5dp"
                         app:cardElevation="2dp"
                         app:cardMaxElevation="3dp">

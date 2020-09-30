@@ -128,7 +128,6 @@ public class LandmarkActivity extends AppCompatActivity {
         TextView city = findViewById(R.id.landmark_city);
         TextView type = findViewById(R.id.landmark_type);
         dist = findViewById(R.id.landmark_distance_val);
-        TextView fee = findViewById(R.id.landmark_fee);
         //TextView hours;
         TextView short_desc = findViewById(R.id.landmark_description_shrt);
         TextView long_desc = findViewById(R.id.landmark_description);
@@ -235,7 +234,6 @@ public class LandmarkActivity extends AppCompatActivity {
                     }
 
 
-                    fee.setText(landmark.getFee());
                     short_desc.setText(landmark.getShort_desc().replace("\"", ""));
                     long_desc.setText(landmark.getLong_desc().replace("\"", ""));
 
@@ -253,7 +251,7 @@ public class LandmarkActivity extends AppCompatActivity {
                         case "Hills & Caves":
                             category_img.setImageResource(R.drawable.category_hills_and_caves);
                             break;
-                        case "Historical Monuments":
+                        case "Iconic Places":
                             category_img.setImageResource(R.drawable.category_historical_monuments);
                             break;
                         case "Nature & Wildlife":
@@ -265,7 +263,7 @@ public class LandmarkActivity extends AppCompatActivity {
                         case "Religious Sites":
                             category_img.setImageResource(R.drawable.category_religious);
                             break;
-                        case "Waterfalls":
+                        case "Waterbodies":
                             category_img.setImageResource(R.drawable.category_waterfalls);
                             break;
                         case "Zoos & Reserves":

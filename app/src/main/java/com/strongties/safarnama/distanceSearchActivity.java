@@ -1,6 +1,7 @@
 package com.strongties.safarnama;
 
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -13,11 +14,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.strongties.safarnama.adapters.RecyclerViewAdaptor_distance_search;
 import com.strongties.safarnama.user_classes.RV_DistanceSearch;
@@ -99,15 +103,27 @@ public class distanceSearchActivity extends AppCompatActivity {
         recyclerAdapter = new RecyclerViewAdaptor_distance_search(this, list_DistanceSearch);
 
 
-        LatLng latLng = new LatLng(current_location.getLatitude(), current_location.getLongitude());
-
-        addtoLists(latLng);
+        try {
+            LatLng latLng = new LatLng(current_location.getLatitude(), current_location.getLongitude());
+            addtoLists(latLng);
+        } catch (NullPointerException e) {
+            FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(distanceSearchActivity.this);
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            mFusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
+                if (location != null) {
+                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                    addtoLists(latLng);
+                }
+            });
+        }
 
 
         Log.d(TAG, "List Size => " + list_DistanceSearch.size());
 
         myrecyclerview.setAdapter(recyclerAdapter);
-        recyclerAdapter.notifyDataSetChanged();
+        //recyclerAdapter.notifyDataSetChanged();
 
 
     }
@@ -176,6 +192,7 @@ public class distanceSearchActivity extends AppCompatActivity {
         }
 
 
+        recyclerAdapter.notifyDataSetChanged();
 
     }
 

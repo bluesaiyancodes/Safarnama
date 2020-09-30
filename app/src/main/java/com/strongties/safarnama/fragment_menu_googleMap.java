@@ -224,7 +224,7 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
                         .replace(R.id.fragment_container, new fragment_menu_googleMap("new"), "Google Map Fragment").commit();
 
                 Toast toast = Toast.makeText(getContext(), getString(R.string.show_new), Toast.LENGTH_SHORT);
-                toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_colored));
+                toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_toast_colored));
                 TextView toastmsg = toast.getView().findViewById(android.R.id.message);
                 toastmsg.setTextColor(Color.WHITE);
                 toast.show();
@@ -241,7 +241,7 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
                         .replace(R.id.fragment_container, new fragment_menu_googleMap("wish"), "Google Map Fragment").commit();
 
                 Toast toast = Toast.makeText(getContext(), getString(R.string.show_bucket), Toast.LENGTH_SHORT);
-                toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_colored));
+                toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_toast_colored));
                 TextView toastmsg = toast.getView().findViewById(android.R.id.message);
                 toastmsg.setTextColor(Color.WHITE);
                 toast.show();
@@ -259,7 +259,7 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
                         .replace(R.id.fragment_container, new fragment_menu_googleMap("accomplish"), "Google Map Fragment").commit();
 
                 Toast toast = Toast.makeText(getContext(), getString(R.string.show_accomplished), Toast.LENGTH_SHORT);
-                toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_colored));
+                toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_toast_colored));
                 TextView toastmsg = toast.getView().findViewById(android.R.id.message);
                 toastmsg.setTextColor(Color.WHITE);
                 toast.show();

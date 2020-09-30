@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.AsyncTask;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -15,6 +16,9 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -37,10 +41,12 @@ import java.util.Objects;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.strongties.safarnama.MainActivity.RequestList;
+import static com.strongties.safarnama.MainActivity.accomplish_type_count;
 import static com.strongties.safarnama.MainActivity.accomplished_id_list;
 import static com.strongties.safarnama.MainActivity.accomplished_list;
 import static com.strongties.safarnama.MainActivity.bucket_id_list;
 import static com.strongties.safarnama.MainActivity.bucket_list;
+import static com.strongties.safarnama.MainActivity.bucket_type_count;
 import static com.strongties.safarnama.MainActivity.current_location;
 import static com.strongties.safarnama.MainActivity.list_hot;
 import static com.strongties.safarnama.MainActivity.places_id_list;
@@ -48,7 +54,7 @@ import static com.strongties.safarnama.MainActivity.places_list;
 
 public class OtherBackgroundTask extends AsyncTask<Void, Void, Boolean> {
 
-    private static final String TAG = "Avatar BG";
+    private static final String TAG = "Other BG";
     FusedLocationProviderClient mFusedLocationClient;
 
     private Context mContext;
@@ -88,30 +94,6 @@ public class OtherBackgroundTask extends AsyncTask<Void, Void, Boolean> {
     }
 
 
-    private void getallfriends() {
-
-        CollectionReference collRef = FirebaseFirestore.getInstance()
-                .collection(mContext.getString(R.string.collection_relations))
-                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
-                .collection(mContext.getString(R.string.collection_friendlist));
-
-        collRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                        String user_id = document.getId();
-                        if (!MainActivity.FriendList.contains(user_id)) {
-                            MainActivity.FriendList.add(user_id);
-                        }
-                    }
-                }
-            }
-        });
-
-        Log.d(TAG, "FriendList" + MainActivity.FriendList);
-
-    }
 
     @Override
     protected void onPreExecute() {
@@ -185,6 +167,85 @@ public class OtherBackgroundTask extends AsyncTask<Void, Void, Boolean> {
                         bucket_id_list.add(landmarkList.getLandmarkMeta().getId());
                         bucket_list.add(landmarkList.getLandmarkMeta().getLandmark().getName());
                         Log.d(TAG, "Bucket List Added");
+
+                        Integer count = 0;
+                        switch (landmarkList.getLandmarkMeta().getLandmark().getCategory()) {
+                            case "Dams & Water Reservoirs":
+                                count = bucket_type_count.get(mContext.getString(R.string.category1));
+                                if (count == null) {
+                                    bucket_type_count.put(mContext.getString(R.string.category1), 1);
+                                }
+                                bucket_type_count.put(mContext.getString(R.string.category1), count + 1);
+                                break;
+                            case "Education & History":
+                                count = bucket_type_count.get(mContext.getString(R.string.category2));
+                                if (count == null) {
+                                    bucket_type_count.put(mContext.getString(R.string.category2), 1);
+                                }
+                                bucket_type_count.put(mContext.getString(R.string.category2), count + 1);
+                                break;
+                            case "Garden & Parks":
+                                count = bucket_type_count.get(mContext.getString(R.string.category3));
+                                if (count == null) {
+                                    bucket_type_count.put(mContext.getString(R.string.category3), 1);
+                                }
+                                bucket_type_count.put(mContext.getString(R.string.category3), count + 1);
+                                break;
+                            case "Hills & Caves":
+                                count = bucket_type_count.get(mContext.getString(R.string.category4));
+                                bucket_type_count.put(mContext.getString(R.string.category4), count + 1);
+                                if (count == null) {
+                                    bucket_type_count.put(mContext.getString(R.string.category4), 1);
+                                }
+                                break;
+                            case "Historical Monuments":
+                                count = bucket_type_count.get(mContext.getString(R.string.category5));
+                                if (count == null) {
+                                    bucket_type_count.put(mContext.getString(R.string.category5), 1);
+                                }
+                                bucket_type_count.put(mContext.getString(R.string.category5), count + 1);
+                                break;
+                            case "Nature & Wildlife":
+                                count = bucket_type_count.get(mContext.getString(R.string.category6));
+                                if (count == null) {
+                                    bucket_type_count.put(mContext.getString(R.string.category6), 1);
+                                }
+                                bucket_type_count.put(mContext.getString(R.string.category6), count + 1);
+                                break;
+                            case "Port & Sea Beach":
+                                count = bucket_type_count.get(mContext.getString(R.string.category7));
+                                if (count == null) {
+                                    bucket_type_count.put(mContext.getString(R.string.category7), 1);
+                                }
+                                bucket_type_count.put(mContext.getString(R.string.category7), count + 1);
+                                break;
+                            case "Religious Sites":
+                                count = bucket_type_count.get(mContext.getString(R.string.category8));
+                                if (count == null) {
+                                    bucket_type_count.put(mContext.getString(R.string.category8), 1);
+                                }
+                                bucket_type_count.put(mContext.getString(R.string.category8), count + 1);
+                                break;
+                            case "Waterfalls":
+                                count = bucket_type_count.get(mContext.getString(R.string.category9));
+                                if (count == null) {
+                                    bucket_type_count.put(mContext.getString(R.string.category9), 1);
+                                }
+                                bucket_type_count.put(mContext.getString(R.string.category9), count + 1);
+                                break;
+                            case "Zoos & Reserves":
+                                count = bucket_type_count.get(mContext.getString(R.string.category10));
+                                if (count == null) {
+                                    bucket_type_count.put(mContext.getString(R.string.category10), 1);
+                                }
+                                bucket_type_count.put(mContext.getString(R.string.category10), count + 1);
+                                break;
+                            default:
+                                break;
+
+                        }
+
+
                     }
                 }
             }
@@ -207,6 +268,85 @@ public class OtherBackgroundTask extends AsyncTask<Void, Void, Boolean> {
                         accomplished_id_list.add(landmarkList.getLandmarkMeta().getId());
                         accomplished_list.add(landmarkList.getLandmarkMeta().getLandmark().getName());
                         Log.d(TAG, "Accomplished List Added");
+
+                        Integer count = 0;
+                        switch (landmarkList.getLandmarkMeta().getLandmark().getCategory()) {
+                            case "Dams & Water Reservoirs":
+                                count = accomplish_type_count.get(mContext.getString(R.string.category1));
+                                if (count == null) {
+                                    accomplish_type_count.put(mContext.getString(R.string.category1), 1);
+                                }
+                                accomplish_type_count.put(mContext.getString(R.string.category1), count + 1);
+                                break;
+                            case "Education & History":
+                                count = accomplish_type_count.get(mContext.getString(R.string.category2));
+                                if (count == null) {
+                                    accomplish_type_count.put(mContext.getString(R.string.category2), 1);
+                                }
+                                accomplish_type_count.put(mContext.getString(R.string.category2), count + 1);
+                                break;
+                            case "Garden & Parks":
+                                count = accomplish_type_count.get(mContext.getString(R.string.category3));
+                                if (count == null) {
+                                    accomplish_type_count.put(mContext.getString(R.string.category3), 1);
+                                }
+                                accomplish_type_count.put(mContext.getString(R.string.category3), count + 1);
+                                break;
+                            case "Hills & Caves":
+                                count = accomplish_type_count.get(mContext.getString(R.string.category4));
+                                accomplish_type_count.put(mContext.getString(R.string.category4), count + 1);
+                                if (count == null) {
+                                    accomplish_type_count.put(mContext.getString(R.string.category4), 1);
+                                }
+                                break;
+                            case "Historical Monuments":
+                                count = accomplish_type_count.get(mContext.getString(R.string.category5));
+                                if (count == null) {
+                                    accomplish_type_count.put(mContext.getString(R.string.category5), 1);
+                                }
+                                accomplish_type_count.put(mContext.getString(R.string.category5), count + 1);
+                                break;
+                            case "Nature & Wildlife":
+                                count = accomplish_type_count.get(mContext.getString(R.string.category6));
+                                if (count == null) {
+                                    accomplish_type_count.put(mContext.getString(R.string.category6), 1);
+                                }
+                                accomplish_type_count.put(mContext.getString(R.string.category6), count + 1);
+                                break;
+                            case "Port & Sea Beach":
+                                count = accomplish_type_count.get(mContext.getString(R.string.category7));
+                                if (count == null) {
+                                    accomplish_type_count.put(mContext.getString(R.string.category7), 1);
+                                }
+                                accomplish_type_count.put(mContext.getString(R.string.category7), count + 1);
+                                break;
+                            case "Religious Sites":
+                                count = accomplish_type_count.get(mContext.getString(R.string.category8));
+                                if (count == null) {
+                                    accomplish_type_count.put(mContext.getString(R.string.category8), 1);
+                                }
+                                accomplish_type_count.put(mContext.getString(R.string.category8), count + 1);
+                                break;
+                            case "Waterfalls":
+                                count = accomplish_type_count.get(mContext.getString(R.string.category9));
+                                if (count == null) {
+                                    accomplish_type_count.put(mContext.getString(R.string.category9), 1);
+                                }
+                                accomplish_type_count.put(mContext.getString(R.string.category9), count + 1);
+                                break;
+                            case "Zoos & Reserves":
+                                count = accomplish_type_count.get(mContext.getString(R.string.category10));
+                                if (count == null) {
+                                    accomplish_type_count.put(mContext.getString(R.string.category10), 1);
+                                }
+                                accomplish_type_count.put(mContext.getString(R.string.category10), count + 1);
+                                break;
+                            default:
+                                break;
+
+                        }
+
+
                     }
                 }
             }
@@ -253,6 +393,32 @@ public class OtherBackgroundTask extends AsyncTask<Void, Void, Boolean> {
         return true;
     }
 
+
+    private void getallfriends() {
+
+        CollectionReference collRef = FirebaseFirestore.getInstance()
+                .collection(mContext.getString(R.string.collection_relations))
+                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                .collection(mContext.getString(R.string.collection_friendlist));
+
+        collRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                        String user_id = document.getId();
+                        if (!MainActivity.FriendList.contains(user_id)) {
+                            MainActivity.FriendList.add(user_id);
+                        }
+                    }
+                }
+            }
+        });
+
+        Log.d(TAG, "FriendList" + MainActivity.FriendList);
+
+    }
+
     private void getallrequested() {
 
         CollectionReference collRef = FirebaseFirestore.getInstance()
@@ -285,11 +451,15 @@ public class OtherBackgroundTask extends AsyncTask<Void, Void, Boolean> {
         if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        mFusedLocationClient.getLastLocation().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                Location location = task.getResult();
-                assert location != null;
 
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mContext);
+
+        LocationCallback locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+
+                Location location = locationResult.getLastLocation();
                 current_location = location;
 
                 Double dist = distance(location.getLatitude(), location.getLongitude(), landmarkStat.getLandmark().getGeo_point().getLatitude(), landmarkStat.getLandmark().getGeo_point().getLongitude(), 0, 0);
@@ -298,7 +468,15 @@ public class OtherBackgroundTask extends AsyncTask<Void, Void, Boolean> {
                         landmarkStat.getLandmark().getCategory(), landmarkStat.getLandmark().getState(), landmarkStat.getLandmark().getDistrict(), landmarkStat.getLandmark().getCity(), dist, mContext.getString(R.string.hot_places)));
 
             }
-        });
+        };
+
+//        Looper.prepare();
+
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setNumUpdates(1);
+        mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
+
 
     }
 }

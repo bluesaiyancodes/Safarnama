@@ -6,12 +6,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
+import com.strongties.safarnama.adapters.PagerAdapterWishlist;
 
 public class WishlistActivity extends AppCompatActivity {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    private ViewPagerAdapter adapter;
+    private PagerAdapterWishlist adapter;
 
 
     @Override
@@ -21,7 +22,7 @@ public class WishlistActivity extends AppCompatActivity {
 
         tabLayout = findViewById(R.id.tablayout_id);
         viewPager = findViewById(R.id.viewpager_id);
-        adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter = new PagerAdapterWishlist(getSupportFragmentManager());
 
         //Fragments Added Here
         adapter.AddFragment(new RV_ExploreFragment(),getString(R.string.Explore));

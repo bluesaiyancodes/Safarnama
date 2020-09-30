@@ -10,6 +10,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,11 +23,18 @@ import androidx.core.content.ContextCompat;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 import com.strongties.safarnama.user_classes.Landmark;
 import com.strongties.safarnama.user_classes.LandmarkMeta;
+
+import org.imaginativeworld.whynotimagecarousel.CarouselItem;
+import org.imaginativeworld.whynotimagecarousel.ImageCarousel;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -76,13 +86,21 @@ public class configurePlacesActivity extends AppCompatActivity {
 
         mContext = getApplicationContext();
 
+        Button config_back = findViewById(R.id.config_v2_back);
+        config_back.setOnClickListener(view -> {
+            onBackPressed();
+        });
+
         ImageView iv_dev = findViewById(R.id.config_v2_dev_img);
         Button btn_crash = findViewById(R.id.config_v2_crash);
         Button btn_upload = findViewById(R.id.config_v2_upload);
+        LinearLayout version_layout = findViewById(R.id.layout_version);
 
         Button btn_update_version_btn = findViewById(R.id.config_v2_version_update_btn);
         Button btn_update_version_submit = findViewById(R.id.config_v2_version_submit);
         EditText et_version = findViewById(R.id.config_v2_version_ET);
+
+        RelativeLayout maintenance_layout = findViewById(R.id.config_v2_maintenance_layout);
 
         AtomicReference<Boolean> iv_dev_clicked = new AtomicReference<>();
         iv_dev_clicked.set(Boolean.FALSE);
@@ -91,15 +109,19 @@ public class configurePlacesActivity extends AppCompatActivity {
             if (!iv_dev_clicked.get()) {
                 iv_dev_clicked.set(Boolean.TRUE);
 
+                version_layout.setVisibility(View.VISIBLE);
                 btn_crash.setVisibility(View.VISIBLE);
                 btn_upload.setVisibility(View.VISIBLE);
                 btn_update_version_btn.setVisibility(View.VISIBLE);
+                maintenance_layout.setVisibility(View.VISIBLE);
             } else {
                 iv_dev_clicked.set(Boolean.FALSE);
 
+                version_layout.setVisibility(View.GONE);
                 btn_crash.setVisibility(View.GONE);
                 btn_upload.setVisibility(View.GONE);
                 btn_update_version_btn.setVisibility(View.GONE);
+                maintenance_layout.setVisibility(View.GONE);
             }
         });
 
@@ -117,7 +139,7 @@ public class configurePlacesActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 //Read from Landmarks csv file
-                InputStream is = mContext.getResources().openRawResource(R.raw.landmarks_odishav2);
+                InputStream is = mContext.getResources().openRawResource(R.raw.landmarks_odisha);
                 BufferedReader reader = new BufferedReader(
                         new InputStreamReader(is, StandardCharsets.UTF_8));
                 String line = "";
@@ -174,13 +196,11 @@ public class configurePlacesActivity extends AppCompatActivity {
                         landmark.setCity(tokens.get(4));
                         landmark.setGeo_point(geoPoint);
                         landmark.setCategory(tokens.get(7));
-                        landmark.setFee(tokens.get(8));
-                        landmark.setHours(tokens.get(9));
-                        landmark.setShort_desc(tokens.get(10));
-                        landmark.setLong_desc(tokens.get(11));
-                        landmark.setHistory(tokens.get(12));
-                        landmark.setImg_url(tokens.get(13));
-                        landmark.setImg_all_url(tokens.get(14));
+                        landmark.setShort_desc(tokens.get(8));
+                        landmark.setLong_desc(tokens.get(9));
+                        landmark.setHistory(tokens.get(10));
+                        landmark.setImg_url(tokens.get(11));
+                        landmark.setImg_all_url(tokens.get(12));
 
                         docRef = FirebaseFirestore.getInstance()
                                 .collection(getString(R.string.collection_landmarks))
@@ -251,8 +271,8 @@ public class configurePlacesActivity extends AppCompatActivity {
                 btn_update_version_submit.setVisibility(View.VISIBLE);
 
                 DocumentReference documentReference = FirebaseFirestore.getInstance()
-                        .collection("Version")
-                        .document("version-id");
+                        .collection(getString(R.string.collection_maintainance))
+                        .document(getString(R.string.document_version));
 
                 documentReference.get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -265,8 +285,8 @@ public class configurePlacesActivity extends AppCompatActivity {
 
                 btn_update_version_submit.setOnClickListener(view1 -> {
                     DocumentReference docRef = FirebaseFirestore.getInstance()
-                            .collection("Version")
-                            .document("version-id");
+                            .collection(getString(R.string.collection_maintainance))
+                            .document(getString(R.string.document_version));
 
                     Map<String, Object> version_map = new HashMap<>();
                     version_map.put("id", Integer.parseInt(et_version.getText().toString()));
@@ -292,6 +312,40 @@ public class configurePlacesActivity extends AppCompatActivity {
 
         });
 
+
+        Switch maintenance_switch = findViewById(R.id.config_v2_maintenance_switch);
+        DocumentReference docRef = FirebaseFirestore.getInstance()
+                .collection(getString(R.string.collection_maintainance))
+                .document(getString(R.string.document_db_maintenance));
+        docRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Boolean flag = task.getResult().getBoolean("flag");
+                if (flag) {
+                    maintenance_switch.setChecked(true);
+                } else {
+                    maintenance_switch.setChecked(false);
+                }
+            }
+        });
+
+        maintenance_switch.setOnCheckedChangeListener((compoundButton, b) -> {
+            DocumentReference documentReference = FirebaseFirestore.getInstance()
+                    .collection(getString(R.string.collection_maintainance))
+                    .document(getString(R.string.document_db_maintenance));
+
+            Map<String, Object> switch_flag = new HashMap<>();
+            switch_flag.put("flag", b);
+
+            documentReference.set(switch_flag).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    if (b) {
+                        Snackbar.make(getWindow().getDecorView().getRootView(), "Maintenance In Progress", Snackbar.LENGTH_SHORT).show();
+                    } else {
+                        Snackbar.make(getWindow().getDecorView().getRootView(), "Maintenance Ended", Snackbar.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        });
 
         ImageView iv_coor_address = findViewById(R.id.config_v2_coord_loc);
         EditText et_coor_lat = findViewById(R.id.config_v2_coord_loc_lat);
@@ -325,7 +379,105 @@ public class configurePlacesActivity extends AppCompatActivity {
         });
 
 
+        // Demo YouTube
 
+        Button demo_youtube = findViewById(R.id.config_v2_youtube_btn);
+        YouTubePlayerView youTubePlayerView = findViewById(R.id.config_v2_youtube_player);
+
+        AtomicReference<Boolean> demo_youtube_clicked = new AtomicReference<>();
+        demo_youtube_clicked.set(Boolean.FALSE);
+
+        demo_youtube.setOnClickListener(view -> {
+
+            if (!demo_youtube_clicked.get()) {
+                demo_youtube_clicked.set(Boolean.TRUE);
+
+                youTubePlayerView.setVisibility(View.VISIBLE);
+
+            } else {
+                demo_youtube_clicked.set(Boolean.FALSE);
+
+
+                youTubePlayerView.setVisibility(View.GONE);
+            }
+
+
+        });
+
+
+        getLifecycle().addObserver(youTubePlayerView);
+
+        youTubePlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
+            @Override
+            public void onReady(@NonNull YouTubePlayer youTubePlayer) {
+                String videoId = "0fgfu8M-fdg";
+                youTubePlayer.cueVideo(videoId, 0f); // Loads video but does not play
+                // youTubePlayer.loadVideo(videoId, 0f); // Loads and plays video
+            }
+        });
+
+
+        //Demo Carousel
+        Button btn_carousel = findViewById(R.id.config_v2_carousel_btn);
+        ImageCarousel carousel = findViewById(R.id.config_v2_carousel);
+        carousel.setAutoPlay(true);
+
+
+        AtomicReference<Boolean> demo_carousel_clicked = new AtomicReference<>();
+        demo_carousel_clicked.set(Boolean.FALSE);
+
+        btn_carousel.setOnClickListener(view -> {
+
+            if (!demo_carousel_clicked.get()) {
+                demo_carousel_clicked.set(Boolean.TRUE);
+
+                carousel.setVisibility(View.VISIBLE);
+
+            } else {
+                demo_carousel_clicked.set(Boolean.FALSE);
+
+
+                carousel.setVisibility(View.GONE);
+            }
+
+
+        });
+
+
+        List<CarouselItem> list = new ArrayList<>();
+
+        // Image URL with caption
+        list.add(new CarouselItem("https://images.unsplash.com/photo-1532581291347-9c39cf10a73c?w=1080", "Photo by Aaron Wu on Unsplash"));
+
+        // Just image URL
+        list.add(new CarouselItem("https://images.unsplash.com/photo-1534447677768-be436bb09401?w=1080"));
+
+        list.add(new CarouselItem("https://unsplash.com/photos/ekLogSC9jX4/download?force=true&w=1920"));
+        list.add(new CarouselItem("https://unsplash.com/photos/R1NoMQu9B5k/download?force=true&w=1920"));
+        list.add(new CarouselItem("https://unsplash.com/photos/3A3Jx8QrnsY/download?force=true&w=1920"));
+        list.add(new CarouselItem("https://unsplash.com/photos/mf84vWO2jgo/download?force=true&w=1920"));
+        list.add(new CarouselItem("https://unsplash.com/photos/1EXMa6e6Qvc/download?force=true&w=1920"));
+
+/*
+        // Image drawable with caption
+        list.add(
+                new CarouselItem(
+                        R.drawable.image_1,
+                        "Photo by Kimiya Oveisi on Unsplash"
+                )
+        );
+
+        // Just image drawable
+        list.add(
+                new CarouselItem(
+                        R.drawable.image_2
+                )
+        );
+
+ */
+
+
+        carousel.addData(list);
 
 
 

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:layout_marginTop="130dp"
+    android:background="@color/background">
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/feed_v2_screen_viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="10dp"
+        android:background="@android:color/transparent"
+        app:cardCornerRadius="30dp">
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/feed_v2_tab_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            app:tabBackground="@color/color1"
+            app:tabGravity="fill"
+            app:tabIndicatorHeight="0dp"
+            app:tabMinWidth="50dp"
+            app:tabMode="scrollable"
+            app:tabPaddingEnd="10dp"
+            app:tabPaddingStart="10dp"
+            app:tabTextColor="@color/white" />
+    </com.google.android.material.card.MaterialCardView>
+
+
+    <include layout="@layout/fab_insert_new" />
+
+</RelativeLayout>

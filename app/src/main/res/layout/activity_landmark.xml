@@ -99,7 +99,7 @@
                         android:orientation="horizontal"
                         android:weightSum="1">
 
-                        <Button
+                        <androidx.appcompat.widget.AppCompatButton
                             android:id="@+id/landmark_add_to_bucket"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -113,13 +113,12 @@
                             android:textColor="@color/textItemMenu"
                             android:textSize="15sp" />
 
-                        <Button
+                        <androidx.appcompat.widget.AppCompatButton
                             android:id="@+id/landmark_add_to_accomplish"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="15dp"
                             android:layout_marginEnd="10dp"
-
                             android:layout_weight="0.5"
                             android:background="@drawable/dialog_bg"
                             android:drawableStart="@drawable/accomplished_add"
@@ -130,45 +129,14 @@
 
                 </RelativeLayout>
 
-                <RelativeLayout
-                    android:id="@+id/landmark_distance_layout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/landmark_header_btns"
-                    android:layout_centerHorizontal="true">
 
-                    <TextView
-                        android:id="@+id/landmark_distance_val"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:background="@drawable/dialog_bg_colored"
-                        android:gravity="center"
-                        android:paddingStart="230sp"
-                        android:text="200Km"
-                        android:textColor="@color/white" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:background="@drawable/dialog_bg_light"
-                        android:gravity="center"
-                        android:text="@string/distancefromcurent"
-                        android:textColor="@color/textItemMenu" />
-
-                </RelativeLayout>
 
 
                 <TextView
                     android:id="@+id/landmark_type_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/landmark_distance_layout"
+                    android:layout_below="@id/landmark_header_btns"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="20dp"
                     android:text="@string/category"
@@ -179,7 +147,7 @@
                     android:id="@+id/image_category"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/landmark_distance_layout"
+                    android:layout_below="@id/landmark_header_btns"
                     android:layout_marginStart="30dp"
                     android:layout_marginTop="15dp"
                     android:layout_toEndOf="@id/landmark_type_label"
@@ -190,7 +158,7 @@
                     android:id="@+id/landmark_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/landmark_distance_layout"
+                    android:layout_below="@id/landmark_header_btns"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="20dp"
@@ -281,37 +249,46 @@
                     android:textColor="@color/textItemMenu"
                     android:textSize="15sp" />
 
-
-                <TextView
-                    android:id="@+id/landmark_fee_label"
+                <RelativeLayout
+                    android:id="@+id/landmark_distance_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/landmark_state"
+                    android:layout_below="@id/landmark_state_label"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginTop="30dp"
-                    android:text="@string/fee" />
+                    android:layout_marginTop="20dp">
 
-                <TextView
-                    android:id="@+id/landmark_fee"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/landmark_fee_label"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginStart="30dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="10dp"
-                    android:background="@drawable/dialog_bg"
-                    android:text="@string/fee"
-                    android:textColor="@color/textItemMenu"
-                    android:textSize="20sp" />
+                    <TextView
+                        android:id="@+id/landmark_distance_val"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/dialog_bg_colored"
+                        android:gravity="center"
+                        android:paddingStart="230sp"
+                        android:text="200Km"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/dialog_bg_light"
+                        android:gravity="center"
+                        android:text="@string/distancefromcurent"
+                        android:textColor="@color/textItemMenu" />
+
+                </RelativeLayout>
 
 
                 <TextView
                     android:id="@+id/landmark_description_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/landmark_fee"
+                    android:layout_below="@id/landmark_distance_layout"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="20dp"
                     android:text="@string/description"

@@ -14,7 +14,6 @@ import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,7 +36,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -53,7 +51,6 @@ import com.strongties.safarnama.user_classes.UserRelation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class fragment_menu_buddies extends Fragment {
 
@@ -118,131 +115,7 @@ public class fragment_menu_buddies extends Fragment {
         currentuser = ((UserClient) (mcontext.getApplicationContext())).getUser();
 
 
-        //Set Profile at a Glance
-        TextView profile_glance = v.findViewById(R.id.menu3_profile_glance);
 
-        TextView tv_profile_name = v.findViewById(R.id.menu3_buddies_profile_name);
-        TextView tv_profile_email = v.findViewById(R.id.menu3_buddies_profile_email);
-        TextView tv_profile_badge = v.findViewById(R.id.menu3_buddies_profile_badge);
-        ImageView iv_profile_img = v.findViewById(R.id.menu3_buddies_profile_img);
-        ImageView iv_badge_small = v.findViewById(R.id.menu3_buddies_profile_badge_small);
-
-        DocumentReference documentReference = FirebaseFirestore.getInstance()
-                .collection(mcontext.getString(R.string.collection_users))
-                .document(FirebaseAuth.getInstance().getUid());
-
-        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
-                    Log.d(TAG, "onComplete: successfully set the user client.");
-                    User user = Objects.requireNonNull(task.getResult()).toObject(User.class);
-
-                    Log.d(TAG, "username -> "+user.getUsername());
-                    Log.d(TAG, "email -> "+user.getEmail());
-                    Log.d(TAG, "uid -> "+user.getUser_id());
-                    tv_profile_name.setText(user.getUsername());
-                    tv_profile_email.setText(user.getEmail());
-
-                    switch (user.getAvatar()) {
-                        case "0 Star":
-                            tv_profile_badge.setText(getString(R.string.avatar_0_lvl));
-                            Glide.with(mcontext)
-                                    .load(R.drawable.avatar_0_star)
-                                    .placeholder(R.drawable.loading_image)
-                                    .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
-                                    .into(iv_badge_small);
-                            break;
-                        case "1 Star":
-                            tv_profile_badge.setText(getString(R.string.avatar_1_lvl));
-                            Glide.with(mcontext)
-                                    .load(R.drawable.avatar_1_star)
-                                    .placeholder(R.drawable.loading_image)
-                                    .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
-                                    .into(iv_badge_small);
-                            break;
-                        case "2 Star":
-                            tv_profile_badge.setText(getString(R.string.avatar_2_lvl));
-                            Glide.with(mcontext)
-                                    .load(R.drawable.avatar_2_star)
-                                    .placeholder(R.drawable.loading_image)
-                                    .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
-                                    .into(iv_badge_small);
-                            break;
-                        case "3 Star":
-                            tv_profile_badge.setText(getString(R.string.avatar_3_lvl));
-                            Glide.with(mcontext)
-                                    .load(R.drawable.avatar_3_star)
-                                    .placeholder(R.drawable.loading_image)
-                                    .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
-                                    .into(iv_badge_small);
-                            break;
-                        case "4 Star":
-                            tv_profile_badge.setText(getString(R.string.avatar_4_lvl));
-                            Glide.with(mcontext)
-                                    .load(R.drawable.avatar_4_star)
-                                    .placeholder(R.drawable.loading_image)
-                                    .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
-                                    .into(iv_badge_small);
-                            break;
-                        case "5 Star":
-                            tv_profile_badge.setText(getString(R.string.avatar_5_lvl));
-                            Glide.with(mcontext)
-                                    .load(R.drawable.avatar_5_star)
-                                    .placeholder(R.drawable.loading_image)
-                                    .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
-                                    .into(iv_badge_small);
-                            break;
-                        case "Developer":
-                            tv_profile_badge.setText(getString(R.string.avatar_dev_lvl));
-                            Glide.with(mcontext)
-                                    .load(R.drawable.avatar_6_star)
-                                    .placeholder(R.drawable.loading_image)
-                                    .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
-                                    .into(iv_badge_small);
-                            break;
-                        default:
-                            break;
-                    }
-                    Glide.with(mcontext)
-                            .load(user.getPhoto())
-                            .placeholder(R.drawable.loading_image)
-                            .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
-                            .into(iv_profile_img);
-
-
-                }
-            }
-        });
-
-        LinearLayout profile_layout = v.findViewById(R.id.menu3_buddies_profile);
-
-        AtomicReference<Boolean> glance_clicked = new AtomicReference<>();
-        glance_clicked.set(Boolean.FALSE);
-
-        profile_glance.setOnClickListener(view -> {
-            view.startAnimation(new AlphaAnimation(1F, 0.7F));
-            if (!glance_clicked.get()) {
-                glance_clicked.set(Boolean.TRUE);
-                profile_layout.setVisibility(View.VISIBLE);
-            } else {
-                glance_clicked.set(Boolean.FALSE);
-                profile_layout.setVisibility(View.GONE);
-            }
-        });
-
-
-/*
-        AlphaAnimation btn_click = new AlphaAnimation(1F, 0.7F);
-        profile_layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                v.startAnimation(btn_click);
-                ((AppCompatActivity) mcontext).getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_top, R.anim.enter_from_top, R.anim.exit_to_bottom)
-                        .replace(R.id.fragment_container, new fragment_menu_buddies_profile(), "Buddy Profile Fragment").addToBackStack("buddyProfile").commit();
-            }
-        });
- */
 
 
 
@@ -266,7 +139,7 @@ public class fragment_menu_buddies extends Fragment {
                     public void onClick(View v) {
                         if(email.getText().toString().equals(currentuser.getEmail())) {
                             Toast toast = Toast.makeText(mcontext, getString(R.string.friend_request_self), Toast.LENGTH_SHORT);
-                            toast.getView().setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getActivity()), R.drawable.dialog_bg_toast_colored));
+                            toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_toast_colored));
                             TextView toastmsg = toast.getView().findViewById(android.R.id.message);
                             toastmsg.setTextColor(Color.WHITE);
                             toast.show();
@@ -384,13 +257,13 @@ public class fragment_menu_buddies extends Fragment {
 
                                             if(MainActivity.RequestedList.contains(user.getUser_id())) {
                                                 Toast toast = Toast.makeText(mcontext, getString(R.string.friend_request_pending), Toast.LENGTH_SHORT);
-                                                toast.getView().setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getActivity()), R.drawable.dialog_bg_toast_colored));
+                                                toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_toast_colored));
                                                 TextView toastmsg = toast.getView().findViewById(android.R.id.message);
                                                 toastmsg.setTextColor(Color.WHITE);
                                                 toast.show();
                                             }else if(MainActivity.FriendList.contains(user.getUser_id())) {
                                                 Toast toast = Toast.makeText(mcontext, getString(R.string.friend_request_already_accepted), Toast.LENGTH_SHORT);
-                                                toast.getView().setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getActivity()), R.drawable.dialog_bg_toast_colored));
+                                                toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_toast_colored));
                                                 TextView toastmsg = toast.getView().findViewById(android.R.id.message);
                                                 toastmsg.setTextColor(Color.WHITE);
                                                 toast.show();
@@ -426,14 +299,14 @@ public class fragment_menu_buddies extends Fragment {
                                                     public void onComplete(@NonNull Task<Void> task) {
                                                         if(task.isSuccessful()) {
                                                             Toast toast = Toast.makeText(mcontext, getString(R.string.friend_request_success), Toast.LENGTH_SHORT);
-                                                            toast.getView().setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getActivity()), R.drawable.dialog_bg_toast_colored));
+                                                            toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_toast_colored));
                                                             TextView toastmsg = toast.getView().findViewById(android.R.id.message);
                                                             toastmsg.setTextColor(Color.WHITE);
                                                             toast.show();
                                                             Log.d(TAG, "Successfull added to request list for reciever");
                                                         }else {
                                                             Toast toast = Toast.makeText(mcontext, getString(R.string.friend_request_fail), Toast.LENGTH_SHORT);
-                                                            toast.getView().setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getActivity()), R.drawable.dialog_bg_toast_colored));
+                                                            toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_toast_colored));
                                                             TextView toastmsg = toast.getView().findViewById(android.R.id.message);
                                                             toastmsg.setTextColor(Color.WHITE);
                                                             toast.show();
@@ -464,7 +337,7 @@ public class fragment_menu_buddies extends Fragment {
                                 public void run() {
                                     if(!finalFlag) {
                                         Toast toast = Toast.makeText(mcontext, "User not found", Toast.LENGTH_SHORT);
-                                        toast.getView().setBackground(ContextCompat.getDrawable(Objects.requireNonNull(getActivity()), R.drawable.dialog_bg_toast_colored));
+                                        toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_toast_colored));
                                         TextView toastmsg = toast.getView().findViewById(android.R.id.message);
                                         toastmsg.setTextColor(Color.WHITE);
                                         toast.show();

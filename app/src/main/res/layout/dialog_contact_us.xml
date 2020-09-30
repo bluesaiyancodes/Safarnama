@@ -39,13 +39,13 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_weight="1" />
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:id="@+id/contact_btn"
             android:text="@string/contact_submit"
-            android:background="@color/white"/>
+            android:background="@color/white" />
     </LinearLayout>
 
 

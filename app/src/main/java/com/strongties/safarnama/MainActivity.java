@@ -15,7 +15,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -68,7 +67,9 @@ import com.strongties.safarnama.user_classes.RV_Distance;
 import com.strongties.safarnama.user_classes.User;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -96,6 +97,9 @@ public class MainActivity extends AppCompatActivity {
     public static List<RV_Distance> list_hot;
     public static Location current_location;
 
+    public static Map<String, Integer> accomplish_type_count;
+    public static Map<String, Integer> bucket_type_count;
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +116,31 @@ public class MainActivity extends AppCompatActivity {
         bucket_id_list = new ArrayList<>();
         accomplished_id_list = new ArrayList<>();
         list_hot = new ArrayList<>();
+
+
+        accomplish_type_count = new HashMap<>();
+        accomplish_type_count.put(getString(R.string.category1), 0);
+        accomplish_type_count.put(getString(R.string.category2), 0);
+        accomplish_type_count.put(getString(R.string.category3), 0);
+        accomplish_type_count.put(getString(R.string.category4), 0);
+        accomplish_type_count.put(getString(R.string.category5), 0);
+        accomplish_type_count.put(getString(R.string.category6), 0);
+        accomplish_type_count.put(getString(R.string.category7), 0);
+        accomplish_type_count.put(getString(R.string.category8), 0);
+        accomplish_type_count.put(getString(R.string.category9), 0);
+        accomplish_type_count.put(getString(R.string.category10), 0);
+
+        bucket_type_count = new HashMap<>();
+        bucket_type_count.put(getString(R.string.category1), 0);
+        bucket_type_count.put(getString(R.string.category2), 0);
+        bucket_type_count.put(getString(R.string.category3), 0);
+        bucket_type_count.put(getString(R.string.category4), 0);
+        bucket_type_count.put(getString(R.string.category5), 0);
+        bucket_type_count.put(getString(R.string.category6), 0);
+        bucket_type_count.put(getString(R.string.category7), 0);
+        bucket_type_count.put(getString(R.string.category8), 0);
+        bucket_type_count.put(getString(R.string.category9), 0);
+        bucket_type_count.put(getString(R.string.category10), 0);
 
 
         context = getApplicationContext();
@@ -307,7 +336,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                         } else {
                             Toast toast = Toast.makeText(context, getString(R.string.place_not_found), Toast.LENGTH_SHORT);
-                            toast.getView().setBackground(ContextCompat.getDrawable(context, R.drawable.dialog_bg_colored));
+                            toast.getView().setBackground(ContextCompat.getDrawable(context, R.drawable.dialog_bg_toast_colored));
                             TextView toastmsg = toast.getView().findViewById(android.R.id.message);
                             toastmsg.setTextColor(Color.WHITE);
                             toast.show();
@@ -413,7 +442,7 @@ public class MainActivity extends AppCompatActivity {
             tv_view_profile.setOnClickListener(view12 -> {
                 view12.startAnimation(new AlphaAnimation(1F, 0.7F));
                 getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_top, R.anim.enter_from_top, R.anim.exit_to_bottom)
-                        .replace(R.id.fragment_container, new fragment_menu_buddies_profile(), "Buddy Profile Fragment").commit();
+                        .replace(R.id.fragment_container, new fragment_menu_profile(), "Buddy Profile Fragment").commit();
                 myDialog.cancel();
             });
 
@@ -545,7 +574,7 @@ public class MainActivity extends AppCompatActivity {
         menu4.setOnClickListener(view -> {
             view.startAnimation(new AlphaAnimation(1F, 0.7F));
             getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
-                    .replace(R.id.fragment_container, new fragment_menu_feed(), "Menu Feed").commit();
+                    .replace(R.id.fragment_container, new fragment_menu_feed_v2(), "Menu Feed").commit();
         });
 
         menu5.setOnClickListener(view -> {
@@ -569,7 +598,7 @@ public class MainActivity extends AppCompatActivity {
         menu7.setOnClickListener(view -> {
             view.startAnimation(new AlphaAnimation(1F, 0.7F));
             getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_top, R.anim.enter_from_top, R.anim.exit_to_bottom)
-                    .replace(R.id.fragment_container, new fragment_menu_buddies_profile(), "Buddy Profile Fragment").commit();
+                    .replace(R.id.fragment_container, new fragment_menu_explore(), "Explore Fragment").commit();
         });
 
     }
@@ -813,12 +842,7 @@ public class MainActivity extends AppCompatActivity {
     private Intent rateIntentForUrl(String url) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(String.format("%s?id=%s", url, getPackageName())));
         int flags = Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_MULTIPLE_TASK;
-        if (Build.VERSION.SDK_INT >= 21) {
-            flags |= Intent.FLAG_ACTIVITY_NEW_DOCUMENT;
-        } else {
-            //noinspection deprecation
-            flags |= Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET;
-        }
+        flags |= Intent.FLAG_ACTIVITY_NEW_DOCUMENT;
         intent.addFlags(flags);
         return intent;
     }

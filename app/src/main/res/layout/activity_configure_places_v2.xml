@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background">
@@ -8,7 +9,7 @@
         android:id="@+id/config_v2_dev_img"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_margin="20dp"
         android:src="@drawable/ic_dev" />
 
 
@@ -35,6 +36,7 @@
         android:textColor="@color/white"
         android:visibility="gone" />
 
+    <!-- Layout Version -->
     <LinearLayout
         android:id="@+id/layout_version"
         android:layout_width="wrap_content"
@@ -42,7 +44,8 @@
         android:layout_below="@id/config_v2_crash"
         android:layout_centerHorizontal="true"
         android:layout_margin="10dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <Button
             android:id="@+id/config_v2_version_update_btn"
@@ -82,12 +85,41 @@
 
     </LinearLayout>
 
+    <RelativeLayout
+        android:id="@+id/config_v2_maintenance_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_below="@id/layout_version"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/config_v2_maintenance_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:background="@drawable/dialog_bg_colored"
+            android:text="Set Maintenance"
+            android:textColor="@color/white" />
+
+        <Switch
+            android:id="@+id/config_v2_maintenance_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@id/config_v2_maintenance_tv"
+            android:theme="@style/SCBSwitch" />
+
+    </RelativeLayout>
+
+
     <ImageView
         android:id="@+id/config_v2_coord_loc"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_below="@id/layout_version"
-        android:layout_margin="10dp"
+        android:layout_below="@id/config_v2_maintenance_layout"
+        android:layout_margin="20dp"
         android:src="@drawable/ic_location_on_map" />
 
     <LinearLayout
@@ -139,5 +171,83 @@
         android:layout_marginTop="5dp"
         android:visibility="gone" />
 
+    <Button
+        android:id="@+id/config_v2_youtube_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/config_v2_coord_result"
+        android:layout_margin="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/dialog_bg_colored_narrow"
+        android:text="Demo Video Player"
+        android:textColor="@color/white" />
+
+    <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+        android:id="@+id/config_v2_youtube_player"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/config_v2_youtube_btn"
+        android:layout_margin="20dp"
+        android:visibility="gone"
+        app:autoPlay="false"
+        app:showFullScreenButton="false" />
+
+    <Button
+        android:id="@+id/config_v2_carousel_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/config_v2_youtube_player"
+        android:layout_margin="20dp"
+        android:background="@drawable/dialog_bg_colored_narrow"
+        android:text="Demo Carousel"
+        android:textColor="@color/white" />
+
+    <org.imaginativeworld.whynotimagecarousel.ImageCarousel
+        android:id="@+id/config_v2_carousel"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_below="@id/config_v2_carousel_btn"
+        android:visibility="gone"
+        app:autoPlay="true"
+        app:autoPlayDelay="2000"
+        app:autoWidthFixing="true"
+        app:bottomShadowAlpha="0.6"
+        app:bottomShadowHeight="64dp"
+        app:captionMargin="0dp"
+        app:captionTextSize="14sp"
+        app:carouselBackground="#333333"
+        app:carouselType="BLOCK"
+        app:imagePlaceholder="@drawable/loading_image"
+        app:imageScaleType="centerCrop"
+        app:imageViewId="@id/img"
+        app:indicatorMargin="0dp"
+        app:itemLayout="@layout/item_carousel"
+        app:nextButtonId="@id/btn_next"
+        app:nextButtonLayout="@layout/next_button_layout"
+        app:nextButtonMargin="4dp"
+        app:previousButtonId="@id/btn_previous"
+        app:previousButtonLayout="@layout/previous_button_layout"
+        app:previousButtonMargin="4dp"
+        app:scaleOnScroll="true"
+        app:scalingFactor="0.35"
+        app:showBottomShadow="true"
+        app:showCaption="true"
+        app:showIndicator="true"
+        app:showNavigationButtons="true"
+        app:showTopShadow="true"
+        app:topShadowAlpha="0.6"
+        app:topShadowHeight="32dp" />
+
+
+    <Button
+        android:id="@+id/config_v2_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="20dp"
+        android:background="@drawable/dialog_bg_colored"
+        android:text="@string/back"
+        android:textColor="@color/white" />
 
 </RelativeLayout>

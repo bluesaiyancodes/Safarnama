@@ -12,8 +12,6 @@ public class Landmark {
     private String city;
     private GeoPoint geo_point;
     private String category;
-    private String fee;
-    private String hours;
     private String short_desc;
     private String long_desc;
     private String history;
@@ -24,7 +22,7 @@ public class Landmark {
     public Landmark() {
     }
 
-    public Landmark(String name, String id, String state, String district, String city, GeoPoint geo_point, String type, String fee, String hours, String short_desc, String long_desc, String history, String img_url, String img_all_url) {
+    public Landmark(String name, String id, String state, String district, String city, GeoPoint geo_point, String type, String short_desc, String long_desc, String history, String img_url, String img_all_url) {
         this.name = name;
         this.id = id;
         this.state = state;
@@ -32,8 +30,6 @@ public class Landmark {
         this.city = city;
         this.geo_point = geo_point;
         this.category = type;
-        this.fee = fee;
-        this.hours = hours;
         this.short_desc = short_desc;
         this.long_desc = long_desc;
         this.history = history;
@@ -102,22 +98,6 @@ public class Landmark {
         this.category = category;
     }
 
-    public String getFee() {
-        return fee;
-    }
-
-    public void setFee(String fee) {
-        this.fee = fee;
-    }
-
-    public String getHours() {
-        return hours;
-    }
-
-    public void setHours(String hours) {
-        this.hours = hours;
-    }
-
     public String getShort_desc() {
         return short_desc;
     }
@@ -169,8 +149,6 @@ public class Landmark {
                 ", city='" + city + '\'' +
                 ", geo_point=" + geo_point +
                 ", category='" + category + '\'' +
-                ", fee='" + fee + '\'' +
-                ", hours='" + hours + '\'' +
                 ", short_desc='" + short_desc + '\'' +
                 ", long_desc='" + long_desc + '\'' +
                 ", history='" + history + '\'' +

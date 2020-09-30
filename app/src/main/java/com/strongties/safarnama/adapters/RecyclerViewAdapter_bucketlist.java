@@ -104,7 +104,7 @@ public class RecyclerViewAdapter_bucketlist extends FirestoreRecyclerAdapter<Lan
             case "Hills & Caves":
                 holder.category.setImageResource(R.drawable.category_hills_and_caves);
                 break;
-            case "Historical Monuments":
+            case "Iconic Places":
                 holder.category.setImageResource(R.drawable.category_historical_monuments);
                 break;
             case "Nature & Wildlife":
@@ -116,7 +116,7 @@ public class RecyclerViewAdapter_bucketlist extends FirestoreRecyclerAdapter<Lan
             case "Religious Sites":
                 holder.category.setImageResource(R.drawable.category_religious);
                 break;
-            case "Waterfalls":
+            case "Waterbodies":
                 holder.category.setImageResource(R.drawable.category_waterfalls);
                 break;
             case "Zoos & Reserves":

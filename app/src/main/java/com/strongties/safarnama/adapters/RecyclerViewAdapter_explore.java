@@ -106,7 +106,7 @@ public class RecyclerViewAdapter_explore extends FirestoreRecyclerAdapter<Landma
             case "Hills & Caves":
                 holder.img_heart.setImageResource(R.drawable.category_hills_and_caves);
                 break;
-            case "Historical Monuments":
+            case "Iconic Places":
                 holder.img_heart.setImageResource(R.drawable.category_historical_monuments);
                 break;
             case "Nature & Wildlife":
@@ -118,7 +118,7 @@ public class RecyclerViewAdapter_explore extends FirestoreRecyclerAdapter<Landma
             case "Religious Sites":
                 holder.img_heart.setImageResource(R.drawable.category_religious);
                 break;
-            case "Waterfalls":
+            case "Waterbodies":
                 holder.img_heart.setImageResource(R.drawable.category_waterfalls);
                 break;
             case "Zoos & Reserves":

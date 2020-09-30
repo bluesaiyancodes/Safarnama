@@ -122,6 +122,14 @@
     <string name="collection_feed">Feed</string>
     <string name="collection_posts">posts</string>
     <string name="document_global">global</string>
+    <string name="collection_stats">Stats</string>
+    <string name="collection_lists">Lists</string>
+    <string name="document_accomplished">Accomplished</string>
+    <string name="document_bucketlist">Bucket List</string>
+    <string name="collection_fcm_tokens">Firebase Tokens</string>
+    <string name="collection_maintainance">Maintenance</string>
+    <string name="document_version">Version</string>
+
 
     <string name="i_circle">\u24D8</string>
     <string name="i_star1">\u2605</string>
@@ -142,6 +150,18 @@
     <string name="post">Post</string>
     <string name="feed_post_success">Posted Successfully</string>
     <string name="feed_msg_accomplished">"Today I completed my visit to "</string>
+
+
+    <string name="category1">Dams &amp; Water Reservoirs</string>
+    <string name="category2">Education &amp; History</string>
+    <string name="category3">Garden &amp; Parks</string>
+    <string name="category4">Hills &amp; Caves</string>
+    <string name="category5">Historical Monuments</string>
+    <string name="category6">Nature &amp; Wildlife</string>
+    <string name="category7">Port &amp; Sea Beach</string>
+    <string name="category8">Religious Sites</string>
+    <string name="category9">Waterfalls</string>
+    <string name="category10">Zoos &amp; Reserves</string>
 
 
     <string name="avatar_0">0 Star</string>
@@ -225,12 +245,6 @@
     <string name="dialog_permission_title">Grant Permissions</string>
     <string name="dialog_permission_message">This app needs permission to use this feature. You can grant them in app settings.</string>
     <string name="go_to_settings">GOTO SETTINGS</string>
-    <string name="collection_stats">Stats</string>
-    <string name="collection_lists">Lists</string>
-    <string name="document_accomplished">Accomplished</string>
-    <string name="document_bucketlist">Bucket List</string>
-    <string name="collection_version">Version</string>
-    <string name="document_version_id">version-id</string>
     <string name="outdated_version">Outdated Version</string>
     <string name="outdated_version_message">Download the latest version from Playstore or Request the Developers for updated version.</string>
     <string name="playstore">PlayStore</string>
@@ -246,7 +260,10 @@
     <string name="privacy_policy">Privacy Policy</string>
     <string name="terms_of_service">Terms of Service</string>
     <string name="developer_options">Developer Options</string>
-    <string name="collection_fcm_tokens">Firebase Tokens</string>
+    <string name="document_db_maintenance">DB Maintenance</string>
+    <string name="maintenance">Maintenance</string>
+    <string name="maintenance_msg">The application is under maintenance, please try again after sometime.</string>
+    <string name="maintenance_msg_dev">The application is under maintenance. Proceed with caution.</string>
 
 
 </resources>

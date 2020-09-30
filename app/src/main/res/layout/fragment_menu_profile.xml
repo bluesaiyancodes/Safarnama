@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_marginTop="150dp"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/profile"
+            android:textSize="25sp"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/textItemMenu"
+            android:layout_margin="10dp"/>
+
+
+    </RelativeLayout>
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="200dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal|center_vertical"
+                android:layout_weight="0.5">
+                <ImageView
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:layout_margin="15dp"
+                    android:id="@+id/menu3_profile_img"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal|center_vertical"
+                android:layout_weight="0.5">
+                <ImageView
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:layout_margin="15dp"
+                    android:id="@+id/menu3_buddies_profile_badge"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/profile_name_label"
+                        android:text="@string/name"
+                        android:textSize="15sp"
+                    android:textColor="@color/text_color"
+                    android:layout_margin="10dp"/>
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/profile_name_label"
+                        android:id="@+id/profile_name"
+                        android:background="@drawable/dialog_bg_light"
+                        android:text="@string/name"
+                        android:textSize="15sp"
+                        android:textColor="@color/text_color_dark"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/profile_email_label"
+                        android:layout_below="@+id/profile_name"
+                        android:text="@string/email"
+                        android:textSize="15sp"
+                        android:textColor="@color/text_color"
+                        android:layout_margin="10dp"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/profile_email_label"
+                        android:id="@+id/profile_email"
+                        android:background="@drawable/dialog_bg_light"
+                        android:text="@string/email"
+                        android:textSize="15sp"
+                        android:textColor="@color/text_color_dark"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp" />
+
+
+                    <!-- Bucket List Count  -->
+                    <RelativeLayout
+                        android:id="@+id/profile_bucket_count_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/profile_email"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="60dp">
+
+                        <TextView
+                            android:id="@+id/profile_bucket_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:background="@drawable/dialog_bg_colored"
+                            android:gravity="center"
+                            android:paddingStart="145sp"
+                            android:paddingEnd="20sp"
+                            android:text="20"
+                            android:textColor="@color/white" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:background="@drawable/dialog_bg_light"
+                            android:gravity="center"
+                            android:text="@string/bucketlistcount"
+                            android:textColor="@color/textItemMenu" />
+
+                    </RelativeLayout>
+
+                    <!-- Accomplished List Count  -->
+                    <RelativeLayout
+                        android:id="@+id/profile_accomplished_count_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/profile_bucket_count_layout"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="20dp">
+
+                        <TextView
+                            android:id="@+id/profile_accomplished_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:background="@drawable/dialog_bg_colored"
+                            android:gravity="center"
+                            android:paddingStart="165sp"
+                            android:paddingEnd="20sp"
+                            android:text="20"
+                            android:textColor="@color/white" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:background="@drawable/dialog_bg_light"
+                            android:gravity="center"
+                            android:text="@string/accomplishlistcount"
+                            android:textColor="@color/textItemMenu" />
+
+                    </RelativeLayout>
+
+                </RelativeLayout>
+
+                <com.github.mikephil.charting.charts.BarChart
+                    android:id="@+id/profile_chart1"
+                    android:layout_width="match_parent"
+                    android:layout_height="400dp"
+                    android:layout_marginTop="20dp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="200dp"
+                android:layout_height="100dp"
+                android:layout_marginBottom="100dp" />
+
+
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/profile_done"
+            android:background="@drawable/dialog_bg_colored"
+            android:layout_toEndOf="@id/profile_save_changes"
+            android:text="@string/back"
+            android:textSize="15sp"
+            android:textColor="@color/white"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/profile_save_changes"
+            android:background="@drawable/dialog_bg_colored"
+            android:text="@string/save_changes"
+            android:textSize="15sp"
+            android:textColor="@color/white"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"/>
+
+
+
+    </RelativeLayout>
+
+
+
+
+</RelativeLayout>

@@ -11,10 +11,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -33,6 +35,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.strongties.safarnama.LandmarkActivity;
 import com.strongties.safarnama.R;
+import com.strongties.safarnama.imageViewActivity;
 import com.strongties.safarnama.user_classes.LandmarkMeta;
 import com.strongties.safarnama.user_classes.User;
 import com.strongties.safarnama.user_classes.UserFeed;
@@ -41,7 +44,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Objects;
 
-public class RecyclerViewAdapter_feed extends FirestoreRecyclerAdapter<UserFeed, RecyclerViewAdapter_feed.MyViewHolder>{
+public class RecyclerViewAdapter_feed extends FirestoreRecyclerAdapter<UserFeed, RecyclerViewAdapter_feed.MyViewHolder> {
 
     public static final String TAG = "FeedFragAdap";
 
@@ -55,12 +58,16 @@ public class RecyclerViewAdapter_feed extends FirestoreRecyclerAdapter<UserFeed,
         this.mode = mode;
     }
 
+    public RecyclerViewAdapter_feed(@NonNull FirestoreRecyclerOptions<UserFeed> options) {
+        super(options);
+    }
+
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View v;
-        v = LayoutInflater.from(parent.getContext()).inflate(R.layout.rv_feed,parent,false);
+        v = LayoutInflater.from(parent.getContext()).inflate(R.layout.rv_feed, parent, false);
         final MyViewHolder vHolder = new MyViewHolder(v);
 
         mContext = parent.getContext();
@@ -72,6 +79,9 @@ public class RecyclerViewAdapter_feed extends FirestoreRecyclerAdapter<UserFeed,
     @Override
     protected void onBindViewHolder(@NonNull MyViewHolder holder, int position, @NonNull UserFeed model) {
 
+        if (position == 0) {
+            holder.vspace.setVisibility(View.VISIBLE);
+        }
 
         holder.tv_feed_body.setText(model.getDatacontent());
 
@@ -150,6 +160,19 @@ public class RecyclerViewAdapter_feed extends FirestoreRecyclerAdapter<UserFeed,
 
 
                 });
+            } else {
+                holder.feed_img.setOnClickListener(view -> {
+
+
+                    view.startAnimation(new AlphaAnimation(1F, 0.7F));
+                    Intent intent = new Intent(mContext, imageViewActivity.class);
+                    intent.putExtra("imageUrl", model.getImgUrl());
+                    intent.putExtra("name", "View Image");
+                    mContext.startActivity(intent);
+                    ((Activity) mContext).overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+
+
+                });
             }
         }
 
@@ -173,44 +196,42 @@ public class RecyclerViewAdapter_feed extends FirestoreRecyclerAdapter<UserFeed,
                         Glide.with(mContext)
                                 .load(user[0].getPhoto())
                                 .placeholder(R.drawable.loading_image)
-                                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                                    .into(holder.profile_img);
-                            holder.tv_name.setText(user[0].getUsername());
-                            switch (user[0].getAvatar()){
-                                case "0 Star":
-                                    holder.tv_avatar_lvl.setText(mContext.getString(R.string.avatar_0_lvl));
-                                    break;
-                                case "1 Star":
-                                    holder.tv_avatar_lvl.setText(mContext.getString(R.string.avatar_1_lvl));
-                                    break;
-                                case "2 Star":
-                                    holder.tv_avatar_lvl.setText(mContext.getString(R.string.avatar_2_lvl));
-                                    break;
-                                case "3 Star":
-                                    holder.tv_avatar_lvl.setText(mContext.getString(R.string.avatar_3_lvl));
-                                    break;
-                                case "4 Star":
-                                    holder.tv_avatar_lvl.setText(mContext.getString(R.string.avatar_4_lvl));
-                                    break;
-                                case "5 Star":
-                                    holder.tv_avatar_lvl.setText(mContext.getString(R.string.avatar_5_lvl));
-                                    break;
-                                case "Developer":
-                                    holder.tv_avatar_lvl.setText(mContext.getString(R.string.avatar_dev_lvl));
-                                    break;
-                                default:
-                                    break;
-                            }
-                        } else {
-                            Log.d(TAG, "No such document");
+                                .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                                .into(holder.profile_img);
+                        holder.tv_name.setText(user[0].getUsername());
+                        switch (user[0].getAvatar()) {
+                            case "0 Star":
+                                holder.tv_avatar_lvl.setText(mContext.getString(R.string.avatar_0_lvl));
+                                break;
+                            case "1 Star":
+                                holder.tv_avatar_lvl.setText(mContext.getString(R.string.avatar_1_lvl));
+                                break;
+                            case "2 Star":
+                                holder.tv_avatar_lvl.setText(mContext.getString(R.string.avatar_2_lvl));
+                                break;
+                            case "3 Star":
+                                holder.tv_avatar_lvl.setText(mContext.getString(R.string.avatar_3_lvl));
+                                break;
+                            case "4 Star":
+                                holder.tv_avatar_lvl.setText(mContext.getString(R.string.avatar_4_lvl));
+                                break;
+                            case "5 Star":
+                                holder.tv_avatar_lvl.setText(mContext.getString(R.string.avatar_5_lvl));
+                                break;
+                            case "Developer":
+                                holder.tv_avatar_lvl.setText(mContext.getString(R.string.avatar_dev_lvl));
+                                break;
+                            default:
+                                break;
                         }
                     } else {
-                        Log.d(TAG, "get failed with ", task.getException());
+                        Log.d(TAG, "No such document");
                     }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
                 }
-            });
-
-
+            }
+        });
 
 
     }
@@ -225,6 +246,7 @@ public class RecyclerViewAdapter_feed extends FirestoreRecyclerAdapter<UserFeed,
         private ImageView feed_img;
 
         private LinearLayout itemlayout;
+        private RelativeLayout vspace;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -237,6 +259,7 @@ public class RecyclerViewAdapter_feed extends FirestoreRecyclerAdapter<UserFeed,
             feed_img = itemView.findViewById(R.id.menu_feed_img);
 
             itemlayout = itemView.findViewById(R.id.feed_layout);
+            vspace = itemView.findViewById(R.id.feed_vspace);
         }
     }
 

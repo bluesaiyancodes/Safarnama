@@ -101,7 +101,7 @@ public class RV_ExploreFragment extends Fragment {
                     inputPlaceID = places_id_list.get(places_list.indexOf(inputPlace));
                 }catch (ArrayIndexOutOfBoundsException e){
                     Toast toast = Toast.makeText(mContext, mContext.getString(R.string.place_not_found), Toast.LENGTH_SHORT);
-                    toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_colored));
+                    toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_toast_colored));
                     TextView toastmsg = toast.getView().findViewById(android.R.id.message);
                     toastmsg.setTextColor(Color.WHITE);
                     toast.show();
@@ -175,7 +175,7 @@ public class RV_ExploreFragment extends Fragment {
                                                 public void onComplete(@NonNull Task<Void> task) {
                                                     if (task.isSuccessful()) {
                                                         Toast toast = Toast.makeText(mContext, mContext.getString(R.string.wishlistadd), Toast.LENGTH_SHORT);
-                                                        toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_colored));
+                                                        toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_toast_colored));
                                                         TextView toastmsg = toast.getView().findViewById(android.R.id.message);
                                                         toastmsg.setTextColor(Color.WHITE);
                                                         toast.show();
@@ -286,7 +286,7 @@ public class RV_ExploreFragment extends Fragment {
                                                 public void onComplete(@NonNull Task<Void> task) {
                                                     if (task.isSuccessful()) {
                                                         Toast toast = Toast.makeText(mContext, mContext.getString(R.string.accomplishlistadd), Toast.LENGTH_SHORT);
-                                                        toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_colored));
+                                                        toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_toast_colored));
                                                         TextView toastmsg = toast.getView().findViewById(android.R.id.message);
                                                         toastmsg.setTextColor(Color.WHITE);
                                                         toast.show();
@@ -454,7 +454,7 @@ public class RV_ExploreFragment extends Fragment {
                             }
                         }else {
                             Toast toast = Toast.makeText(mContext, mContext.getString(R.string.place_not_found), Toast.LENGTH_SHORT);
-                            toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_colored));
+                            toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_toast_colored));
                             TextView toastmsg = toast.getView().findViewById(android.R.id.message);
                             toastmsg.setTextColor(Color.WHITE);
                             toast.show();

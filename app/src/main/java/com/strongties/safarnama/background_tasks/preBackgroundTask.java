@@ -9,18 +9,17 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
-import android.os.Build;
+import android.os.Looper;
 import android.provider.Settings;
-import android.text.TextUtils;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.strongties.safarnama.MainActivity;
 
 import java.io.IOException;
@@ -31,7 +30,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class preBackgroundTask extends AsyncTask<Void, Void, Boolean> {
 
-    private static final String TAG = "Avatar BG";
+    private static final String TAG = "Pre BG";
     FusedLocationProviderClient mFusedLocationClient;
 
     private Context mContext;
@@ -42,19 +41,13 @@ public class preBackgroundTask extends AsyncTask<Void, Void, Boolean> {
 
     public static boolean isLocationEnabled(Context context) {
         int locationMode = 0;
-        String locationProviders;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            try {
-                locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
-            } catch (Settings.SettingNotFoundException e) {
-                e.printStackTrace();
-            }
-            return locationMode != Settings.Secure.LOCATION_MODE_OFF;
-        } else {
-            locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
-            return !TextUtils.isEmpty(locationProviders);
+        try {
+            locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
         }
+        return locationMode != Settings.Secure.LOCATION_MODE_OFF;
     }
 
     @Override
@@ -90,47 +83,61 @@ public class preBackgroundTask extends AsyncTask<Void, Void, Boolean> {
         if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        mFusedLocationClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mContext);
+
+        LocationCallback locationCallback = new LocationCallback() {
             @Override
-            public void onComplete(@NonNull Task<Location> task) {
-                if (task.isSuccessful()) {
-                    Location location = task.getResult();
-                    assert location != null;
+            public void onLocationResult(LocationResult locationResult) {
 
-                    String address = getaddres(location);
-                    MainActivity.current_location = location;
+                Location location = locationResult.getLastLocation();
 
-                    String[] tokens = address.split(",");
-                    String[] stateToken = tokens[tokens.length - 2].split(" ");
-                    String LocalState = stateToken[1];
+                String address = getaddres(location);
+                MainActivity.current_location = location;
+
+                String[] tokens = address.split(",");
+                String[] stateToken = tokens[tokens.length - 2].split(" ");
+                String LocalState = stateToken[1];
 
 
-                    SharedPreferences pref = mContext.getSharedPreferences("myPrefs", MODE_PRIVATE);
-                    SharedPreferences.Editor editor = pref.edit();
-                    editor.putString("localState", LocalState);
-                    editor.apply();
+                SharedPreferences pref = mContext.getSharedPreferences("myPrefs", MODE_PRIVATE);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString("localState", LocalState);
+                editor.apply();
 
-                    Log.d(TAG, "local Testing-> " + stateToken[1]);
+                Log.d(TAG, "local Testing-> " + stateToken[1]);
 
-                }
             }
-        });
+        };
+
+        try {
+            Looper.prepare();
+        } catch (RuntimeException e) {
+            //do nothing
+        }
+
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setNumUpdates(1);
+        mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
+
 
     }
 
     public String getaddres(Location loc) {
 
-        StringBuffer address = new StringBuffer();
+        StringBuilder address = new StringBuilder();
         Geocoder gcd = new Geocoder(mContext, Locale.getDefault());
         List<Address> addresses;
         try {
             addresses = gcd.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
 
-            if (addresses.size() > 0)
+            if (addresses.size() > 0) {
                 System.out.println(addresses.get(0).getLocality());
-            Log.d(TAG, "Testing" + addresses.get(0).getLocality());
-            address.append(addresses.get(0).getAddressLine(0)).append("\n");
-
+                Log.d(TAG, "Testing" + addresses.get(0).getLocality());
+                address.append(addresses.get(0).getAddressLine(0)).append("\n");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -144,4 +151,5 @@ public class preBackgroundTask extends AsyncTask<Void, Void, Boolean> {
 
         return address.toString();
     }
+
 }

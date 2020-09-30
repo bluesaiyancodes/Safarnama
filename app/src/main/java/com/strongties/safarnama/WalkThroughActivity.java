@@ -40,7 +40,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
-import com.strongties.safarnama.adapters.IntroViewPagerAdapter;
+import com.strongties.safarnama.adapters.PagerAdapterIntroView;
 import com.strongties.safarnama.user_classes.ScreenItem;
 import com.strongties.safarnama.user_classes.User;
 import com.strongties.safarnama.user_classes.UserLocation;
@@ -52,7 +52,7 @@ import java.util.Objects;
 public class WalkThroughActivity extends AppCompatActivity {
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private static final String TAG = "WalkThrough";
-    IntroViewPagerAdapter introViewPagerAdapter;
+    PagerAdapterIntroView pagerAdapterIntroView;
     TabLayout tabIndicator;
     Button btnNext;
     int position = 0;
@@ -157,8 +157,8 @@ public class WalkThroughActivity extends AppCompatActivity {
 
         // setup viewpager
         screenPager = findViewById(R.id.screen_viewpager);
-        introViewPagerAdapter = new IntroViewPagerAdapter(this, mList);
-        screenPager.setAdapter(introViewPagerAdapter);
+        pagerAdapterIntroView = new PagerAdapterIntroView(this, mList);
+        screenPager.setAdapter(pagerAdapterIntroView);
 
         // setup tablayout with viewpager
 
@@ -181,7 +181,6 @@ public class WalkThroughActivity extends AppCompatActivity {
 
                 if (position == mList.size() - 1) { // when we rech to the last screen
 
-                    // TODO : show the GETSTARTED Button and hide the indicator and the next button
 
                     loadLastScreen();
 
@@ -231,7 +230,7 @@ public class WalkThroughActivity extends AppCompatActivity {
 
                 //open main activity
 
-                Intent mainActivity = new Intent(getApplicationContext(), MainActivity.class);
+                Intent mainActivity = new Intent(getApplicationContext(), VersionCheckActivity.class);
                 startActivity(mainActivity);
 
                 savePrefsData();

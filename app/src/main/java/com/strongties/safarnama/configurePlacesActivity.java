@@ -202,30 +202,43 @@ public class configurePlacesActivity extends AppCompatActivity {
                         landmark.setImg_url(tokens.get(11));
                         landmark.setImg_all_url(tokens.get(12));
 
+                        LandmarkMeta landmarkMeta = new LandmarkMeta(landmark.getId(), landmark.getState(), landmark.getDistrict(), landmark.getGeo_point(), landmark, landmark.getCategory());
+
+
                         docRef = FirebaseFirestore.getInstance()
                                 .collection(getString(R.string.collection_landmarks))
                                 .document(landmark.getState())
                                 .collection(landmark.getDistrict())
                                 .document(landmark.getId());
 
-                        docRef.set(landmark).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        docRef.set(landmarkMeta).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
+                                if (task.isSuccessful()) {
                                     // Toast.makeText(mContext, "Landmark Inserted Successfully", Toast.LENGTH_SHORT).show();
-                                }
-                                else {
+                                } else {
                                     //Toast.makeText(mContext, "Encountered Errors. Try Later.", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
 
-                        LandmarkMeta landmarkMeta = new LandmarkMeta();
-                        landmarkMeta.setId(landmark.getId());
-                        landmarkMeta.setdistrict(landmark.getDistrict());
-                        landmarkMeta.setState(landmark.getState());
-                        landmarkMeta.setGeoPoint(landmark.getGeo_point());
-                        landmarkMeta.setLandmark(landmark);
+                        docRef = FirebaseFirestore.getInstance()
+                                .collection(getString(R.string.collection_landmarks))
+                                .document(landmark.getState())
+                                .collection(getString(R.string.document_meta))
+                                .document(landmark.getId());
+
+                        docRef.set(landmarkMeta).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    // Toast.makeText(mContext, "Landmark Inserted Successfully", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    //Toast.makeText(mContext, "Encountered Errors. Try Later.", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+
                         docRef = FirebaseFirestore.getInstance()
                                 .collection(getString(R.string.collection_landmarks))
                                 .document(getString(R.string.document_meta))

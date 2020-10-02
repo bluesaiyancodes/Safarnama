@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static String DBname = "wander";
-    private static int version = 19;
+    private static int version = 22;
     private Context context;
 
     public DatabaseHelper(Context context) {
@@ -48,6 +48,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS LANDMARKS");
+        db.execSQL("DROP TABLE IF EXISTS INDIAINFO");
         onCreate(db);
 
     }
@@ -55,7 +56,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        //Create Table
+        //Create Table for Local Landmark
         String sql = "CREATE TABLE LANDMARKS (id INTEGER PRIMARY KEY AUTOINCREMENT, place_id TEXT, name TEXT, lat REAL, lon REAL, state TEXT, district TEXT, city TEXT, type TEXT, url TEXT)";
         db.execSQL(sql);
 
@@ -74,12 +75,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 //count lines
                 linecounter++;
                 //exclude the first line as it contains headers
-                if(linecounter == 1){
+                if (linecounter == 1) {
                     continue;
                 }
-                insertdata(tokens.get(0), tokens.get(1), tokens.get(2), tokens.get(3), tokens.get(4), Double.parseDouble(tokens.get(5)), Double.parseDouble(tokens.get(6)), tokens.get(7), tokens.get(11), db);
+                insertdataLandmark(tokens.get(0), tokens.get(1), tokens.get(2), tokens.get(3), tokens.get(4), Double.parseDouble(tokens.get(5)), Double.parseDouble(tokens.get(6)), tokens.get(7), tokens.get(11), db);
 
-                Log.d("DatabaseHelper" ,"CSV read " );
+                Log.d("DatabaseHelper", "Landmark CSV read line ->" + linecounter);
             }
         } catch (IOException e1) {
             Log.e("DatabaseHelper", "Error" + line, e1);
@@ -87,10 +88,46 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
 
+        //Create Table for Local Landmark
+        String sql2 = "CREATE TABLE INDIAINFO (id INTEGER PRIMARY KEY AUTOINCREMENT, state TEXT, district TEXT, lat REAL, lon REAL, statetype TEXT)";
+        db.execSQL(sql2);
+
+        InputStream is2 = context.getResources().openRawResource(R.raw.india_info);
+        BufferedReader reader2 = new BufferedReader(
+                new InputStreamReader(is2, StandardCharsets.UTF_8));
+        String line2 = "";
+        int linecounter2 = 0;
+
+
+        try {
+
+            while ((line2 = reader2.readLine()) != null) {
+                // Split the line into different tokens (using the comma as a separator excluding commas inside quotes).
+                ArrayList<String> tokens = customSplitSpecific(line2);
+                //count lines
+                linecounter2++;
+                //exclude the first line as it contains headers
+                if (linecounter2 == 1) {
+                    continue;
+                }
+
+                try {
+                    insertdataIndiaInfo(tokens.get(0), tokens.get(1), Double.parseDouble(tokens.get(2)), Double.parseDouble(tokens.get(3)), tokens.get(4), db);
+                    Log.d("DatabaseHelper", "IndiaInfo CSV read -> " + tokens.toString());
+                } catch (NumberFormatException e) {
+                    Log.d("DatabaseHelper", "IndiaInfo CSV read -> " + tokens.toString());
+                }
+
+            }
+        } catch (IOException e1) {
+            Log.e("DatabaseHelper", "Error" + line, e1);
+            e1.printStackTrace();
+        }
+
 
     }
 
-    private void insertdata(String name, String place_id, String state, String district, String city, double lat, double lon, String type, String url, SQLiteDatabase database) {
+    private void insertdataLandmark(String name, String place_id, String state, String district, String city, double lat, double lon, String type, String url, SQLiteDatabase database) {
         ContentValues values = new ContentValues();
         values.put("place_id", place_id);
         values.put("name", name);
@@ -104,5 +141,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         database.insert("LANDMARKS", null, values);
 
+    }
+
+    private void insertdataIndiaInfo(String state, String district, double lat, double lon, String statetype, SQLiteDatabase database) {
+        ContentValues values = new ContentValues();
+        values.put("state", state);
+        values.put("district", district);
+        values.put("lat", lat);
+        values.put("lon", lon);
+        values.put("statetype", statetype);
+
+        database.insert("INDIAINFO", null, values);
     }
 }

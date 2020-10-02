@@ -156,11 +156,11 @@
     <string name="category2">Education &amp; History</string>
     <string name="category3">Garden &amp; Parks</string>
     <string name="category4">Hills &amp; Caves</string>
-    <string name="category5">Historical Monuments</string>
+    <string name="category5">Iconic Places</string>
     <string name="category6">Nature &amp; Wildlife</string>
     <string name="category7">Port &amp; Sea Beach</string>
     <string name="category8">Religious Sites</string>
-    <string name="category9">Waterfalls</string>
+    <string name="category9">Waterbodies</string>
     <string name="category10">Zoos &amp; Reserves</string>
 
 
@@ -264,6 +264,14 @@
     <string name="maintenance">Maintenance</string>
     <string name="maintenance_msg">The application is under maintenance, please try again after sometime.</string>
     <string name="maintenance_msg_dev">The application is under maintenance. Proceed with caution.</string>
+    <string name="all_states">All States</string>
+    <string name="all_districts">All Districts</string>
+    <string name="filter_category">Filter Category</string>
+    <string name="chooseregion">Choose Region</string>
+    <string name="filter">Filter</string>
+    <string name="unsupported">Unsupported!</string>
+    <string name="selectstate_msg">Filtering categories on all states is not available yet. Try to filter categories on a particular state.</string>
+    <string name="selectcategory_msg">Select some categories to filter results.</string>
 
 
 </resources>

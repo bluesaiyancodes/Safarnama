@@ -122,6 +122,7 @@
 
         <androidx.constraintlayout.motion.widget.MotionLayout
             android:layout_width="match_parent"
+            android:id="@+id/main_menu_motion_layout"
             android:layout_height="wrap_content"
             app:layoutDescription="@xml/scene_01">
 

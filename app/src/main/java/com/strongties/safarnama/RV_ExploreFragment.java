@@ -512,7 +512,7 @@ public class RV_ExploreFragment extends Fragment {
         FirestoreRecyclerOptions<LandmarkMeta> option = new FirestoreRecyclerOptions.Builder<LandmarkMeta>()
                 .setQuery(query, LandmarkMeta.class)
                 .build();
-        adapter_explore = new RecyclerViewAdapter_explore(option);
+      //  adapter_explore = new RecyclerViewAdapter_explore(option);
 
 
 

@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -72,6 +73,7 @@ import com.strongties.safarnama.user_classes.UserLocation;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
     GoogleMap googleMap;
@@ -190,10 +192,29 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
         mapFragment.getMapAsync(this);
 
 
-        Button btn_all = root.findViewById(R.id.menu1_mixed);
-        Button btn_new = root.findViewById(R.id.menu1_explore);
-        Button btn_wish = root.findViewById(R.id.menu1_wish);
-        Button btn_accomplish = root.findViewById(R.id.menu1_accomplish);
+        ImageView iv_filter_btn = root.findViewById(R.id.menu1_iv_filter);
+        LinearLayout layout_filters = root.findViewById(R.id.menu1_filter_layout);
+
+        AtomicReference<Boolean> iv_filter_btn_flag = new AtomicReference<>(false);
+        iv_filter_btn.setOnClickListener(view -> {
+            if (iv_filter_btn_flag.get()) {
+                layout_filters.setVisibility(View.GONE);
+                iv_filter_btn.setImageResource(R.drawable.ic_up_arrow);
+
+                iv_filter_btn_flag.set(false);
+            } else {
+                layout_filters.setVisibility(View.VISIBLE);
+                iv_filter_btn.setImageResource(R.drawable.ic_down_arrow);
+
+                iv_filter_btn_flag.set(true);
+            }
+        });
+
+
+        ImageView btn_all = root.findViewById(R.id.menu1_mixed_iv);
+        ImageView btn_new = root.findViewById(R.id.menu1_explore_iv);
+        ImageView btn_wish = root.findViewById(R.id.menu1_wish_iv);
+        ImageView btn_accomplish = root.findViewById(R.id.menu1_accomplish_iv);
 
         getallfriends();
 
@@ -474,113 +495,92 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
                 .document(getString(R.string.document_meta))
                 .collection(getString(R.string.collection_all));
 
+
         CollRef.whereEqualTo("geoPoint", Landmark_geoPoint).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-
                 assert queryDocumentSnapshots != null;
-                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    LandmarkMeta landmarkMeta = doc.toObject(LandmarkMeta.class);
-                    CollectionReference placeRef = mDb
-                            .collection(getString(R.string.collection_landmarks))
-                            .document(landmarkMeta.getState())
-                            .collection(landmarkMeta.getdistrict());
+                for (QueryDocumentSnapshot doc1 : queryDocumentSnapshots) {
+                    LandmarkMeta landmarkMeta = doc1.toObject(LandmarkMeta.class);
+                    Landmark landmark = landmarkMeta.getLandmark();
+                    Log.d(TAG, "Fetched Geopoint -> " + landmark.getGeo_point());
+                    String name = landmark.getName();
+                    String desc = landmark.getShort_desc();
+                    String url = landmark.getImg_url();
+                    String type = landmark.getCategory();
 
 
-                    placeRef.whereEqualTo("geo_point", Landmark_geoPoint).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    Log.d(TAG, "Landmark -> " + name);
+
+
+                    Dialog myDialog = new Dialog(mcontext);
+                    myDialog.setContentView(R.layout.menu1_dialogue_map_marker);
+                    Objects.requireNonNull(myDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    myDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+
+                    ImageView imageView = myDialog.findViewById(R.id.dialog_marker_image);
+                    final ProgressBar progressBar = myDialog.findViewById(R.id.dialog_progress);
+
+                    TextView tv_name = myDialog.findViewById(R.id.dialog_marker_name);
+                    TextView tv_type = myDialog.findViewById(R.id.dialog_marker_type);
+                    TextView tv_desc = myDialog.findViewById(R.id.dialog_marker_desc);
+
+                    Button btn = myDialog.findViewById(R.id.dialog_btn);
+                    Button details = myDialog.findViewById(R.id.dialog_btn_details);
+
+
+                    tv_name.setText(name);
+                    tv_type.setText(type);
+                    tv_desc.setText(desc);
+
+
+                    Glide.with(mcontext).load(url)
+                            .listener(new RequestListener<Drawable>() {
+                                @Override
+                                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                    progressBar.setVisibility(View.GONE);
+                                    return false;
+                                }
+
+                                @Override
+                                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                    progressBar.setVisibility(View.GONE);
+                                    return false;
+                                }
+                            })
+                            .into(imageView);
+
+                    btn.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                            assert queryDocumentSnapshots != null;
-                            for (QueryDocumentSnapshot doc1 : queryDocumentSnapshots) {
-                                Landmark landmark = doc1.toObject(Landmark.class);
-                                Log.d(TAG, "Fetched Geopoint -> " + landmark.getGeo_point());
-                                    String name = landmark.getName();
-                                    String desc = landmark.getShort_desc();
-                                    String url = landmark.getImg_url();
-                                    String type = landmark.getCategory();
+                        public void onClick(View v) {
+                            v.startAnimation(new AlphaAnimation(1F, 0.7F));
+                            myDialog.dismiss();
+                        }
+                    });
 
-
-                                    Log.d(TAG, "Landmark -> " + name);
-
-
-
-                                Dialog myDialog = new Dialog(mcontext);
-                                myDialog.setContentView(R.layout.menu1_dialogue_map_marker);
-                                Objects.requireNonNull(myDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                                myDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-
-                                ImageView imageView = myDialog.findViewById(R.id.dialog_marker_image);
-                                final ProgressBar progressBar = myDialog.findViewById(R.id.dialog_progress);
-
-                                TextView tv_name = myDialog.findViewById(R.id.dialog_marker_name);
-                                TextView tv_type = myDialog.findViewById(R.id.dialog_marker_type);
-                                TextView tv_desc = myDialog.findViewById(R.id.dialog_marker_desc);
-
-                                Button btn = myDialog.findViewById(R.id.dialog_btn);
-                                Button details = myDialog.findViewById(R.id.dialog_btn_details);
-
-
-                                tv_name.setText(name);
-                                tv_type.setText(type);
-                                tv_desc.setText(desc);
-
-
-                                Glide.with(mcontext).load(url)
-                                        .listener(new RequestListener<Drawable>() {
-                                            @Override
-                                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                                progressBar.setVisibility(View.GONE);
-                                                return false;
-                                            }
-
-                                            @Override
-                                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                                                progressBar.setVisibility(View.GONE);
-                                                return false;
-                                            }
-                                        })
-                                        .into(imageView);
-
-                                btn.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        v.startAnimation(new AlphaAnimation(1F, 0.7F));
-                                        myDialog.dismiss();
-                                    }
-                                });
-
-                                details.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        v.startAnimation(new AlphaAnimation(1F, 0.7F));
-                                        Intent intent = new Intent(mcontext, LandmarkActivity.class);
-                                        Bundle args = new Bundle();
-                                        args.putString("state", landmark.getState());
-                                        args.putString("district", landmark.getDistrict());
-                                        args.putString("id", landmark.getId());
-                                        intent.putExtras(args);
-                                        startActivity(intent);
-                                        ((Activity) mcontext).overridePendingTransition(R.anim.enter_from_top, R.anim.exit_to_bottom);
-                                    }
-                                });
-
-
-
-
-                                myDialog.show();
-
-
-
-
-                            }
+                    details.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            v.startAnimation(new AlphaAnimation(1F, 0.7F));
+                            Intent intent = new Intent(mcontext, LandmarkActivity.class);
+                            Bundle args = new Bundle();
+                            args.putString("state", landmark.getState());
+                            args.putString("district", landmark.getDistrict());
+                            args.putString("id", landmark.getId());
+                            intent.putExtras(args);
+                            startActivity(intent);
+                            ((Activity) mcontext).overridePendingTransition(R.anim.enter_from_top, R.anim.exit_to_bottom);
                         }
                     });
 
 
-                }
+                    myDialog.show();
 
+
+                }
             }
         });
+
 
 
 

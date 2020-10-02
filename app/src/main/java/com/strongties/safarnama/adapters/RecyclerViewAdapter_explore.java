@@ -55,15 +55,18 @@ public class RecyclerViewAdapter_explore extends FirestoreRecyclerAdapter<Landma
     Context mContext;
     Dialog myDialog;
 
+
     public RecyclerViewAdapter_explore(@NonNull FirestoreRecyclerOptions<LandmarkMeta> options) {
         super(options);
       //  this.mContext = mContext;
+
 
     }
 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
 
         View v;
         v = LayoutInflater.from(parent.getContext()).inflate(R.layout.rv_item_explore,parent,false);
@@ -76,6 +79,20 @@ public class RecyclerViewAdapter_explore extends FirestoreRecyclerAdapter<Landma
 
     @Override
     protected void onBindViewHolder(@NonNull MyViewHolder holder, int position, @NonNull LandmarkMeta model) {
+        //Log.d(TAG, "Selected CHips -> "+selectedChips.toString());
+/*
+
+        if(selectedChips.size()!=0){
+            if(!selectedChips.contains(model.getCategory())){
+                holder.item_explore.setVisibility(View.GONE);
+            }else{
+                holder.item_explore.setVisibility(View.GONE);
+            }
+        }
+
+
+ */
+
 
         Log.d(TAG, "PlaceName ->" + model.getLandmark().getName());
         Log.d(TAG, "PlaceName ->" + model.getLandmark().getCity());

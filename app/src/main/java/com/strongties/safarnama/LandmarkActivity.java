@@ -164,7 +164,9 @@ public class LandmarkActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     Log.d(TAG, "onComplete: successfully got the landmark details.");
 
-                    landmark = Objects.requireNonNull(task.getResult()).toObject(Landmark.class);
+                    LandmarkMeta landmarkMeta = task.getResult().toObject(LandmarkMeta.class);
+                    assert landmarkMeta != null;
+                    landmark = landmarkMeta.getLandmark();
                     assert landmark != null;
                     //Check if the landmark is in user's bucketlist
 

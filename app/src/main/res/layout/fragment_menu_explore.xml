@@ -1,35 +1,412 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="150dp">
+    android:layout_marginTop="150dp"
+    android:background="@color/background">
+
+    <ScrollView
+        android:id="@+id/explore_main_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/explore_choose_region"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:backgroundTint="@color/colorPrimary"
+                android:elevation="10dp"
+                android:text="@string/chooseregion"
+                android:textColor="@color/white"
+                app:cornerRadius="20dp" />
 
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:background="@drawable/spinner_background"
-        android:orientation="horizontal">
+            <LinearLayout
+                android:id="@+id/explore_state_district_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/explore_choose_region"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:orientation="horizontal"
+                android:weightSum="1">
 
-        <Spinner
-            android:id="@+id/explore_state_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="5dp"
-            android:background="@android:color/transparent"
-            android:gravity="center"
-            android:spinnerMode="dialog" />
+                <androidx.cardview.widget.CardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_weight="0.5"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="5dp"
+                    app:contentPadding="2dp">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_drop_down" />
+                    <RelativeLayout
+                        android:id="@+id/explore_state_spinner_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <Spinner
+                            android:id="@+id/explore_state_spinner"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="2dp"
+                            android:layout_marginEnd="2dp"
+                            android:background="@android:color/transparent"
+                            android:gravity="center"
+                            android:spinnerMode="dialog" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_drop_down" />
 
 
-    </LinearLayout>
+                    </RelativeLayout>
+
+                </androidx.cardview.widget.CardView>
 
 
+                <androidx.cardview.widget.CardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_weight="0.5"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="5dp"
+                    app:contentPadding="2dp">
+
+                    <RelativeLayout
+                        android:id="@+id/explore_district_spinner_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <Spinner
+                            android:id="@+id/explore_district_spinner"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="2dp"
+                            android:layout_marginEnd="2dp"
+                            android:background="@android:color/transparent"
+                            android:gravity="center"
+                            android:spinnerMode="dialog" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_drop_down" />
+
+                    </RelativeLayout>
+
+                </androidx.cardview.widget.CardView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/explore_chip_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/explore_state_district_layout"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="10dp"
+                android:orientation="vertical">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/explore_filter_category"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:elevation="10dp"
+                    android:text="@string/filter_category"
+                    android:textColor="@color/white"
+                    app:cornerRadius="20dp" />
+
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/explore_chip_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/explore_chip_cat1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkable="true"
+                        android:clickable="true"
+                        android:elevation="2dp"
+                        android:focusable="true"
+                        android:text="@string/category1"
+                        android:textColor="@color/text_chip_state_list"
+                        app:checkedIconVisible="true"
+                        app:chipBackgroundColor="@color/bg_chip_state_list" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/explore_chip_cat2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkable="true"
+                        android:clickable="true"
+                        android:elevation="2dp"
+                        android:focusable="true"
+                        android:text="@string/category2"
+                        android:textColor="@color/text_chip_state_list"
+                        app:chipBackgroundColor="@color/bg_chip_state_list" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/explore_chip_cat3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:checkable="true"
+                        android:clickable="true"
+                        android:elevation="2dp"
+                        android:focusable="true"
+                        android:text="@string/category3"
+                        android:textColor="@color/text_chip_state_list"
+                        app:chipBackgroundColor="@color/bg_chip_state_list" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/explore_chip_cat4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkable="true"
+                        android:clickable="true"
+                        android:elevation="2dp"
+                        android:focusable="true"
+                        android:text="@string/category4"
+                        android:textColor="@color/text_chip_state_list"
+                        app:chipBackgroundColor="@color/bg_chip_state_list" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/explore_chip_cat5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkable="true"
+                        android:clickable="true"
+                        android:elevation="2dp"
+                        android:focusable="true"
+                        android:text="@string/category5"
+                        android:textColor="@color/text_chip_state_list"
+                        app:chipBackgroundColor="@color/bg_chip_state_list" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/explore_chip_cat6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkable="true"
+                        android:clickable="true"
+                        android:elevation="2dp"
+                        android:focusable="true"
+                        android:text="@string/category6"
+                        android:textColor="@color/text_chip_state_list"
+                        app:chipBackgroundColor="@color/bg_chip_state_list" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/explore_chip_cat7"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkable="true"
+                        android:clickable="true"
+                        android:elevation="2dp"
+                        android:focusable="true"
+                        android:text="@string/category7"
+                        android:textColor="@color/text_chip_state_list"
+                        app:chipBackgroundColor="@color/bg_chip_state_list" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/explore_chip_cat8"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkable="true"
+                        android:clickable="true"
+                        android:elevation="2dp"
+                        android:focusable="true"
+                        android:text="@string/category8"
+                        android:textColor="@color/text_chip_state_list"
+                        app:chipBackgroundColor="@color/bg_chip_state_list" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/explore_chip_cat9"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkable="true"
+                        android:clickable="true"
+                        android:elevation="2dp"
+                        android:focusable="true"
+                        android:text="@string/category9"
+                        android:textColor="@color/text_chip_state_list"
+                        app:chipBackgroundColor="@color/bg_chip_state_list" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/explore_chip_cat10"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkable="true"
+                        android:clickable="true"
+                        android:elevation="2dp"
+                        android:focusable="true"
+                        android:text="@string/category10"
+                        android:textColor="@color/text_chip_state_list"
+                        app:chipBackgroundColor="@color/bg_chip_state_list" />
+
+                </com.google.android.material.chip.ChipGroup>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/explore_filter_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="10dp"
+                        android:backgroundTint="@color/colorAccent"
+                        android:elevation="10dp"
+                        android:text="@string/filter"
+                        android:textColor="@color/white"
+                        android:visibility="gone"
+                        app:cornerRadius="20dp" />
+                </RelativeLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/explore_line_1"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_below="@id/explore_chip_layout"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="20dp"
+                android:background="@android:color/darker_gray"
+                android:orientation="horizontal" />
+
+            <HorizontalScrollView
+                android:id="@+id/explore_cat_icon_scroll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/explore_line_1"
+                android:layout_marginTop="5dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+
+                    <ImageView
+                        android:id="@+id/explre_icon_cat1"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_margin="5dp"
+                        android:src="@drawable/category_dams"
+                        android:visibility="gone" />
+
+                    <ImageView
+                        android:id="@+id/explre_icon_cat2"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_margin="5dp"
+                        android:src="@drawable/category_education_and_history"
+                        android:visibility="gone" />
+
+
+                    <ImageView
+                        android:id="@+id/explre_icon_cat3"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_margin="5dp"
+                        android:src="@drawable/category_garden_and_parks"
+                        android:visibility="gone" />
+
+                    <ImageView
+                        android:id="@+id/explre_icon_cat4"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_margin="5dp"
+                        android:src="@drawable/category_hills_and_caves"
+                        android:visibility="gone" />
+
+                    <ImageView
+                        android:id="@+id/explre_icon_cat5"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_margin="5dp"
+                        android:src="@drawable/category_historical_monuments"
+                        android:visibility="gone" />
+
+                    <ImageView
+                        android:id="@+id/explre_icon_cat6"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_margin="5dp"
+                        android:src="@drawable/category_nature_and_wildlife"
+                        android:visibility="gone" />
+
+                    <ImageView
+                        android:id="@+id/explre_icon_cat7"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_margin="5dp"
+                        android:src="@drawable/category_port_and_sea_beach"
+                        android:visibility="gone" />
+
+                    <ImageView
+                        android:id="@+id/explre_icon_cat8"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_margin="5dp"
+                        android:src="@drawable/category_religious"
+                        android:visibility="gone" />
+
+                    <ImageView
+                        android:id="@+id/explre_icon_cat9"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_margin="5dp"
+                        android:src="@drawable/category_waterfalls"
+                        android:visibility="gone" />
+
+                    <ImageView
+                        android:id="@+id/explre_icon_cat10"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_margin="5dp"
+                        android:src="@drawable/category_zoo"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/explore_menu_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="580dp"
+                android:layout_below="@id/explore_cat_icon_scroll"
+                android:layout_marginTop="5dp" />
+
+
+        </RelativeLayout>
+    </ScrollView>
 </RelativeLayout>

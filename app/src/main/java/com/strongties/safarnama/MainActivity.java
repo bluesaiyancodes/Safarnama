@@ -39,6 +39,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.motion.widget.MotionLayout;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
@@ -183,6 +184,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
+        //Initialise motion layout
+        MotionLayout motionLayout = findViewById(R.id.main_menu_motion_layout);
 
         //Title Bar Related Tasks
 
@@ -553,28 +556,36 @@ public class MainActivity extends AppCompatActivity {
         CardView menu7 = findViewById(R.id.menu7);
 
 
+        Handler motionhandler = new Handler();
+
+
         menu1.setOnClickListener(view -> {
             view.startAnimation(new AlphaAnimation(1F, 0.7F));
             getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right)
                     .replace(R.id.fragment_container, new fragment_menu_googleMap(), "Menu Google map").commit();
+            handler.postDelayed(() -> motionLayout.setProgress(0f), 500);
         });
 
         menu2.setOnClickListener(view -> {
             view.startAnimation(new AlphaAnimation(1F, 0.7F));
             getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
                     .replace(R.id.fragment_container, new fragment_menu_distance(), "Menu Distance").commit();
+            handler.postDelayed(() -> motionLayout.setProgress(0f), 500);
+
         });
 
         menu3.setOnClickListener(view -> {
             view.startAnimation(new AlphaAnimation(1F, 0.7F));
             getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
                     .replace(R.id.fragment_container, new fragment_menu_buddies(), "Menu Buddies").commit();
+            handler.postDelayed(() -> motionLayout.setProgress(0f), 500);
         });
 
         menu4.setOnClickListener(view -> {
             view.startAnimation(new AlphaAnimation(1F, 0.7F));
             getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
                     .replace(R.id.fragment_container, new fragment_menu_feed_v2(), "Menu Feed").commit();
+            handler.postDelayed(() -> motionLayout.setProgress(0f), 500);
         });
 
         menu5.setOnClickListener(view -> {
@@ -584,6 +595,7 @@ public class MainActivity extends AppCompatActivity {
             TextView toastmsg = toast.getView().findViewById(android.R.id.message);
             toastmsg.setTextColor(Color.WHITE);
             toast.show();
+            handler.postDelayed(() -> motionLayout.setProgress(0f), 500);
         });
 
         menu6.setOnClickListener(view -> {
@@ -593,12 +605,14 @@ public class MainActivity extends AppCompatActivity {
             TextView toastmsg = toast.getView().findViewById(android.R.id.message);
             toastmsg.setTextColor(Color.WHITE);
             toast.show();
+            handler.postDelayed(() -> motionLayout.setProgress(0f), 500);
         });
 
         menu7.setOnClickListener(view -> {
             view.startAnimation(new AlphaAnimation(1F, 0.7F));
             getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_top, R.anim.enter_from_top, R.anim.exit_to_bottom)
                     .replace(R.id.fragment_container, new fragment_menu_explore(), "Explore Fragment").commit();
+            handler.postDelayed(() -> motionLayout.setProgress(0f), 500);
         });
 
     }

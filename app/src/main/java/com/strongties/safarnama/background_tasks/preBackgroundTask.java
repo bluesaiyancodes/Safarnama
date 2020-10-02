@@ -87,40 +87,65 @@ public class preBackgroundTask extends AsyncTask<Void, Void, Boolean> {
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mContext);
 
-        LocationCallback locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-
-                Location location = locationResult.getLastLocation();
-
-                String address = getaddres(location);
-                MainActivity.current_location = location;
-
-                String[] tokens = address.split(",");
-                String[] stateToken = tokens[tokens.length - 2].split(" ");
-                String LocalState = stateToken[1];
-
-
-                SharedPreferences pref = mContext.getSharedPreferences("myPrefs", MODE_PRIVATE);
-                SharedPreferences.Editor editor = pref.edit();
-                editor.putString("localState", LocalState);
-                editor.apply();
-
-                Log.d(TAG, "local Testing-> " + stateToken[1]);
-
-            }
-        };
-
         try {
-            Looper.prepare();
-        } catch (RuntimeException e) {
-            //do nothing
-        }
 
-        LocationRequest locationRequest = LocationRequest.create();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setNumUpdates(1);
-        mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
+            mFusedLocationClient.getLastLocation().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Location location = task.getResult();
+
+                    String address = getaddres(location);
+                    MainActivity.current_location = location;
+
+                    String[] tokens = address.split(",");
+                    String[] stateToken = tokens[tokens.length - 2].split(" ");
+                    String LocalState = stateToken[1];
+
+
+                    SharedPreferences pref = mContext.getSharedPreferences("myPrefs", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putString("localState", LocalState);
+                    editor.apply();
+
+                    Log.d(TAG, "local Testing-> " + stateToken[1]);
+                }
+            });
+        } catch (NullPointerException e) {
+
+            LocationCallback locationCallback = new LocationCallback() {
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+
+                    Location location = locationResult.getLastLocation();
+
+                    String address = getaddres(location);
+                    MainActivity.current_location = location;
+
+                    String[] tokens = address.split(",");
+                    String[] stateToken = tokens[tokens.length - 2].split(" ");
+                    String LocalState = stateToken[1];
+
+
+                    SharedPreferences pref = mContext.getSharedPreferences("myPrefs", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putString("localState", LocalState);
+                    editor.apply();
+
+                    Log.d(TAG, "local Testing-> " + stateToken[1]);
+
+                }
+            };
+
+            try {
+                Looper.prepare();
+            } catch (RuntimeException e1) {
+                //do nothing
+            }
+
+            LocationRequest locationRequest = LocationRequest.create();
+            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            locationRequest.setNumUpdates(1);
+            mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
+        }
 
 
     }

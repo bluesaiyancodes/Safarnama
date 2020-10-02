@@ -81,6 +81,8 @@ public class RecyclerViewAdapter_feed extends FirestoreRecyclerAdapter<UserFeed,
 
         if (position == 0) {
             holder.vspace.setVisibility(View.VISIBLE);
+        } else {
+            holder.vspace.setVisibility(View.GONE);
         }
 
         holder.tv_feed_body.setText(model.getDatacontent());

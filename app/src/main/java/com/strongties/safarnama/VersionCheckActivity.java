@@ -37,6 +37,10 @@ public class VersionCheckActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_version_check);
 
+        //run pre background task
+        preBackgroundTask prebackgroundTask = new preBackgroundTask(getApplicationContext());
+        prebackgroundTask.execute();
+
 
         //Version Check
         ProgressDialog mProgressDialog = ProgressDialog.show(this, "Version Check", "Checking for Updates");
@@ -124,9 +128,6 @@ public class VersionCheckActivity extends AppCompatActivity {
                         if (task1.isSuccessful()) {
                             Boolean maintenance = task1.getResult().getBoolean("flag");
                             if (!maintenance) {
-                                //run pre background task
-                                preBackgroundTask prebackgroundTask = new preBackgroundTask(getApplicationContext());
-                                prebackgroundTask.execute();
 
                                 Intent mainactivity = new Intent(getApplicationContext(), MainActivity.class);
                                 startActivity(mainactivity);
@@ -142,10 +143,6 @@ public class VersionCheckActivity extends AppCompatActivity {
                                     if (task2.isSuccessful()) {
                                         DocumentSnapshot document1 = task2.getResult();
                                         if (document1.exists()) {
-                                            //run pre background task
-                                            preBackgroundTask prebackgroundTask = new preBackgroundTask(getApplicationContext());
-                                            prebackgroundTask.execute();
-
                                             new AlertDialog.Builder(VersionCheckActivity.this)
                                                     .setTitle(getString(R.string.maintenance))
                                                     .setMessage(getString(R.string.maintenance_msg_dev))
@@ -188,4 +185,5 @@ public class VersionCheckActivity extends AppCompatActivity {
 
 
     }
+
 }

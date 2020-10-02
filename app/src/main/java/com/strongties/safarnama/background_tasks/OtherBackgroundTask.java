@@ -198,7 +198,7 @@ public class OtherBackgroundTask extends AsyncTask<Void, Void, Boolean> {
                                     bucket_type_count.put(mContext.getString(R.string.category4), 1);
                                 }
                                 break;
-                            case "Historical Monuments":
+                            case "Iconic Places":
                                 count = bucket_type_count.get(mContext.getString(R.string.category5));
                                 if (count == null) {
                                     bucket_type_count.put(mContext.getString(R.string.category5), 1);
@@ -226,7 +226,7 @@ public class OtherBackgroundTask extends AsyncTask<Void, Void, Boolean> {
                                 }
                                 bucket_type_count.put(mContext.getString(R.string.category8), count + 1);
                                 break;
-                            case "Waterfalls":
+                            case "Waterbodies":
                                 count = bucket_type_count.get(mContext.getString(R.string.category9));
                                 if (count == null) {
                                     bucket_type_count.put(mContext.getString(R.string.category9), 1);
@@ -299,7 +299,7 @@ public class OtherBackgroundTask extends AsyncTask<Void, Void, Boolean> {
                                     accomplish_type_count.put(mContext.getString(R.string.category4), 1);
                                 }
                                 break;
-                            case "Historical Monuments":
+                            case "Iconic Places":
                                 count = accomplish_type_count.get(mContext.getString(R.string.category5));
                                 if (count == null) {
                                     accomplish_type_count.put(mContext.getString(R.string.category5), 1);
@@ -327,7 +327,7 @@ public class OtherBackgroundTask extends AsyncTask<Void, Void, Boolean> {
                                 }
                                 accomplish_type_count.put(mContext.getString(R.string.category8), count + 1);
                                 break;
-                            case "Waterfalls":
+                            case "Waterbodies":
                                 count = accomplish_type_count.get(mContext.getString(R.string.category9));
                                 if (count == null) {
                                     accomplish_type_count.put(mContext.getString(R.string.category9), 1);
@@ -356,13 +356,16 @@ public class OtherBackgroundTask extends AsyncTask<Void, Void, Boolean> {
         //To Display Hot Places
         SharedPreferences pref = mContext.getSharedPreferences("myPrefs", MODE_PRIVATE);
 
+        Log.d(TAG, "list_hot -> " + pref.getString("localState", "Meta"));
+
+        ///path -> Stats/Landmarks/Lists/Accomplished/Odisha
 
         CollectionReference colRef = FirebaseFirestore.getInstance()
                 .collection(mContext.getString(R.string.collection_stats))
                 .document(mContext.getString(R.string.collection_landmarks))
                 .collection(mContext.getString(R.string.document_lists))
                 .document(mContext.getString(R.string.document_accomplished))
-                .collection(Objects.requireNonNull(pref.getString("localState", "ichy")));
+                .collection(Objects.requireNonNull(pref.getString("localState", "Meta")));
 
         Query query = colRef
                 .orderBy("landmarkCounter", Query.Direction.DESCENDING)
@@ -373,12 +376,11 @@ public class OtherBackgroundTask extends AsyncTask<Void, Void, Boolean> {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
                 if (task.isSuccessful()) {
-
                     for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                         LandmarkStat landmarkStat = document.toObject(LandmarkStat.class);
                         try {
                             Double dist = distance(current_location.getLatitude(), current_location.getLongitude(), landmarkStat.getLandmark().getGeo_point().getLatitude(), landmarkStat.getLandmark().getGeo_point().getLongitude(), 0, 0);
-
+                            Log.d(TAG, "list_hot -> " + landmarkStat.getLandmark().getName());
                             list_hot.add(new RV_Distance(landmarkStat.getLandmark().getId(), landmarkStat.getLandmark().getName(), landmarkStat.getLandmark().getImg_url(),
                                     landmarkStat.getLandmark().getCategory(), landmarkStat.getLandmark().getState(), landmarkStat.getLandmark().getDistrict(), landmarkStat.getLandmark().getCity(), dist, mContext.getString(R.string.hot_places)));
                         } catch (NullPointerException e) {

@@ -9,16 +9,18 @@ public class LandmarkMeta {
     private String district;
     private GeoPoint geoPoint;
     private Landmark landmark;
+    private String category;
 
     public LandmarkMeta() {
     }
 
-    public LandmarkMeta(String id, String state, String district, GeoPoint geoPoint, Landmark landmark) {
+    public LandmarkMeta(String id, String state, String district, GeoPoint geoPoint, Landmark landmark, String category) {
         this.id = id;
         this.state = state;
         this.district = district;
         this.geoPoint = geoPoint;
         this.landmark = landmark;
+        this.category = category;
     }
 
     public String getId() {
@@ -61,14 +63,23 @@ public class LandmarkMeta {
         this.landmark = landmark;
     }
 
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
     @Override
     public String toString() {
         return "LandmarkMeta{" +
                 "id='" + id + '\'' +
                 ", state='" + state + '\'' +
                 ", district='" + district + '\'' +
-                ", geoPoint=" + geoPoint + '\'' +
+                ", geoPoint=" + geoPoint +
                 ", landmark=" + landmark +
+                ", category='" + category + '\'' +
                 '}';
     }
 }

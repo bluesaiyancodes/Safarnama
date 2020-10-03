@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/background"
     android:weightSum="1">
 
     <RelativeLayout
@@ -78,12 +79,37 @@
                     </androidx.recyclerview.widget.RecyclerView>
 
 
-                    <Space
-                        android:layout_width="1dp"
-                        android:layout_height="150dp" />
-
-
                 </LinearLayout>
+
+                <RelativeLayout
+                    android:id="@+id/menu3_buddies_nobuddies"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="30dp"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/menu3_buddies_nobuddies_iv"
+                        android:layout_width="200dp"
+                        android:layout_height="200dp"
+                        android:layout_centerInParent="true"
+                        android:alpha="0.5"
+                        android:src="@drawable/buddy_add" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/menu3_buddies_nobuddies_iv"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="20dp"
+                        android:text="@string/friend_some_add"
+                        android:textSize="30sp" />
+
+                </RelativeLayout>
+
+                <Space
+                    android:layout_width="1dp"
+                    android:layout_height="150dp" />
 
 
             </LinearLayout>

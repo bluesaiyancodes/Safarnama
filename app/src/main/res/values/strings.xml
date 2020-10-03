@@ -2,11 +2,12 @@
     <string name="app_name">Safarnama</string>
     <string name="menu_1">Wander</string>
     <string name="menu_2">Nearby</string>
-    <string name="menu_3">Travel Buddies</string>
+    <string name="menu_3">Buddies</string>
     <string name="menu_4">Feed</string>
     <string name="menu_5">Journey</string>
     <string name="menu_6">Delicacies</string>
     <string name="menu_7">Explore</string>
+    <string name="menu_8">Inspiration</string>
 
     <string name="support_email">strongtieschannel@gmail.com</string>
     <string name="support_sub">Support Email from Safarnama - </string>
@@ -272,6 +273,8 @@
     <string name="unsupported">Unsupported!</string>
     <string name="selectstate_msg">Filtering categories on all states is not available yet. Try to filter categories on a particular state.</string>
     <string name="selectcategory_msg">Select some categories to filter results.</string>
+    <string name="friend_some_add">Add Some Buddies</string>
+    <string name="timeline">Timeline</string>
 
 
 </resources>

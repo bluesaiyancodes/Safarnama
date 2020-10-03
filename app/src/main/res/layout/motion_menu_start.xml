@@ -36,13 +36,12 @@
                 android:layout_weight="0.25"
                 android:background="@color/colorPrimaryDark"
                 app:cardCornerRadius="5dp"
-                app:cardElevation="2dp"
-                app:cardMaxElevation="3dp">
+                app:cardElevation="5dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/white">
+                    android:background="@color/dialog_bg">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/menu_5_image"
@@ -80,13 +79,12 @@
                 android:background="@color/colorPrimaryDark"
                 android:visibility="visible"
                 app:cardCornerRadius="5dp"
-                app:cardElevation="2dp"
-                app:cardMaxElevation="3dp">
+                app:cardElevation="5dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/white">
+                    android:background="@color/dialog_bg">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/menu_6_image"
@@ -122,15 +120,14 @@
                 android:layout_margin="4dp"
                 android:layout_weight="0.25"
                 android:background="@color/colorPrimaryDark"
-                android:visibility="invisible"
+                android:visibility="visible"
                 app:cardCornerRadius="5dp"
-                app:cardElevation="2dp"
-                app:cardMaxElevation="3dp">
+                app:cardElevation="5dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/white">
+                    android:background="@color/dialog_bg">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/menu_7_image"
@@ -139,7 +136,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="5sp"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/loading_image" />
+                        android:src="@drawable/ic_explore_1" />
 
                     <TextView
                         android:id="@+id/menu_7_name"
@@ -166,15 +163,14 @@
                 android:layout_margin="4dp"
                 android:layout_weight="0.25"
                 android:background="@color/colorPrimaryDark"
-                android:visibility="invisible"
+                android:visibility="visible"
                 app:cardCornerRadius="5dp"
-                app:cardElevation="2dp"
-                app:cardMaxElevation="3dp">
+                app:cardElevation="2dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/white">
+                    android:background="@color/dialog_bg">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/menu_8_image"
@@ -183,7 +179,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="5sp"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/loading_image" />
+                        android:src="@drawable/ic_inspiration" />
 
                     <TextView
                         android:id="@+id/menu_8_name"
@@ -197,7 +193,7 @@
                         android:autoSizeMinTextSize="8sp"
                         android:autoSizeTextType="uniform"
                         android:gravity="center"
-                        android:text="@string/menu_1"
+                        android:text="@string/menu_8"
                         android:textColor="@color/textItemMenu" />
                 </RelativeLayout>
 
@@ -212,15 +208,15 @@
         android:id="@+id/menu_layout1"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:layout_marginTop="125dp"
         android:background="@drawable/dialog_bg_menu"
-        android:visibility="visible"
+        android:layout_marginTop="125dp"
+        android:paddingStart="10dp"
         android:orientation="vertical"
         android:weightSum="1"
-        android:paddingStart="10dp"
         android:paddingTop="5dp"
         android:paddingEnd="10dp"
         android:paddingBottom="5dp"
+        android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -240,8 +236,7 @@
                 android:layout_weight="0.25"
                 android:background="@color/colorPrimaryDark"
                 app:cardCornerRadius="5dp"
-                app:cardElevation="2dp"
-                app:cardMaxElevation="3dp">
+                app:cardElevation="5dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -284,8 +279,7 @@
                 android:layout_weight="0.25"
                 android:background="@color/colorPrimaryDark"
                 app:cardCornerRadius="5dp"
-                app:cardElevation="2dp"
-                app:cardMaxElevation="3dp">
+                app:cardElevation="5dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -328,8 +322,7 @@
                 android:layout_weight="0.25"
                 android:background="@color/colorPrimaryDark"
                 app:cardCornerRadius="5dp"
-                app:cardElevation="2dp"
-                app:cardMaxElevation="3dp">
+                app:cardElevation="5dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -372,8 +365,7 @@
                 android:layout_weight="0.25"
                 android:background="@color/colorPrimaryDark"
                 app:cardCornerRadius="5dp"
-                app:cardElevation="2dp"
-                app:cardMaxElevation="3dp">
+                app:cardElevation="5dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -416,7 +408,7 @@
                 android:layout_width="40dp"
                 android:layout_height="5dp"
                 android:layout_centerHorizontal="true"
-                android:background="@drawable/dialog_bg_colored_gray" />
+                android:background="@drawable/dialog_bg" />
 
         </RelativeLayout>
 
@@ -443,6 +435,5 @@
 
 
     </LinearLayout>
-
 
 </androidx.constraintlayout.motion.widget.MotionLayout>

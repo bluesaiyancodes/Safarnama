@@ -14,6 +14,7 @@ import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -90,6 +91,7 @@ public class fragment_menu_buddies extends Fragment {
 
         TextView buddy_requests = v.findViewById(R.id.menu3_buddy_requests);
         TextView buddy_list_placeholder = v.findViewById(R.id.menu3_buddy_list_placeholder);
+        RelativeLayout nobuddy_layout = v.findViewById(R.id.menu3_buddies_nobuddies);
 
 
         //Check for request list if none then remove provision
@@ -101,6 +103,12 @@ public class fragment_menu_buddies extends Fragment {
             buddy_requests.setVisibility(View.VISIBLE);
         }
 
+        //Check for Buddy list if none then show to add buddies
+        if (MainActivity.FriendList.size() < 1) {
+            nobuddy_layout.setVisibility(View.VISIBLE);
+        } else {
+            nobuddy_layout.setVisibility(View.GONE);
+        }
 
         mcontext = getContext();
 

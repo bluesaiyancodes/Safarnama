@@ -163,7 +163,7 @@ public class preBackgroundTask extends AsyncTask<Void, Void, Boolean> {
                 Log.d(TAG, "Testing" + addresses.get(0).getLocality());
                 address.append(addresses.get(0).getAddressLine(0)).append("\n");
             }
-        } catch (IOException e) {
+        } catch (NullPointerException | IOException e) {
             e.printStackTrace();
         }
 

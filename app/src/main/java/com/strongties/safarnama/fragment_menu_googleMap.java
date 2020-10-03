@@ -32,6 +32,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -194,16 +195,19 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
 
         ImageView iv_filter_btn = root.findViewById(R.id.menu1_iv_filter);
         LinearLayout layout_filters = root.findViewById(R.id.menu1_filter_layout);
+        CardView layout_card_filter = root.findViewById(R.id.menu1_filter_cv);
 
         AtomicReference<Boolean> iv_filter_btn_flag = new AtomicReference<>(false);
         iv_filter_btn.setOnClickListener(view -> {
             if (iv_filter_btn_flag.get()) {
                 layout_filters.setVisibility(View.GONE);
+                layout_card_filter.setVisibility(View.INVISIBLE);
                 iv_filter_btn.setImageResource(R.drawable.ic_up_arrow);
 
                 iv_filter_btn_flag.set(false);
             } else {
                 layout_filters.setVisibility(View.VISIBLE);
+                layout_card_filter.setVisibility(View.VISIBLE);
                 iv_filter_btn.setImageResource(R.drawable.ic_down_arrow);
 
                 iv_filter_btn_flag.set(true);

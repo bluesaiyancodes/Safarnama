@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#023E7D</color>
     <color name="colorAccent">#0466C8</color>
     <color name="textItemMenu">#001233</color>
+    <color name="background_original">#F5F9FF</color>
     <color name="background">#F5F9FF</color>
     <color name="background_blur">#AAF5F9FF</color>
     <color name="white">#FFFFFF</color>
@@ -14,6 +15,8 @@
     <color name="card_background">#F5F9FF</color>
 
 
+    <color name="chart_bucketlist">#FA0A02</color>
+    <color name="chart_accomplished">#00D5D5</color>
 
     <!-- colors for button style -->
 

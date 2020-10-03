@@ -1,5 +1,6 @@
 package com.strongties.safarnama;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -380,6 +381,13 @@ public class fragment_menu_explore extends Fragment implements AdapterView.OnIte
                 return;
             }
 
+            //Scroll the window
+            // scrollView.smoothScrollTo(0, scrollView.getBottom());
+            ObjectAnimator anim = ObjectAnimator.ofInt(scrollView, "scrollY", scrollView.getBottom());
+            anim.setDuration(3000);
+            anim.start();
+
+
             //Limit functionality to only selected state and not all states
             if (statespinner.getSelectedItem().toString().equals(getString(R.string.all_states))) {
                 new AlertDialog.Builder(mContext)
@@ -461,9 +469,6 @@ public class fragment_menu_explore extends Fragment implements AdapterView.OnIte
                 adapter_explore.updateOptions(new_option);
                 adapter_explore.notifyDataSetChanged();
             }
-
-            //Scroll the window
-            // scrollView.smoothScrollTo(0, scrollView.getBottom());
 
 
         });

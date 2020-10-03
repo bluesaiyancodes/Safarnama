@@ -4,10 +4,18 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
+    <ImageView
+        android:id="@+id/nearby_background_iv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.2"
+        android:src="@drawable/background_nearby" />
+
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:alpha="1">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -36,9 +44,9 @@
                 android:layout_height="wrap_content">
 
                 <TextView
+                    android:id="@+id/rv_dist_label_hot"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/rv_dist_label_hot"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"

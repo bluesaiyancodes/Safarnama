@@ -57,7 +57,7 @@ public class OtherBackgroundTask extends AsyncTask<Void, Void, Boolean> {
     private static final String TAG = "Other BG";
     FusedLocationProviderClient mFusedLocationClient;
 
-    private Context mContext;
+    private final Context mContext;
 
     public OtherBackgroundTask(Context context) {
         this.mContext = context;
@@ -413,7 +413,9 @@ public class OtherBackgroundTask extends AsyncTask<Void, Void, Boolean> {
                             MainActivity.FriendList.add(user_id);
                         }
                     }
+
                 }
+
             }
         });
 

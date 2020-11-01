@@ -100,7 +100,7 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="20dp"
                         android:layout_marginBottom="10dp"
-                        android:src="@drawable/all_places" />
+                        android:src="@drawable/ic_gmap_all_places" />
 
                     <ImageView
                         android:id="@+id/menu1_explore_iv"
@@ -110,7 +110,7 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="20dp"
                         android:layout_marginBottom="10dp"
-                        android:src="@drawable/new_places" />
+                        android:src="@drawable/ic_gmap_new_places" />
 
                     <ImageView
                         android:id="@+id/menu1_wish_iv"
@@ -120,7 +120,7 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="20dp"
                         android:layout_marginBottom="10dp"
-                        android:src="@drawable/bucketlist" />
+                        android:src="@drawable/ic_gmap_bucket_list" />
 
                     <ImageView
                         android:id="@+id/menu1_accomplish_iv"
@@ -130,7 +130,7 @@
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="20dp"
                         android:layout_marginBottom="10dp"
-                        android:src="@drawable/accomplished" />
+                        android:src="@drawable/ic_gmap_accomplished_list" />
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>

@@ -186,6 +186,12 @@
     <string name="avatar_dev">Developer</string>
     <string name="avatar_dev_lvl">\u272d Developer \u272d</string>
     <string name="avatar_dev_text">Developer</string>
+
+    <string name="badge_progress_singular"> place more to get to the next badge</string>
+    <string name="badge_progress_plural"> places more to get to the next badge</string>
+    <string name="avatar_5_congratulations">Congratulations on being a Wanderer</string>
+
+
     <string name="error_permission_map">Error Getting Location Data</string>
     <string name="change_success">Update Successful</string>
     <string name="back">Back</string>
@@ -275,6 +281,7 @@
     <string name="selectcategory_msg">Select some categories to filter results.</string>
     <string name="friend_some_add">Add Some Buddies</string>
     <string name="timeline">Timeline</string>
+    <string name="stats">Statistics</string>
 
 
 </resources>

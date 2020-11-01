@@ -7,12 +7,13 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="150dp"
         android:layout_marginBottom="10dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
             android:orientation="vertical">
 
             <!--   Head   -->
@@ -21,20 +22,37 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/profile_v2_dp"
+                <RelativeLayout
+                    android:id="@+id/profile_v2_dp_layout"
                     android:layout_width="200dp"
                     android:layout_height="200dp"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="20dp"
-                    android:src="@drawable/profile_pic_placeholder" />
+                    android:layout_marginBottom="10dp">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/profile_v2_dp"
+                        android:layout_width="200dp"
+                        android:layout_height="200dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="20dp"
+                        android:src="@drawable/profile_pic_placeholder" />
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/profile_v2_edit"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:src="@drawable/ic_edit_tool" />
+
+                </RelativeLayout>
 
                 <TextView
                     android:id="@+id/profile_v2_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/profile_v2_dp"
+                    android:layout_below="@id/profile_v2_dp_layout"
                     android:layout_centerHorizontal="true"
                     android:text="Name Placeholder"
                     android:textColor="@color/textItemMenu"
@@ -104,6 +122,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:id="@+id/profile_v2_buddy_count"
                             android:background="@drawable/dialog_bg"
                             android:gravity="center"
                             android:paddingStart="130sp"
@@ -163,8 +182,7 @@
                         android:layout_width="120dp"
                         android:layout_height="120dp"
                         android:layout_marginStart="20dp"
-                        android:layout_marginEnd="10dp"
-                        android:src="@drawable/avatar_4_star" />
+                        android:src="@drawable/avatar_2_star" />
 
                     <!--  Badge: Right side Information  -->
 
@@ -172,6 +190,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
+                        android:layout_marginStart="5dp"
                         android:orientation="vertical">
 
                         <ProgressBar
@@ -179,6 +198,7 @@
                             style="?android:attr/progressBarStyleHorizontal"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:max="100"
                             android:progress="30"
                             android:progressDrawable="@drawable/horizontal_progress" />
 
@@ -187,7 +207,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="5dp"
-                            android:text="20 places moreto get to the next badge" />
+                            android:text="20 places more to get to the next badge" />
 
                         <!--  Badge: progress_badges  -->
                         <LinearLayout
@@ -221,7 +241,6 @@
                                 android:id="@+id/profile_v2_badge_3"
                                 android:layout_width="40dp"
                                 android:layout_height="40dp"
-                                android:alpha="0.4"
                                 android:src="@drawable/avatar_3_star" />
 
                             <de.hdodenhof.circleimageview.CircleImageView
@@ -234,7 +253,6 @@
                                 android:id="@+id/profile_v2_badge_5"
                                 android:layout_width="40dp"
                                 android:layout_height="40dp"
-                                android:alpha="0.4"
                                 android:src="@drawable/avatar_5_star" />
 
                         </LinearLayout>
@@ -267,7 +285,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:text="@string/timeline"
+                    android:text="@string/stats"
                     android:textColor="@color/textItemMenu"
                     android:textSize="20dp" />
 
@@ -300,6 +318,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:id="@+id/profile_v2_stat_bucket"
                                 android:background="@drawable/dialog_bg_colored_accent"
                                 android:backgroundTint="@color/chart_bucketlist"
                                 android:gravity="center"
@@ -341,6 +360,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:id="@+id/profile_v2_stat_accomplished"
                                 android:background="@drawable/dialog_bg_colored_accent"
                                 android:backgroundTint="@color/chart_accomplished"
                                 android:gravity="center"

@@ -33,7 +33,7 @@ public class preBackgroundTask extends AsyncTask<Void, Void, Boolean> {
     private static final String TAG = "Pre BG";
     FusedLocationProviderClient mFusedLocationClient;
 
-    private Context mContext;
+    private final Context mContext;
 
     public preBackgroundTask(Context context) {
         this.mContext = context;
@@ -99,14 +99,22 @@ public class preBackgroundTask extends AsyncTask<Void, Void, Boolean> {
                     String[] tokens = address.split(",");
                     String[] stateToken = tokens[tokens.length - 2].split(" ");
                     String LocalState = stateToken[1];
+                    String Locality = "";
+                    try {
+                        Locality = tokens[tokens.length - 3];
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                        Locality = "Unknown";
+                    }
 
 
                     SharedPreferences pref = mContext.getSharedPreferences("myPrefs", MODE_PRIVATE);
                     SharedPreferences.Editor editor = pref.edit();
                     editor.putString("localState", LocalState);
+                    editor.putString("locality", Locality);
                     editor.apply();
 
                     Log.d(TAG, "local Testing-> " + stateToken[1]);
+                    Log.d(TAG, "local Testing-> " + tokens[tokens.length - 3]);
                 }
             });
         } catch (NullPointerException e) {
@@ -130,7 +138,6 @@ public class preBackgroundTask extends AsyncTask<Void, Void, Boolean> {
                     editor.putString("localState", LocalState);
                     editor.apply();
 
-                    Log.d(TAG, "local Testing-> " + stateToken[1]);
 
                 }
             };

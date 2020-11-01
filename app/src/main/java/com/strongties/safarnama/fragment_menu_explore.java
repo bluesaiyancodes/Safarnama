@@ -459,8 +459,7 @@ public class fragment_menu_explore extends Fragment implements AdapterView.OnIte
                         .collection(districtspinner.getSelectedItem().toString());
 
                 Query query = collRef
-                        .whereIn("category", selectedChips)
-                        .orderBy("district", Query.Direction.ASCENDING);
+                        .whereIn("category", selectedChips);
 
                 FirestoreRecyclerOptions<LandmarkMeta> new_option = new FirestoreRecyclerOptions.Builder<LandmarkMeta>()
                         .setQuery(query, LandmarkMeta.class)

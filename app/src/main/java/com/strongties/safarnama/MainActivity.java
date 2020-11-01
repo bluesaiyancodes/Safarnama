@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
     Context context;
 
     //Variables
-    private ArrayList<String> mNames = new ArrayList<>();
+    private final ArrayList<String> mNames = new ArrayList<>();
     public static ArrayList<String> FriendList;
 
     GoogleSignInClient googleSignInClient;
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
     public static ArrayList<String> RequestList;
     private static final String SHOWCASE_ID = "1";
     public static ArrayList<String> places_list;
-    private ArrayList<String> mImageUrls = new ArrayList<>();
+    private final ArrayList<String> mImageUrls = new ArrayList<>();
     public static ArrayList<String> places_id_list;
     public static ArrayList<String> bucket_id_list;
     public static ArrayList<String> bucket_list;
@@ -445,7 +445,7 @@ public class MainActivity extends AppCompatActivity {
             tv_view_profile.setOnClickListener(view12 -> {
                 view12.startAnimation(new AlphaAnimation(1F, 0.7F));
                 getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_top, R.anim.enter_from_top, R.anim.exit_to_bottom)
-                        .replace(R.id.fragment_container, new fragment_menu_profile(), "Buddy Profile Fragment").commit();
+                        .replace(R.id.fragment_container, new fragment_menu_profile_v2(), "Buddy Profile Fragment").commit();
                 myDialog.cancel();
             });
 
@@ -554,6 +554,7 @@ public class MainActivity extends AppCompatActivity {
         CardView menu5 = findViewById(R.id.menu5);
         CardView menu6 = findViewById(R.id.menu6);
         CardView menu7 = findViewById(R.id.menu7);
+        CardView menu8 = findViewById(R.id.menu8);
 
 
         Handler motionhandler = new Handler();
@@ -612,6 +613,16 @@ public class MainActivity extends AppCompatActivity {
             view.startAnimation(new AlphaAnimation(1F, 0.7F));
             getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_top, R.anim.enter_from_top, R.anim.exit_to_bottom)
                     .replace(R.id.fragment_container, new fragment_menu_explore(), "Explore Fragment").commit();
+            handler.postDelayed(() -> motionLayout.setProgress(0f), 500);
+        });
+
+        menu8.setOnClickListener(view -> {
+            view.startAnimation(new AlphaAnimation(1F, 0.7F));
+            Toast toast = Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT);
+            toast.getView().setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.dialog_bg_toast_colored));
+            TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+            toastmsg.setTextColor(Color.WHITE);
+            toast.show();
             handler.postDelayed(() -> motionLayout.setProgress(0f), 500);
         });
 

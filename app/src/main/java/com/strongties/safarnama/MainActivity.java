@@ -3,6 +3,7 @@ package com.strongties.safarnama;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
@@ -25,6 +26,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -72,6 +74,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -196,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
         CircleImageView back_btn = findViewById(R.id.main_menu_title_back);
         CircleImageView reset = findViewById(R.id.main_menu_title_reset);
         CircleImageView profile_icon = findViewById(R.id.main_menu_title_profile);
-        TextView fillscreen = findViewById(R.id.main_menu_fill_screen);
+        RelativeLayout fillscreen = findViewById(R.id.main_menu_fill_screen);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.custom_layout_actv_main_menu, R.id.custom_actv_text, places_list);
         actv_search.setAdapter(adapter);
@@ -233,8 +236,13 @@ public class MainActivity extends AppCompatActivity {
             }
         }, 3000);
 
+        //Flag for Keyboard On Check
+        AtomicReference<Boolean> keyboardOn = new AtomicReference<>();
+        keyboardOn.set(Boolean.FALSE);
+
         actv_search.setOnTouchListener((view, motionEvent) -> {
             if (MotionEvent.ACTION_UP == motionEvent.getAction()) {
+                keyboardOn.set(Boolean.TRUE);
                 fillscreen.setVisibility(View.VISIBLE);
                 profile_icon.setVisibility(View.GONE);
                 reset.setVisibility(View.VISIBLE);
@@ -359,6 +367,10 @@ public class MainActivity extends AppCompatActivity {
             profile_icon.setVisibility(View.VISIBLE);
             back_btn.setVisibility(View.GONE);
             app_icon.setVisibility(View.VISIBLE);
+
+            dismissKeyboard(this);
+            keyboardOn.set(Boolean.FALSE);
+
         });
 
         reset.setOnClickListener(view -> {
@@ -591,21 +603,15 @@ public class MainActivity extends AppCompatActivity {
 
         menu5.setOnClickListener(view -> {
             view.startAnimation(new AlphaAnimation(1F, 0.7F));
-            Toast toast = Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT);
-            toast.getView().setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.dialog_bg_toast_colored));
-            TextView toastmsg = toast.getView().findViewById(android.R.id.message);
-            toastmsg.setTextColor(Color.WHITE);
-            toast.show();
+            getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
+                    .replace(R.id.fragment_container, new fragment_menu_journey(), "Menu Journey").commit();
             handler.postDelayed(() -> motionLayout.setProgress(0f), 500);
         });
 
         menu6.setOnClickListener(view -> {
             view.startAnimation(new AlphaAnimation(1F, 0.7F));
-            Toast toast = Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT);
-            toast.getView().setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.dialog_bg_toast_colored));
-            TextView toastmsg = toast.getView().findViewById(android.R.id.message);
-            toastmsg.setTextColor(Color.WHITE);
-            toast.show();
+            getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
+                    .replace(R.id.fragment_container, new fragment_menu_delicacy(), "Menu Delicacy").commit();
             handler.postDelayed(() -> motionLayout.setProgress(0f), 500);
         });
 
@@ -618,11 +624,9 @@ public class MainActivity extends AppCompatActivity {
 
         menu8.setOnClickListener(view -> {
             view.startAnimation(new AlphaAnimation(1F, 0.7F));
-            Toast toast = Toast.makeText(context, "Feature Coming Soon", Toast.LENGTH_SHORT);
-            toast.getView().setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.dialog_bg_toast_colored));
-            TextView toastmsg = toast.getView().findViewById(android.R.id.message);
-            toastmsg.setTextColor(Color.WHITE);
-            toast.show();
+            getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_top, R.anim.enter_from_top, R.anim.exit_to_bottom)
+                    .replace(R.id.fragment_container, new fragment_menu_inspiration(), "Inspiration Fragment").commit();
+            handler.postDelayed(() -> motionLayout.setProgress(0f), 500);
             handler.postDelayed(() -> motionLayout.setProgress(0f), 500);
         });
 
@@ -830,6 +834,13 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void dismissKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (null != activity.getCurrentFocus())
+            imm.hideSoftInputFromWindow(activity.getCurrentFocus()
+                    .getApplicationWindowToken(), 0);
     }
 
     @Override

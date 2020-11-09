@@ -1,20 +1,36 @@
 package com.strongties.safarnama;
 
+import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
@@ -29,11 +45,31 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.strongties.safarnama.user_classes.User;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.strongties.safarnama.MainActivity.accomplish_type_count;
@@ -47,6 +83,11 @@ public class fragment_menu_profile_v2 extends Fragment {
     Context mContext;
 
     User currentuser;
+
+    private static final int REQUEST_IMAGE = 100;
+    Uri imgurl;
+    CircleImageView iv_new_dp;
+    AtomicReference<Boolean> isImageChanged;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -71,6 +112,8 @@ public class fragment_menu_profile_v2 extends Fragment {
         TextView tv_locality = root.findViewById(R.id.profile_v2_locality);
         TextView tv_state = root.findViewById(R.id.profile_v2_state);
         ImageView iv_dp = root.findViewById(R.id.profile_v2_dp);
+        CircleImageView iv_dp_edit = root.findViewById(R.id.profile_v2_edit);
+        ImageView iv_name_edit = root.findViewById(R.id.profile_v2_name_edit_ic);
         TextView tv_buddycount = root.findViewById(R.id.profile_v2_buddy_count);
 
         //set Dp
@@ -80,8 +123,176 @@ public class fragment_menu_profile_v2 extends Fragment {
                 .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
                 .into(iv_dp);
 
+        //DP Changes and Updates
+        {
+
+            iv_dp_edit.setOnClickListener(view -> {
+                //Dialog Initiation
+                Dialog myDialog = new Dialog(mContext);
+                myDialog.setContentView(R.layout.dialog_dp_change);
+                Objects.requireNonNull(myDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                myDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+
+                iv_new_dp = myDialog.findViewById(R.id.dialog_dp_change_iv);
+                AppCompatButton btn_save = myDialog.findViewById(R.id.dialog_dp_change_save_btn);
+                TextView btn_cancel = myDialog.findViewById(R.id.dialog_dp_change_cancel_btn);
+
+                //Show Old Image
+                Glide.with(mContext)
+                        .load(currentuser.getPhoto())
+                        .placeholder(R.drawable.loading_image)
+                        .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
+                        .into(iv_new_dp);
+                iv_new_dp.setAlpha(0.7f);
+
+                //Set a isImageChanged flag
+                isImageChanged = new AtomicReference<>(Boolean.FALSE);
+                ImagePickerActivity.clearCache(mContext);
+                iv_new_dp.setOnClickListener(view1 -> {
+
+                    view1.startAnimation(new AlphaAnimation(1F, 0.7F));
+
+                    Dexter.withActivity(getActivity())
+                            .withPermissions(android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            .withListener(new MultiplePermissionsListener() {
+                                @Override
+                                public void onPermissionsChecked(MultiplePermissionsReport report) {
+                                    if (report.areAllPermissionsGranted()) {
+                                        showImagePickerOptions();
+                                    }
+
+                                    if (report.isAnyPermissionPermanentlyDenied()) {
+                                        showSettingsDialog();
+                                    }
+                                }
+
+                                @Override
+                                public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                                    token.continuePermissionRequest();
+                                }
+
+                            }).check();
+
+
+                });
+
+
+                btn_cancel.setOnClickListener(view1 -> {
+                    myDialog.cancel();
+                });
+                btn_save.setOnClickListener(view1 -> {
+
+                    if (isImageChanged.get()) {
+
+                        ProgressDialog mProgressDialog = ProgressDialog.show(mContext, "Uploading", "Uploading Information to Server");
+                        mProgressDialog.setCanceledOnTouchOutside(false);
+                        StorageReference storageRef = FirebaseStorage.getInstance()
+                                .getReference()
+                                .child("android/images/dp/" + FirebaseAuth.getInstance().getUid() + "/dp.jpg");
+
+                        storageRef.putFile(imgurl).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                DocumentReference docRef = FirebaseFirestore.getInstance()
+                                        .collection(getString(R.string.collection_users))
+                                        .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
+                                docRef.get().addOnSuccessListener(documentSnapshot -> {
+                                    if (documentSnapshot.exists()) {
+                                        User user = documentSnapshot.toObject(User.class);
+                                        storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                            @Override
+                                            public void onSuccess(Uri uri) {
+                                                assert user != null;
+                                                user.setPhoto(uri.toString());
+                                                DocumentReference dRef = FirebaseFirestore.getInstance()
+                                                        .collection(getString(R.string.collection_users))
+                                                        .document(FirebaseAuth.getInstance().getUid());
+                                                dRef.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        // Toast.makeText(mContext, "Image Uploaded", Toast.LENGTH_SHORT).show();
+                                                        currentuser.setPhoto(uri.toString());
+                                                        Glide.with(mContext)
+                                                                .load(currentuser.getPhoto())
+                                                                .placeholder(R.drawable.loading_image)
+                                                                .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
+                                                                .into(iv_dp);
+                                                        myDialog.cancel();
+                                                    }
+                                                });
+                                            }
+                                        });
+
+                                    }
+                                });
+
+                                mProgressDialog.cancel();
+                            }
+                        });
+                    }
+
+
+                });
+
+                myDialog.show();
+
+            });
+        }
+
+
         //set Username
         tv_name.setText(currentuser.getUsername());
+        //Username Update Changes
+        {
+            iv_name_edit.setOnClickListener(view -> {
+                //Dialog Initiation
+                BottomSheetDialog myDialog = new BottomSheetDialog(mContext);
+                myDialog.setContentView(R.layout.dialog_name_change);
+                Objects.requireNonNull(myDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                myDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+
+                EditText et_newname = myDialog.findViewById(R.id.dialog_name_change);
+                AppCompatTextView btn_save = myDialog.findViewById(R.id.dialog_name_change_save_btn);
+                AppCompatTextView btn_cancel = myDialog.findViewById(R.id.dialog_name_change_cancel_btn);
+
+                btn_cancel.setOnClickListener(view1 -> {
+                    myDialog.cancel();
+                });
+                btn_save.setOnClickListener(view1 -> {
+                    DocumentReference docRef = FirebaseFirestore.getInstance()
+                            .collection(getString(R.string.collection_users))
+                            .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
+
+                    User user = new User();
+                    user.setUser_id(currentuser.getUser_id());
+                    user.setUsername(et_newname.getText().toString());
+                    user.setEmail(currentuser.getEmail());
+                    user.setPhoto(currentuser.getPhoto());
+                    user.setAvatar(currentuser.getAvatar());
+
+                    docRef.set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast toast = Toast.makeText(mContext, getString(R.string.change_success), Toast.LENGTH_SHORT);
+                                toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_toast_colored));
+                                TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                                toastmsg.setTextColor(Color.WHITE);
+                                toast.show();
+                            }
+                        }
+                    });
+
+                    myDialog.cancel();
+                    currentuser.setUsername(user.getUsername());
+                    tv_name.setText(currentuser.getUsername());
+                });
+
+                myDialog.show();
+            });
+        }
+
+        //set Email
         tv_email.setText(currentuser.getEmail());
 
         //Set Locality and Local State
@@ -449,5 +660,104 @@ public class fragment_menu_profile_v2 extends Fragment {
 
 
     }
+
+
+    private void showImagePickerOptions() {
+        ImagePickerActivity.showImagePickerOptions(mContext, new ImagePickerActivity.PickerOptionListener() {
+            @Override
+            public void onTakeCameraSelected() {
+                launchCameraIntent();
+            }
+
+            @Override
+            public void onChooseGallerySelected() {
+                launchGalleryIntent();
+            }
+        });
+    }
+
+
+    private void launchCameraIntent() {
+        Intent intent = new Intent(getActivity(), ImagePickerActivity.class);
+        intent.putExtra(ImagePickerActivity.INTENT_IMAGE_PICKER_OPTION, ImagePickerActivity.REQUEST_IMAGE_CAPTURE);
+
+        // setting aspect ratio
+        intent.putExtra(ImagePickerActivity.INTENT_LOCK_ASPECT_RATIO, true);
+        intent.putExtra(ImagePickerActivity.INTENT_ASPECT_RATIO_X, 1); // 16x9, 1x1, 3:4, 3:2
+        intent.putExtra(ImagePickerActivity.INTENT_ASPECT_RATIO_Y, 1);
+
+        // setting maximum bitmap width and height
+        intent.putExtra(ImagePickerActivity.INTENT_SET_BITMAP_MAX_WIDTH_HEIGHT, true);
+        intent.putExtra(ImagePickerActivity.INTENT_BITMAP_MAX_WIDTH, 1000);
+        intent.putExtra(ImagePickerActivity.INTENT_BITMAP_MAX_HEIGHT, 1000);
+
+        startActivityForResult(intent, REQUEST_IMAGE);
+    }
+
+    private void launchGalleryIntent() {
+        Intent intent = new Intent(getActivity(), ImagePickerActivity.class);
+        intent.putExtra(ImagePickerActivity.INTENT_IMAGE_PICKER_OPTION, ImagePickerActivity.REQUEST_GALLERY_IMAGE);
+
+        // setting aspect ratio
+        intent.putExtra(ImagePickerActivity.INTENT_LOCK_ASPECT_RATIO, true);
+        intent.putExtra(ImagePickerActivity.INTENT_ASPECT_RATIO_X, 1); // 16x9, 1x1, 3:4, 3:2
+        intent.putExtra(ImagePickerActivity.INTENT_ASPECT_RATIO_Y, 1);
+        startActivityForResult(intent, REQUEST_IMAGE);
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == REQUEST_IMAGE) {
+            if (resultCode == Activity.RESULT_OK) {
+                assert data != null;
+                Uri uri = data.getParcelableExtra("path");
+                try {
+                    // You can update this bitmap to your server
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), uri);
+
+                    // loading profile image from local cache
+                    assert uri != null;
+                    imgurl = uri;
+                    loadProfile(uri.toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+
+    private void showSettingsDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setTitle(getString(R.string.dialog_permission_title));
+        builder.setMessage(getString(R.string.dialog_permission_message));
+        builder.setPositiveButton(getString(R.string.go_to_settings), (dialog, which) -> {
+            dialog.cancel();
+            openSettings();
+        });
+        builder.setNegativeButton(getString(android.R.string.cancel), (dialog, which) -> dialog.cancel());
+        builder.show();
+
+    }
+
+    // navigating user to app settings
+    private void openSettings() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", requireActivity().getPackageName(), null);
+        intent.setData(uri);
+        startActivityForResult(intent, 101);
+    }
+
+    private void loadProfile(String url) {
+        Log.d(TAG, "Image cache path: " + url);
+
+        Glide.with(this).load(url)
+                .into(iv_new_dp);
+        iv_new_dp.setColorFilter(ContextCompat.getColor(mContext, android.R.color.transparent));
+        iv_new_dp.setAlpha(1f);
+        isImageChanged.set(Boolean.TRUE);
+    }
+
 
 }

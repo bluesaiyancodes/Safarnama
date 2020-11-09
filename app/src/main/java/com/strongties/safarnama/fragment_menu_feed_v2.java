@@ -228,7 +228,7 @@ public class fragment_menu_feed_v2 extends Fragment {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()) {
-                                                Toast toast = Toast.makeText(mContext, getString(R.string.feed_post_success), Toast.LENGTH_SHORT);
+                                                Toast toast = Toast.makeText(mContext, getString(R.string.post_success), Toast.LENGTH_SHORT);
                                                 toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_toast_colored));
                                                 TextView toastmsg = toast.getView().findViewById(android.R.id.message);
                                                 toastmsg.setTextColor(Color.WHITE);
@@ -282,7 +282,7 @@ public class fragment_menu_feed_v2 extends Fragment {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                Toast toast = Toast.makeText(mContext, getString(R.string.feed_post_success), Toast.LENGTH_SHORT);
+                                Toast toast = Toast.makeText(mContext, getString(R.string.post_success), Toast.LENGTH_SHORT);
                                 toast.getView().setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.dialog_bg_toast_colored));
                                 TextView toastmsg = toast.getView().findViewById(android.R.id.message);
                                 toastmsg.setTextColor(Color.WHITE);

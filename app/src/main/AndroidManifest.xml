@@ -30,7 +30,6 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity android:name=".ImagePickerActivity" /> <!-- uCrop cropping activity -->
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
@@ -62,12 +61,12 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".WishlistActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".configurePlacesActivity"
             android:screenOrientation="portrait"
@@ -95,6 +94,14 @@
         <activity
             android:name=".distanceViewMore"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".DelicacyActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".JourneyActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
@@ -103,7 +110,6 @@
         <service
             android:name=".services.LocationService"
             android:stopWithTask="true" />
-
         <service
             android:name=".services.MyFirebaseMessagingService"
             android:exported="false">

@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@drawable/dialog_bg">
+
+    <!-- Card Image Carousel -->
+    <RelativeLayout
+        android:id="@+id/rv_dialog_journey_carousel_layout"
+        android:layout_width="match_parent"
+        android:layout_height="170dp">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="5dp"
+            app:cardMaxElevation="5dp">
+
+            <org.imaginativeworld.whynotimagecarousel.ImageCarousel
+                android:id="@+id/rv_dialog_journey_carousel"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="visible"
+                app:autoPlay="false"
+                app:autoPlayDelay="2000"
+                app:autoWidthFixing="true"
+                app:bottomShadowAlpha="0.6"
+                app:bottomShadowHeight="64dp"
+                app:captionMargin="0dp"
+                app:captionTextSize="14sp"
+                app:carouselBackground="#333333"
+                app:carouselType="BLOCK"
+                app:imagePlaceholder="@drawable/loading_image"
+                app:imageScaleType="centerCrop"
+                app:imageViewId="@id/img"
+                app:indicatorMargin="0dp"
+                app:itemLayout="@layout/item_carousel"
+                app:nextButtonId="@id/btn_next"
+                app:nextButtonLayout="@layout/next_button_layout"
+                app:nextButtonMargin="4dp"
+                app:previousButtonId="@id/btn_previous"
+                app:previousButtonLayout="@layout/previous_button_layout"
+                app:previousButtonMargin="4dp"
+                app:scaleOnScroll="true"
+                app:scalingFactor="0.35"
+                app:showBottomShadow="true"
+                app:showCaption="true"
+                app:showIndicator="true"
+                app:showNavigationButtons="true"
+                app:showTopShadow="true"
+                app:topShadowAlpha="0.6"
+                app:topShadowHeight="32dp" />
+        </androidx.cardview.widget.CardView>
+
+    </RelativeLayout>
+
+    <!-- Body -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rv_dialog_journey_carousel_layout"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="20dp">
+
+
+        <!-- Name -->
+        <TextView
+            android:id="@+id/rv_dialog_journey_name_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/placenamecolon" />
+
+        <TextView
+            android:id="@+id/rv_dialog_journey_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_toEndOf="@id/rv_dialog_journey_name_label"
+            android:gravity="end"
+            android:text="@string/placenamecolon"
+            android:textColor="@color/textItemMenu" />
+
+        <!-- Dist. from Origin -->
+        <TextView
+            android:id="@+id/rv_dialog_journey_dist_origin_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rv_dialog_journey_name"
+            android:layout_marginTop="10dp"
+            android:text="@string/distancefromstartpoint" />
+
+        <TextView
+            android:id="@+id/rv_dialog_journey_dist_origin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rv_dialog_journey_name"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="10dp"
+            android:layout_toEndOf="@id/rv_dialog_journey_dist_origin_label"
+            android:gravity="end"
+            android:text="@string/placenamecolon"
+            android:textColor="@color/textItemMenu" />
+
+        <!-- Dist. from Previous -->
+        <TextView
+            android:id="@+id/rv_dialog_journey_dist_previous_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rv_dialog_journey_dist_origin"
+            android:layout_marginTop="10dp"
+            android:text="@string/distancefrompreviouspoint" />
+
+        <TextView
+            android:id="@+id/rv_dialog_journey_dist_previous"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rv_dialog_journey_dist_origin"
+            android:layout_marginTop="10dp"
+            android:layout_toEndOf="@id/rv_dialog_journey_dist_previous_label"
+            android:gravity="end"
+            android:text="@string/placenamecolon"
+            android:textColor="@color/textItemMenu" />
+
+        <!-- Visiting Hours -->
+        <TextView
+            android:id="@+id/rv_dialog_journey_dist_visit_hrs_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rv_dialog_journey_dist_previous"
+            android:layout_marginTop="10dp"
+            android:text="@string/visiting_hours_colon" />
+
+        <TextView
+            android:id="@+id/rv_dialog_journey_dist_visit_hrs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rv_dialog_journey_dist_previous"
+            android:layout_marginTop="10dp"
+            android:layout_toEndOf="@id/rv_dialog_journey_dist_visit_hrs_label"
+            android:gravity="end"
+            android:text="@string/visiting_hours"
+            android:textColor="@color/textItemMenu" />
+
+        <!-- Entry Fee  -->
+        <TextView
+            android:id="@+id/rv_dialog_journey_dist_entry_fee_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rv_dialog_journey_dist_visit_hrs"
+            android:layout_marginTop="10dp"
+            android:text="@string/entry_fee_colon" />
+
+        <TextView
+            android:id="@+id/rv_dialog_journey_dist_entry_fee"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rv_dialog_journey_dist_visit_hrs"
+            android:layout_marginTop="10dp"
+            android:layout_toEndOf="@id/rv_dialog_journey_dist_entry_fee_label"
+            android:gravity="end"
+            android:text="@string/visiting_hours"
+            android:textColor="@color/textItemMenu" />
+
+        <!-- Duration  -->
+        <TextView
+            android:id="@+id/rv_dialog_journey_dist_duration_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rv_dialog_journey_dist_entry_fee"
+            android:layout_marginTop="10dp"
+            android:text="@string/timetospend" />
+
+        <TextView
+            android:id="@+id/rv_dialog_journey_dist_duration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rv_dialog_journey_dist_entry_fee"
+            android:layout_marginTop="10dp"
+            android:layout_toEndOf="@id/rv_dialog_journey_dist_duration_label"
+            android:gravity="end"
+            android:text="@string/visiting_hours"
+            android:textColor="@color/textItemMenu" />
+
+        <!-- Famous For  -->
+        <TextView
+            android:id="@+id/rv_dialog_journey_famous_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rv_dialog_journey_dist_duration"
+            android:layout_marginTop="10dp"
+            android:text="@string/things_to_look_out_for" />
+
+        <TextView
+            android:id="@+id/rv_dialog_journey_famous"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rv_dialog_journey_famous_label"
+            android:text="@string/text_placeholder_short"
+            android:textColor="@color/textItemMenu" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -58,6 +58,15 @@
                     android:textColor="@color/textItemMenu"
                     android:textSize="20sp" />
 
+                <ImageView
+                    android:id="@+id/profile_v2_name_edit_ic"
+                    android:layout_width="20dp"
+                    android:layout_height="15dp"
+                    android:layout_below="@id/profile_v2_dp_layout"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_toEndOf="@id/profile_v2_name"
+                    android:src="@drawable/ic_edit" />
 
                 <TextView
                     android:id="@+id/profile_v2_email"

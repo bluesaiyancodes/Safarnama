@@ -25,7 +25,6 @@ public class WishlistActivity extends AppCompatActivity {
         adapter = new PagerAdapterWishlist(getSupportFragmentManager());
 
         //Fragments Added Here
-        adapter.AddFragment(new RV_ExploreFragment(),getString(R.string.Explore));
         adapter.AddFragment(new RV_BucketlistFragment(),getString(R.string.BucketList));
         adapter.AddFragment(new RV_AccomplishedFragment(),getString(R.string.Accomplished));
 

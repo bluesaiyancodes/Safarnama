@@ -32,6 +32,9 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.Abs
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 import com.strongties.safarnama.user_classes.Landmark;
 import com.strongties.safarnama.user_classes.LandmarkMeta;
+import com.strongties.safarnama.user_classes.RV_Delicacy;
+import com.strongties.safarnama.user_classes.RV_Journey_Location;
+import com.strongties.safarnama.user_classes.RV_Journey_Tour;
 
 import org.imaginativeworld.whynotimagecarousel.CarouselItem;
 import org.imaginativeworld.whynotimagecarousel.ImageCarousel;
@@ -98,6 +101,7 @@ public class configurePlacesActivity extends AppCompatActivity {
 
         Button btn_update_version_btn = findViewById(R.id.config_v2_version_update_btn);
         Button btn_update_version_submit = findViewById(R.id.config_v2_version_submit);
+        TextView tv_current_version = findViewById(R.id.config_v2_version_update_current);
         EditText et_version = findViewById(R.id.config_v2_version_ET);
 
         RelativeLayout maintenance_layout = findViewById(R.id.config_v2_maintenance_layout);
@@ -139,24 +143,25 @@ public class configurePlacesActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 //Read from Landmarks csv file
-                InputStream is = mContext.getResources().openRawResource(R.raw.landmarks_odisha);
-                BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(is, StandardCharsets.UTF_8));
-                String line = "";
-                int linecounter = 0;
-                DocumentReference docRef;
+                {
+                    InputStream is = mContext.getResources().openRawResource(R.raw.landmarks_odisha);
+                    BufferedReader reader = new BufferedReader(
+                            new InputStreamReader(is, StandardCharsets.UTF_8));
+                    String line = "";
+                    int linecounter = 0;
+                    DocumentReference docRef;
 
 
-                try {
-                    while ((line = reader.readLine()) != null) {
-                        // Split the line into different tokens (using the comma as a separator excluding commas inside quotes).
-                        // Log.d("Database: ", line.toString());
+                    try {
+                        while ((line = reader.readLine()) != null) {
+                            // Split the line into different tokens (using the comma as a separator excluding commas inside quotes).
+                            // Log.d("Database: ", line.toString());
 
-                        ArrayList<String> tokens = customSplitSpecific(line);
-                        //  Log.d("Database: ", "Custom token 0 -> "+tokens.get(0));
+                            ArrayList<String> tokens = customSplitSpecific(line);
+                            //  Log.d("Database: ", "Custom token 0 -> "+tokens.get(0));
 
 
-                        // String[] tokens = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+                            // String[] tokens = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
 /*
                 Log.d("Database: ", "token 0 -> "+tokens.get(0));
                 Log.d("Database: ", "token 1 -> "+tokens.get(1));
@@ -177,97 +182,281 @@ public class configurePlacesActivity extends AppCompatActivity {
  */
 
 
-                        //count lines
-                        linecounter++;
-                        //exclude the first line as it contains headers
-                        if(linecounter == 1){
-                            continue;
+                            //count lines
+                            linecounter++;
+                            //exclude the first line as it contains headers
+                            if (linecounter == 1) {
+                                continue;
+                            }
+                            //Insert Data
+                            Log.d("CloudEntry", "name -> " + tokens.get(0));
+                            Log.d("CloudEntry", "geopoint -> lat - " + tokens.get(5) + "& lon - " + tokens.get(6));
+                            GeoPoint geoPoint = new GeoPoint(Double.parseDouble(tokens.get(5)), Double.parseDouble(tokens.get(6)));
+
+                            Landmark landmark = new Landmark();
+                            landmark.setName(tokens.get(0));
+                            landmark.setId(tokens.get(1));
+                            landmark.setState(tokens.get(2));
+                            landmark.setDistrict(tokens.get(3));
+                            landmark.setCity(tokens.get(4));
+                            landmark.setGeo_point(geoPoint);
+                            landmark.setCategory(tokens.get(7));
+                            landmark.setShort_desc(tokens.get(8));
+                            landmark.setLong_desc(tokens.get(9));
+                            landmark.setHistory(tokens.get(10));
+                            landmark.setImg_url(tokens.get(11));
+                            landmark.setImg_all_url(tokens.get(12));
+
+                            LandmarkMeta landmarkMeta = new LandmarkMeta(landmark.getId(), landmark.getState(), landmark.getDistrict(), landmark.getGeo_point(), landmark, landmark.getCategory());
+
+
+                            docRef = FirebaseFirestore.getInstance()
+                                    .collection(getString(R.string.collection_landmarks))
+                                    .document(landmark.getState())
+                                    .collection(landmark.getDistrict())
+                                    .document(landmark.getId());
+
+                            docRef.set(landmarkMeta).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        // Toast.makeText(mContext, "Landmark Inserted Successfully", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        //Toast.makeText(mContext, "Encountered Errors. Try Later.", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+
+                            docRef = FirebaseFirestore.getInstance()
+                                    .collection(getString(R.string.collection_landmarks))
+                                    .document(landmark.getState())
+                                    .collection(getString(R.string.document_meta))
+                                    .document(landmark.getId());
+
+                            docRef.set(landmarkMeta).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        // Toast.makeText(mContext, "Landmark Inserted Successfully", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        //Toast.makeText(mContext, "Encountered Errors. Try Later.", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+
+                            docRef = FirebaseFirestore.getInstance()
+                                    .collection(getString(R.string.collection_landmarks))
+                                    .document(getString(R.string.document_meta))
+                                    .collection(getString(R.string.collection_all))
+                                    .document(landmark.getId());
+
+                            docRef.set(landmarkMeta).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        //  Toast.makeText(mContext, "LandmarkMeta Inserted Successfully", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        // Toast.makeText(mContext, "Encountered Errors. Try Later.", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                            Log.d("DatabaseHelper", "CSV read ");
                         }
-                        //Insert Data
-                        Log.d("CloudEntry", "name -> " + tokens.get(0));
-                        Log.d("CloudEntry", "geopoint -> lat - " + tokens.get(5) + "& lon - "+ tokens.get(6));
-                        GeoPoint geoPoint = new GeoPoint(Double.parseDouble(tokens.get(5)), Double.parseDouble(tokens.get(6)));
-
-                        Landmark landmark = new Landmark();
-                        landmark.setName(tokens.get(0));
-                        landmark.setId(tokens.get(1));
-                        landmark.setState(tokens.get(2));
-                        landmark.setDistrict(tokens.get(3));
-                        landmark.setCity(tokens.get(4));
-                        landmark.setGeo_point(geoPoint);
-                        landmark.setCategory(tokens.get(7));
-                        landmark.setShort_desc(tokens.get(8));
-                        landmark.setLong_desc(tokens.get(9));
-                        landmark.setHistory(tokens.get(10));
-                        landmark.setImg_url(tokens.get(11));
-                        landmark.setImg_all_url(tokens.get(12));
-
-                        LandmarkMeta landmarkMeta = new LandmarkMeta(landmark.getId(), landmark.getState(), landmark.getDistrict(), landmark.getGeo_point(), landmark, landmark.getCategory());
-
-
-                        docRef = FirebaseFirestore.getInstance()
-                                .collection(getString(R.string.collection_landmarks))
-                                .document(landmark.getState())
-                                .collection(landmark.getDistrict())
-                                .document(landmark.getId());
-
-                        docRef.set(landmarkMeta).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    // Toast.makeText(mContext, "Landmark Inserted Successfully", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    //Toast.makeText(mContext, "Encountered Errors. Try Later.", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-
-                        docRef = FirebaseFirestore.getInstance()
-                                .collection(getString(R.string.collection_landmarks))
-                                .document(landmark.getState())
-                                .collection(getString(R.string.document_meta))
-                                .document(landmark.getId());
-
-                        docRef.set(landmarkMeta).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    // Toast.makeText(mContext, "Landmark Inserted Successfully", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    //Toast.makeText(mContext, "Encountered Errors. Try Later.", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-
-                        docRef = FirebaseFirestore.getInstance()
-                                .collection(getString(R.string.collection_landmarks))
-                                .document(getString(R.string.document_meta))
-                                .collection(getString(R.string.collection_all))
-                                .document(landmark.getId());
-
-                        docRef.set(landmarkMeta).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    //  Toast.makeText(mContext, "LandmarkMeta Inserted Successfully", Toast.LENGTH_SHORT).show();
-                                }
-                                else {
-                                    // Toast.makeText(mContext, "Encountered Errors. Try Later.", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-                        Log.d("DatabaseHelper", "CSV read ");
+                    } catch (IOException e1) {
+                        Log.e("DatabaseHelper", "Error" + line, e1);
+                        e1.printStackTrace();
                     }
-                } catch (IOException e1) {
-                    Log.e("DatabaseHelper", "Error" + line, e1);
-                    e1.printStackTrace();
+
+                    Toast toast = Toast.makeText(mContext, linecounter - 1 + " Landmarks Inserted.", Toast.LENGTH_SHORT);
+                    toast.getView().setBackground(ContextCompat.getDrawable(configurePlacesActivity.this, R.drawable.dialog_bg_toast_colored));
+                    TextView toastmsg = toast.getView().findViewById(android.R.id.message);
+                    toastmsg.setTextColor(Color.WHITE);
+                    toast.show();
                 }
 
-                Toast toast = Toast.makeText(mContext, linecounter - 1 + " Landmarks Inserted.", Toast.LENGTH_SHORT);
-                toast.getView().setBackground(ContextCompat.getDrawable(configurePlacesActivity.this, R.drawable.dialog_bg_toast_colored));
-                TextView toastmsg = toast.getView().findViewById(android.R.id.message);
-                toastmsg.setTextColor(Color.WHITE);
-                toast.show();
+
+                //For delicacy
+                {
+                    InputStream is2 = mContext.getResources().openRawResource(R.raw.delicacies_odisha);
+                    BufferedReader reader2 = new BufferedReader(
+                            new InputStreamReader(is2, StandardCharsets.UTF_8));
+                    String line2 = "";
+                    int linecounter2 = 0;
+
+
+                    try {
+                        while ((line2 = reader2.readLine()) != null) {
+                            ArrayList<String> tokens = customSplitSpecific(line2);
+
+                            //count lines
+                            linecounter2++;
+                            //exclude the first line as it contains headers
+                            if (linecounter2 == 1) {
+                                continue;
+                            }
+                            //Insert Data
+                            RV_Delicacy delicacy = new RV_Delicacy();
+                            delicacy.setId(tokens.get(0));
+                            delicacy.setName(tokens.get(1));
+                            delicacy.setPronunciation(tokens.get(2));
+                            delicacy.setFamous_in(tokens.get(3));
+                            delicacy.setPrice(tokens.get(4));
+                            delicacy.setCategory(tokens.get(5));
+                            delicacy.setFoodtype(tokens.get(6));
+                            delicacy.setDescription(tokens.get(7));
+                            delicacy.setPreparation(tokens.get(8));
+                            delicacy.setImg_header(tokens.get(9));
+                            delicacy.setImg_carousel(tokens.get(10));
+                            delicacy.setImg_desciption(tokens.get(11));
+                            delicacy.setVideo_link(tokens.get(12));
+
+                            // Log.d("configActivity", "Delicacy -> \n" + delicacy.toString());
+                            DocumentReference documentReference = FirebaseFirestore.getInstance()
+                                    .collection(getString(R.string.collection_dalicacies))
+                                    .document(getString(R.string.document_states))
+                                    .collection("Odisha")
+                                    .document(delicacy.getId());
+                            documentReference.set(delicacy).addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    // do nothing
+                                }
+                            });
+
+                            DocumentReference documentReference1 = FirebaseFirestore.getInstance()
+                                    .collection(getString(R.string.collection_dalicacies))
+                                    .document(getString(R.string.document_meta))
+                                    .collection(getString(R.string.collection_all))
+                                    .document(delicacy.getId());
+                            documentReference1.set(delicacy).addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    // do nothing
+                                }
+                            });
+
+
+                        }
+                    } catch (IOException e1) {
+                        Log.e("DatabaseHelper", "Error" + line2, e1);
+                        e1.printStackTrace();
+                    }
+
+
+                    Toast.makeText(mContext, linecounter2 - 1 + " Delicacies Inserted.", Toast.LENGTH_SHORT).show();
+                }
+
+                //For Journey
+                {
+                    InputStream is3 = mContext.getResources().openRawResource(R.raw.journey_bbsr_t1);
+                    BufferedReader reader3 = new BufferedReader(
+                            new InputStreamReader(is3, StandardCharsets.UTF_8));
+                    String line3 = "";
+                    int linecounter3 = 0;
+
+
+                    try {
+                        RV_Journey_Tour tour = new RV_Journey_Tour();
+                        while ((line3 = reader3.readLine()) != null) {
+                            ArrayList<String> tokens = customSplitSpecific(line3);
+
+                            //count lines
+                            linecounter3++;
+                            //exclude the first and third line as it contains headers
+                            if (linecounter3 == 1 || linecounter3 == 3) {
+                                continue;
+                            }
+                            //get Tour Data details and insert tour rlated information
+                            if (linecounter3 == 2) {
+                                tour.setName(tokens.get(0));
+                                tour.setId(tokens.get(1));
+                                tour.setDuration(tokens.get(2));
+                                tour.setDescription(tokens.get(3));
+                                tour.setImg_url(tokens.get(4));
+
+                                //Log.d("configActivity", "Journey tour -> \n" + tour.toString());
+
+
+                                DocumentReference docRef1 = FirebaseFirestore.getInstance()
+                                        .collection(getString(R.string.collection_journey))
+                                        .document(getString(R.string.document_states))
+                                        .collection("Odisha")
+                                        .document(tour.getId());
+                                docRef1.set(tour).addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        // do nothing
+                                    }
+                                });
+
+                                DocumentReference documentReference1 = FirebaseFirestore.getInstance()
+                                        .collection(getString(R.string.collection_journey))
+                                        .document(getString(R.string.document_meta))
+                                        .collection(getString(R.string.collection_all))
+                                        .document(tour.getId());
+                                documentReference1.set(tour).addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        // do nothing
+                                    }
+                                });
+
+
+                                continue;
+                            }
+
+                            //Insert Data for tour details
+
+                            RV_Journey_Location tour_location = new RV_Journey_Location();
+                            tour_location.setName(tokens.get(0));
+                            tour_location.setId(tokens.get(1));
+                            tour_location.setPlace_pos_type(tokens.get(2));
+                            tour_location.setPlace_pos(tokens.get(3));
+                            tour_location.setDistance_origin(tokens.get(4));
+                            tour_location.setDistance_previous(tokens.get(5));
+                            tour_location.setVisiting_hours(tokens.get(6));
+                            tour_location.setEntry_fee(tokens.get(7));
+                            tour_location.setDuration(tokens.get(8));
+                            tour_location.setFamous_for(tokens.get(9));
+                            tour_location.setImage(tokens.get(10));
+
+
+                            //Log.d("configActivity", "Journey  tour location-> \n" + tour_location.toString());
+
+                            DocumentReference docRef1 = FirebaseFirestore.getInstance()
+                                    .collection(getString(R.string.collection_journey))
+                                    .document(getString(R.string.document_states))
+                                    .collection("Odisha")
+                                    .document(tour.getId())
+                                    .collection(getString(R.string.collection_locations))
+                                    .document(tour_location.getId());
+                            docRef1.set(tour_location).addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    // do nothing
+                                }
+                            });
+
+                            DocumentReference documentReference1 = FirebaseFirestore.getInstance()
+                                    .collection(getString(R.string.collection_journey))
+                                    .document(getString(R.string.document_meta))
+                                    .collection(getString(R.string.collection_all))
+                                    .document(tour.getId())
+                                    .collection(getString(R.string.collection_locations))
+                                    .document(tour_location.getId());
+                            documentReference1.set(tour_location).addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    // do nothing
+                                }
+                            });
+
+
+                        }
+                    } catch (IOException e1) {
+                        Log.e("DatabaseHelper", "Error" + line3, e1);
+                        e1.printStackTrace();
+                    }
+
+
+                    Toast.makeText(mContext, "Journey Inserted.", Toast.LENGTH_SHORT).show();
+
+
+                }
 
             }
         });
@@ -282,6 +471,9 @@ public class configurePlacesActivity extends AppCompatActivity {
                 btn_update_clicked.set(Boolean.TRUE);
 
                 btn_update_version_submit.setVisibility(View.VISIBLE);
+                String current_str = "App Version is " + BuildConfig.VERSION_CODE;
+                tv_current_version.setText(current_str);
+                tv_current_version.setVisibility(View.VISIBLE);
 
                 DocumentReference documentReference = FirebaseFirestore.getInstance()
                         .collection(getString(R.string.collection_maintainance))
@@ -320,6 +512,7 @@ public class configurePlacesActivity extends AppCompatActivity {
 
                 btn_update_version_submit.setVisibility(View.GONE);
                 et_version.setVisibility(View.GONE);
+                tv_current_version.setVisibility(View.GONE);
             }
 
 
@@ -333,11 +526,7 @@ public class configurePlacesActivity extends AppCompatActivity {
         docRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Boolean flag = task.getResult().getBoolean("flag");
-                if (flag) {
-                    maintenance_switch.setChecked(true);
-                } else {
-                    maintenance_switch.setChecked(false);
-                }
+                maintenance_switch.setChecked(flag);
             }
         });
 

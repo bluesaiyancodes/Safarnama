@@ -146,10 +146,11 @@
 
     <string name="profile">Your Profile</string>
     <string name="text_placeholder">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</string>
+    <string name="text_placeholder_short">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. </string>
     <string name="feed_insert">New Post</string>
     <string name="feed_insert_body">Write your Mind !</string>
     <string name="post">Post</string>
-    <string name="feed_post_success">Posted Successfully</string>
+    <string name="post_success">Posted Successfully</string>
     <string name="feed_msg_accomplished">"Today I completed my visit to "</string>
 
 
@@ -282,6 +283,46 @@
     <string name="friend_some_add">Add Some Buddies</string>
     <string name="timeline">Timeline</string>
     <string name="stats">Statistics</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="price">Price :</string>
+    <string name="preferredtime">Preferred Time :</string>
+    <string name="placenamecolon">Place name  :</string>
+    <string name="view_details">View Details</string>
+    <string name="collection_dalicacies">Delicacies</string>
+    <string name="document_states">States</string>
+    <string name="preparation">Preparation</string>
+    <string name="trip_duration">Trip Duration</string>
+    <string name="trip_duration_colon">Trip Duration : </string>
+    <string name="collection_journey">Journeys</string>
+    <string name="collection_locations">Locations</string>
+    <string name="visiting_hours">Visiting Hours: </string>
+    <string name="entry_fee">Entry Fee: </string>
+    <string name="distancefromstartpoint">Distance From Starting Point : </string>
+    <string name="distancefrompreviouspoint">Distance From Previous Point : </string>
+    <string name="visiting_hours_colon">Visiting Hours : </string>
+    <string name="entry_fee_colon">Entry Fee : </string>
+    <string name="timetospend">Time To Spend : </string>
+    <string name="things_to_look_out_for">Things To Lookout For :</string>
+    <string name="profile_name_change">Profile Name Change</string>
+    <string name="profile_new_name">Enter New Profile Name</string>
+    <string name="cancel">Cancel</string>
+    <string name="update">Update</string>
+    <string name="select_image_dp">Click on Image</string>
+    <string name="new_inspiration_entry">New Inspiration Entry</string>
+    <string name="image">Image</string>
+    <string name="video">Video</string>
+    <string name="inspiration_insert">New Inspiration</string>
+    <string name="content_type">Content Type</string>
+    <string name="image_content_type">Image Content Type</string>
+    <string name="upload">Upload</string>
+    <string name="add_link">Add Link</string>
+    <string name="add_description">Add Description</string>
+    <string name="add_youtube_link">Add Youtube Link</string>
+    <string name="alert_empty_url">URL cannot be empty</string>
+    <string name="empty_location">Location cannot be Empty</string>
+    <string name="collection_inspirations">Inspirations</string>
+    <string name="invalid_img_url">Invalid image URL</string>
 
 
 </resources>

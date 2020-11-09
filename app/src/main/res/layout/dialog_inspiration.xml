@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"
+    android:background="@drawable/dialog_bg"
+    android:orientation="vertical">
+
+    <!-- Header -->
+    <LinearLayout
+        android:id="@+id/dialog_inspiration_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:text="@string/inspiration_insert"
+            android:textColor="@color/textItemMenu"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/dialog_inspiration_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/dialog_inspiration_header">
+
+        <!-- Content Chooser -->
+        <RelativeLayout
+            android:id="@+id/dialog_inspiration_content_chooser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:visibility="gone">
+
+            <!-- Content type label -->
+            <TextView
+                android:id="@+id/dialog_inspiration_content_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="10dp"
+                android:gravity="center"
+                android:text="@string/content_type" />
+
+            <!-- Content Chooser Choices-->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/dialog_inspiration_content_type"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/dialog_inspiration_image_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/dialog_bg"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:text="@string/image" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/dialog_inspiration_video_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/dialog_bg"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:text="@string/video" />
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+        <!-- Image Content Chooser -->
+        <RelativeLayout
+            android:id="@+id/dialog_inspiration_image_content_chooser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:visibility="gone">
+
+            <!-- Image Content type label -->
+            <TextView
+                android:id="@+id/dialog_inspiration_image_content_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="10dp"
+                android:gravity="center"
+                android:text="@string/image_content_type" />
+
+            <!-- Image Content Chooser Choices-->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/dialog_inspiration_image_content_type"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/dialog_inspiration_image_upload"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/dialog_bg"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:text="@string/upload" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/dialog_inspiration_image_link"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/dialog_bg"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:text="@string/add_link" />
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+        <!-- Image Content: Upload -->
+        <RelativeLayout
+            android:id="@+id/dialog_inspiration_content_image_upload_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:visibility="visible">
+
+            <ImageView
+                android:id="@+id/dialog_inspiration_content_image_upload_img"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/select_image" />
+
+            <TextView
+                android:id="@+id/dialog_inspiration_content_image_upload_error"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/dialog_inspiration_content_image_upload_img"
+                android:layout_marginTop="5dp"
+                android:text="@string/add_description"
+                android:textColor="@color/flat_red_1"
+                android:visibility="gone" />
+
+            <EditText
+                android:id="@+id/dialog_inspiration_content_image_upload_loc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/dialog_inspiration_content_image_upload_error"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@android:color/transparent"
+                android:hint="@string/location"
+                android:maxLines="1"
+                android:padding="5dp" />
+
+            <TextView
+                android:id="@+id/dialog_inspiration_content_image_upload_add_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/dialog_inspiration_content_image_upload_loc"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:text="@string/add_description" />
+
+            <EditText
+                android:id="@+id/dialog_inspiration_content_image_upload_desc"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_below="@id/dialog_inspiration_content_image_upload_add_desc"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@android:color/transparent"
+                android:hint="@string/add_description"
+                android:padding="5dp" />
+
+        </RelativeLayout>
+
+        <!-- Image Content: Link -->
+        <RelativeLayout
+            android:id="@+id/dialog_inspiration_content_image_link_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:visibility="gone">
+
+            <EditText
+                android:id="@+id/dialog_inspiration_content_image_link_url"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:hint="@string/add_link" />
+
+            <TextView
+                android:id="@+id/dialog_inspiration_content_image_link_error"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/dialog_inspiration_content_image_link_url"
+                android:layout_marginTop="5dp"
+                android:text="@string/add_description"
+                android:textColor="@color/flat_red_1"
+                android:visibility="gone" />
+
+            <EditText
+                android:id="@+id/dialog_inspiration_content_image_link_loc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/dialog_inspiration_content_image_link_error"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@android:color/transparent"
+                android:hint="@string/location"
+                android:maxLines="1"
+                android:padding="5dp" />
+
+            <TextView
+                android:id="@+id/dialog_inspiration_content_image_link_add_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/dialog_inspiration_content_image_link_loc"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:text="@string/add_description" />
+
+            <EditText
+                android:id="@+id/dialog_inspiration_content_image_link_desc"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_below="@id/dialog_inspiration_content_image_link_add_desc"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@android:color/transparent"
+                android:hint="@string/add_description"
+                android:padding="5dp" />
+
+        </RelativeLayout>
+
+        <!-- Video Content: Link -->
+        <RelativeLayout
+            android:id="@+id/dialog_inspiration_content_video_link_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:visibility="gone">
+
+            <EditText
+                android:id="@+id/dialog_inspiration_content_video_link_url"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:hint="@string/add_youtube_link" />
+
+            <TextView
+                android:id="@+id/dialog_inspiration_content_video_link_error"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/dialog_inspiration_content_video_link_url"
+                android:layout_marginTop="5dp"
+                android:text="@string/add_description"
+                android:textColor="@color/flat_red_1"
+                android:visibility="gone" />
+
+            <EditText
+                android:id="@+id/dialog_inspiration_content_video_link_loc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/dialog_inspiration_content_video_link_error"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@android:color/transparent"
+                android:hint="@string/location"
+                android:maxLines="1"
+                android:padding="5dp" />
+
+            <TextView
+                android:id="@+id/dialog_inspiration_content_video_link_add_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/dialog_inspiration_content_video_link_loc"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:text="@string/add_description" />
+
+            <EditText
+                android:id="@+id/dialog_inspiration_content_video_link_desc"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_below="@id/dialog_inspiration_content_video_link_add_desc"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@android:color/transparent"
+                android:hint="@string/add_description"
+                android:padding="5dp" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/dialog_inspiration_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/dialog_inspiration_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/btn_gradient_style"
+        android:text="@string/post"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:visibility="gone" />
+
+
+</RelativeLayout>

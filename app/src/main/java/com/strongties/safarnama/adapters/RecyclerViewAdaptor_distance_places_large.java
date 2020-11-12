@@ -1,9 +1,5 @@
 package com.strongties.safarnama.adapters;
 
-import android.animation.Animator;
-import android.animation.AnimatorInflater;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -29,7 +25,7 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class RecyclerViewAdaptor_distance_places extends RecyclerView.Adapter<RecyclerViewAdaptor_distance_places.ViewHolder> {
+public class RecyclerViewAdaptor_distance_places_large extends RecyclerView.Adapter<RecyclerViewAdaptor_distance_places_large.ViewHolder> {
 
     public static final String TAG = "RecyclerViewAdaptor";
 
@@ -38,7 +34,7 @@ public class RecyclerViewAdaptor_distance_places extends RecyclerView.Adapter<Re
 
     private final int max_items = 5;
 
-    public RecyclerViewAdaptor_distance_places(Context context, List<RV_Distance> mData) {
+    public RecyclerViewAdaptor_distance_places_large(Context context, List<RV_Distance> mData) {
         this.mcontext = context;
         this.mData = mData;
     }
@@ -48,7 +44,7 @@ public class RecyclerViewAdaptor_distance_places extends RecyclerView.Adapter<Re
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Log.d(TAG, "onCreateViewHolder: called.");
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rv_distance_1, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rv_distance_large, parent, false);
 
         return new ViewHolder(view);
     }
@@ -96,8 +92,8 @@ public class RecyclerViewAdaptor_distance_places extends RecyclerView.Adapter<Re
             @Override
             public void onClick(View v) {
                 v.startAnimation(new AlphaAnimation(1F, 0.7F));
-
-                if (isFlipped.get()) {
+/*
+                if(isFlipped.get()){
                     ObjectAnimator anim = (ObjectAnimator) AnimatorInflater.loadAnimator(mcontext, R.animator.flipping);
                     anim.setTarget(holder.image);
                     anim.setDuration(400);
@@ -126,7 +122,7 @@ public class RecyclerViewAdaptor_distance_places extends RecyclerView.Adapter<Re
                     anim2.start();
                     isFlipped.set(Boolean.FALSE);
 
-                } else {
+                }else{
                     ObjectAnimator anim = (ObjectAnimator) AnimatorInflater.loadAnimator(mcontext, R.animator.flipping);
                     anim.setTarget(holder.image);
                     anim.setDuration(400);
@@ -157,6 +153,8 @@ public class RecyclerViewAdaptor_distance_places extends RecyclerView.Adapter<Re
                     anim2.start();
                     isFlipped.set(Boolean.TRUE);
                 }
+
+ */
 
                 holder.next.setOnClickListener(view -> {
                     Intent intent = new Intent(mcontext, LandmarkActivity.class);

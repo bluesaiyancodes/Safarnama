@@ -3,34 +3,60 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@android:color/black"
     tools:context=".imageViewActivity">
+
 
     <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/photo_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
-    <Button
+    <!-- Back Button -->
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/image_view_back"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/ic_back" />
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/image_view_download"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@id/image_view_back"
-        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        app:icon="@drawable/ic_download"
+        app:iconGravity="textEnd"
+        app:iconPadding="10dp"
+        app:iconSize="20dp"
         android:layout_marginEnd="20dp"
         android:background="@drawable/dialog_bg_colored"
         android:text="@string/download"
-        android:textColor="@color/white"/>
+        android:textColor="@color/white" />
 
-    <Button
-        android:id="@+id/image_view_back"
+
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="20dp"
-        android:background="@drawable/dialog_bg_colored"
-        android:text="@string/back"
-        android:textColor="@color/white"/>
+        android:layout_below="@id/image_view_back"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/text_back4">
+
+        <TextView
+            android:id="@+id/image_view_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="10dp"
+            android:paddingStart="10dp"
+            android:text="@string/placename"
+            android:textColor="@color/textItemMenu"
+            android:textSize="20sp" />
+    </RelativeLayout>
 
 </RelativeLayout>

@@ -1,7 +1,9 @@
 package com.strongties.safarnama.adapters;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +26,7 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 import com.strongties.safarnama.R;
+import com.strongties.safarnama.imageViewActivity;
 import com.strongties.safarnama.user_classes.RV_Inspiration;
 import com.strongties.safarnama.user_classes.UserShort;
 import com.varunest.sparkbutton.SparkButton;
@@ -207,6 +210,14 @@ public class RecyclerViewAdapter_inspiration extends FirestoreRecyclerAdapter<RV
 
 
             }
+        });
+
+        holder.main_img.setOnClickListener(view -> {
+            Intent intent = new Intent(mContext, imageViewActivity.class);
+            intent.putExtra("imageUrl", model.getContent_url());
+            intent.putExtra("name", "Inspiration " + model.getContent_id());
+            mContext.startActivity(intent);
+            ((Activity) mContext).overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
         });
 
     }

@@ -19,7 +19,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,6 +26,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -38,6 +38,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.strongties.safarnama.adapters.RecyclerViewAdaptor_distance_places;
+import com.strongties.safarnama.adapters.RecyclerViewAdaptor_distance_places_large;
 import com.strongties.safarnama.user_classes.RV_Distance;
 
 import java.util.ArrayList;
@@ -121,7 +122,7 @@ public class fragment_menu_distance extends Fragment {
 
         // Custom Search
 
-        Button custom_search = root.findViewById(R.id.menu2_custom_search);
+        TextView custom_search = root.findViewById(R.id.menu2_custom_search);
         custom_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -135,7 +136,7 @@ public class fragment_menu_distance extends Fragment {
                 EditText tv_min = myDialog.findViewById(R.id.menu2_custom_search_min);
                 EditText tv_max = myDialog.findViewById(R.id.menu2_custom_search_max);
 
-                Button search = myDialog.findViewById(R.id.menu2_search_dialog_btn);
+                AppCompatButton search = myDialog.findViewById(R.id.menu2_search_dialog_btn);
                 search.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -301,7 +302,7 @@ public class fragment_menu_distance extends Fragment {
 
         LinearLayoutManager layoutManagerhot = new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false);
         rV_hot.setLayoutManager(layoutManagerhot);
-        RecyclerViewAdaptor_distance_places adapterhot = new RecyclerViewAdaptor_distance_places(mContext, list_hot);
+        RecyclerViewAdaptor_distance_places_large adapterhot = new RecyclerViewAdaptor_distance_places_large(mContext, list_hot);
         rV_hot.setAdapter(adapterhot);
 
 

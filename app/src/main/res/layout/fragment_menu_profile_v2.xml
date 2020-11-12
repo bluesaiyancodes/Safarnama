@@ -190,7 +190,6 @@
                         android:id="@+id/profile_v2_badge"
                         android:layout_width="120dp"
                         android:layout_height="120dp"
-                        android:layout_marginStart="20dp"
                         android:src="@drawable/avatar_2_star" />
 
                     <!--  Badge: Right side Information  -->
@@ -199,7 +198,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:layout_marginStart="5dp"
+                        android:layout_marginStart="10dp"
                         android:orientation="vertical">
 
                         <ProgressBar
@@ -331,7 +330,7 @@
                                 android:background="@drawable/dialog_bg_colored_accent"
                                 android:backgroundTint="@color/chart_bucketlist"
                                 android:gravity="center"
-                                android:paddingStart="130sp"
+                                android:paddingStart="140sp"
                                 android:paddingEnd="20dp"
                                 android:text="20"
                                 android:textColor="@color/white"

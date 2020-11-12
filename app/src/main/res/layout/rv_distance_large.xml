@@ -7,19 +7,19 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
-        android:layout_height="110dp"
+        android:layout_height="200dp"
         android:layout_centerInParent="true"
-        app:cardCornerRadius="5dp"
         android:background="@color/transparent"
+        app:cardCornerRadius="5dp"
         app:cardElevation="2dp"
         app:cardMaxElevation="3dp">
 
 
         <RelativeLayout
-                android:id="@+id/distance_item"
-            android:layout_width="230dp"
-            android:background="@color/transparent"
-            android:layout_height="match_parent">
+            android:id="@+id/distance_item"
+            android:layout_width="300dp"
+            android:layout_height="match_parent"
+            android:background="@color/transparent">
 
             <ImageView
                 android:id="@+id/distance_menu_image"
@@ -37,18 +37,23 @@
                 android:alpha="0.8"
                 android:background="@drawable/text_background">
 
-                <TextView
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/distance_menu_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:autoSizeMaxTextSize="20sp"
+                    android:autoSizeMaxTextSize="18sp"
                     android:autoSizeMinTextSize="10sp"
                     android:autoSizeTextType="uniform"
+                    android:background="@color/transparent"
                     android:gravity="center"
                     android:text="Menu item1"
                     android:textColor="@color/white"
                     android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    app:icon="@drawable/ic_location"
+                    app:iconGravity="textStart"
+                    app:iconPadding="30dp" />
+
             </RelativeLayout>
 
 
@@ -57,29 +62,21 @@
                 android:id="@+id/distance_item_flipped"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="gone">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:alpha="0.6"
-                    android:src="@color/color6" />
+                android:visibility="visible">
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true">
+
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentBottom="true">
 
                     <TextView
                         android:id="@+id/distance_menu_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:autoSizeMaxTextSize="15sp"
-                        android:autoSizeMinTextSize="8sp"
-                        android:autoSizeTextType="uniform"
-                        android:gravity="center"
+                        android:background="@drawable/text_background2"
+                        android:paddingStart="10dp"
                         android:text="Menu item2"
                         android:textColor="@color/white" />
 
@@ -88,10 +85,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/distance_menu_type"
-                        android:layout_centerHorizontal="true"
-                        android:autoSizeMaxTextSize="15sp"
-                        android:autoSizeMinTextSize="8sp"
-                        android:autoSizeTextType="uniform"
+                        android:layout_marginTop="2dp"
+                        android:background="@drawable/text_background2"
+                        android:paddingStart="10dp"
                         android:text="Menu item2"
                         android:textColor="@color/white"
                         android:textSize="12sp" />

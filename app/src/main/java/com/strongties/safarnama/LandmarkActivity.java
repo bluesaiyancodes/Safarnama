@@ -1,16 +1,14 @@
 package com.strongties.safarnama;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -33,17 +31,11 @@ import androidx.core.content.ContextCompat;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MapStyleOptions;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -54,9 +46,13 @@ import com.strongties.safarnama.user_classes.LandmarkList;
 import com.strongties.safarnama.user_classes.LandmarkMeta;
 import com.strongties.safarnama.user_classes.LandmarkStat;
 import com.strongties.safarnama.user_classes.UserFeed;
+import com.varunest.sparkbutton.SparkButton;
+import com.varunest.sparkbutton.SparkEventListener;
 
 import java.text.DecimalFormat;
 import java.util.Objects;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class LandmarkActivity extends AppCompatActivity {
     private static final String TAG = "Landmark->";
@@ -138,11 +134,12 @@ public class LandmarkActivity extends AppCompatActivity {
         ImageView img_2 = findViewById(R.id.landmark_img_2);
         ImageView img_3 = findViewById(R.id.landmark_img_3);
 
-        Button back_pressed =findViewById(R.id.landmark_go_back);
+        CircleImageView back_pressed = findViewById(R.id.landmark_go_back);
         Button map_view = findViewById(R.id.landmark_view_on_map);
-        Button view_more = findViewById(R.id.landmark_view_more);
-        Button add_wish = findViewById(R.id.landmark_add_to_bucket);
-        Button add_accomplish = findViewById(R.id.landmark_add_to_accomplish);
+        MaterialButton view_more = findViewById(R.id.landmark_view_more);
+
+        SparkButton sb_bucket = findViewById(R.id.landmark_bucket);
+        SparkButton sb_accomplish = findViewById(R.id.landmark_accomplish);
 
 
         ProgressDialog mProgressDialog = ProgressDialog.show(LandmarkActivity.this, "Loading", "Fetching Information from Server");
@@ -180,11 +177,9 @@ public class LandmarkActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                             if (task.isSuccessful() && documentSnapshot.exists()) {
-                                Button btn_add = findViewById(R.id.landmark_add_to_bucket);
-                                btn_add.setText(R.string.wishlistin);
-                                btn_add.setCompoundDrawablesWithIntrinsicBounds(R.drawable.bucketlist_white, 0, 0, 0);
-                                btn_add.setBackgroundResource(R.drawable.dialog_bg_colored);
-                                btn_add.setTextColor(getResources().getColor(R.color.white));
+                                // Button btn_add = findViewById(R.id.landmark_add_to_bucket);
+                                sb_bucket.setChecked(true);
+                                sb_accomplish.setChecked(false);
                             }
                         }
                     });
@@ -202,11 +197,9 @@ public class LandmarkActivity extends AppCompatActivity {
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                             if (task.isSuccessful() && documentSnapshot.exists()) {
                                 Log.d(TAG, "Accomplished -> " + documentSnapshot);
-                                Button btn_add = findViewById(R.id.landmark_add_to_accomplish);
-                                btn_add.setText(R.string.accomplishlistin);
-                                btn_add.setCompoundDrawablesWithIntrinsicBounds(R.drawable.accomplished_white, 0, 0, 0);
-                                btn_add.setBackgroundResource(R.drawable.dialog_bg_colored_cyan);
-                                btn_add.setTextColor(getResources().getColor(R.color.white));
+                                // Button btn_add = findViewById(R.id.landmark_add_to_accomplish);
+                                sb_accomplish.setChecked(true);
+                                sb_bucket.setChecked(false);
                             }
                         }
                     });
@@ -313,29 +306,13 @@ public class LandmarkActivity extends AppCompatActivity {
                             .into(img_main);
 
                     String[] imgs = landmark.getImg_all_url().split(" ");
-
-                    try {
-
+                    if (imgs.length < 2) {
                         Glide.with(mContext)
                                 .load(imgs[0])
                                 .centerCrop()
                                 .placeholder(R.drawable.loading_image)
                                 //.apply(RequestOptions.bitmapTransform(new RoundedCorners(10)))
                                 .into(img_1);
-
-                        Glide.with(mContext)
-                                .load(imgs[1])
-                                .centerCrop()
-                                .placeholder(R.drawable.loading_image)
-                                // .apply(RequestOptions.bitmapTransform(new RoundedCorners(10)))
-                                .into(img_2);
-
-                        Glide.with(mContext)
-                                .load(imgs[2])
-                                .centerCrop()
-                                .placeholder(R.drawable.loading_image)
-                                //.apply(RequestOptions.bitmapTransform(new RoundedCorners(10)))
-                                .into(img_3);
 
                         img_1.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -349,6 +326,37 @@ public class LandmarkActivity extends AppCompatActivity {
                             }
                         });
 
+                        img_2.setVisibility(View.INVISIBLE);
+                        img_3.setVisibility(View.INVISIBLE);
+
+                    } else if (imgs.length < 3) {
+
+                        Glide.with(mContext)
+                                .load(imgs[0])
+                                .centerCrop()
+                                .placeholder(R.drawable.loading_image)
+                                //.apply(RequestOptions.bitmapTransform(new RoundedCorners(10)))
+                                .into(img_1);
+
+                        img_1.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                v.startAnimation(new AlphaAnimation(1F, 0.7F));
+                                Intent intent = new Intent(LandmarkActivity.this, imageViewActivity.class);
+                                intent.putExtra("imageUrl", imgs[0]);
+                                intent.putExtra("name", landmark.getName());
+                                startActivity(intent);
+                                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                            }
+                        });
+
+                        Glide.with(mContext)
+                                .load(imgs[1])
+                                .centerCrop()
+                                .placeholder(R.drawable.loading_image)
+                                // .apply(RequestOptions.bitmapTransform(new RoundedCorners(10)))
+                                .into(img_2);
+
                         img_2.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -360,6 +368,54 @@ public class LandmarkActivity extends AppCompatActivity {
                                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                             }
                         });
+
+                        img_3.setVisibility(View.INVISIBLE);
+                    } else {
+                        Glide.with(mContext)
+                                .load(imgs[0])
+                                .centerCrop()
+                                .placeholder(R.drawable.loading_image)
+                                //.apply(RequestOptions.bitmapTransform(new RoundedCorners(10)))
+                                .into(img_1);
+
+                        img_1.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                v.startAnimation(new AlphaAnimation(1F, 0.7F));
+                                Intent intent = new Intent(LandmarkActivity.this, imageViewActivity.class);
+                                intent.putExtra("imageUrl", imgs[0]);
+                                intent.putExtra("name", landmark.getName());
+                                startActivity(intent);
+                                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                            }
+                        });
+
+                        Glide.with(mContext)
+                                .load(imgs[1])
+                                .centerCrop()
+                                .placeholder(R.drawable.loading_image)
+                                // .apply(RequestOptions.bitmapTransform(new RoundedCorners(10)))
+                                .into(img_2);
+
+                        img_2.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                v.startAnimation(new AlphaAnimation(1F, 0.7F));
+                                Intent intent = new Intent(LandmarkActivity.this, imageViewActivity.class);
+                                intent.putExtra("imageUrl", imgs[1]);
+                                intent.putExtra("name", landmark.getName());
+                                startActivity(intent);
+                                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                            }
+                        });
+
+                        Glide.with(mContext)
+                                .load(imgs[2])
+                                .centerCrop()
+                                .placeholder(R.drawable.loading_image)
+                                //.apply(RequestOptions.bitmapTransform(new RoundedCorners(10)))
+                                .into(img_3);
+
 
                         img_3.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -373,12 +429,6 @@ public class LandmarkActivity extends AppCompatActivity {
                             }
                         });
 
-
-
-
-
-                    }catch (ArrayIndexOutOfBoundsException e){
-                        Log.d(TAG, "Images are not present");
                     }
 
                 }
@@ -386,87 +436,84 @@ public class LandmarkActivity extends AppCompatActivity {
             }
         });
 
-
-        add_wish.setOnClickListener(new View.OnClickListener() {
+        sb_bucket.setEventListener(new SparkEventListener() {
             @Override
-            public void onClick(View v) {
-                v.startAnimation(new AlphaAnimation(1F, 0.7F));
-                Button btn_bucket = findViewById(R.id.landmark_add_to_bucket);
+            public void onEvent(ImageView button, boolean buttonState) {
+                if (buttonState) {
 
-                String btn_state = btn_bucket.getText().toString();
-                if (btn_state.equals(getString(R.string.wishlistin))) {
+                    bucketlist_add();
+                    sb_accomplish.setChecked(false);
+                } else {
+
                     new AlertDialog.Builder(LandmarkActivity.this)
                             .setTitle(getString(R.string.confirm))
                             .setMessage(getString(R.string.wishlistremove_confirmation_msg))
                             .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     bucketlist_remove();
-                                    btn_bucket.setText(R.string.BucketList);
-                                    btn_bucket.setCompoundDrawablesWithIntrinsicBounds(R.drawable.bucketlistadd, 0, 0, 0);
-                                    btn_bucket.setBackgroundResource(R.drawable.dialog_bg);
-                                    btn_bucket.setTextColor(getResources().getColor(R.color.textItemMenu));
                                 }
                             })
-                            .setNegativeButton(android.R.string.no, null)
+                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    sb_bucket.setChecked(true);
+                                }
+                            })
                             .setIcon(R.drawable.app_main_icon)
                             .show();
-                } else {
-                    bucketlist_add();
-                    btn_bucket.setText(R.string.wishlistin);
-                    btn_bucket.setCompoundDrawablesWithIntrinsicBounds(R.drawable.bucketlist_white, 0, 0, 0);
-                    btn_bucket.setBackgroundResource(R.drawable.dialog_bg_colored);
-                    btn_bucket.setTextColor(getResources().getColor(R.color.white));
-
-                    Button btn_accomplish = findViewById(R.id.landmark_add_to_accomplish);
-                    if (btn_accomplish.getText().toString().equals(getString(R.string.accomplishlistin))) {
-                        btn_accomplish.setText(R.string.Accomplished);
-                        btn_accomplish.setCompoundDrawablesWithIntrinsicBounds(R.drawable.accomplished_add, 0, 0, 0);
-                        btn_accomplish.setBackgroundResource(R.drawable.dialog_bg);
-                        btn_accomplish.setTextColor(getResources().getColor(R.color.textItemMenu));
-                    }
                 }
+            }
+
+            @Override
+            public void onEventAnimationEnd(ImageView button, boolean buttonState) {
+
+            }
+
+            @Override
+            public void onEventAnimationStart(ImageView button, boolean buttonState) {
+
             }
         });
 
-        add_accomplish.setOnClickListener(new View.OnClickListener() {
+        sb_accomplish.setEventListener(new SparkEventListener() {
             @Override
-            public void onClick(View v) {
-                v.startAnimation(new AlphaAnimation(1F, 0.7F));
-                Button btn_accomplish = findViewById(R.id.landmark_add_to_accomplish);
-                String btn_state = btn_accomplish.getText().toString();
-                if (btn_state.equals(getString(R.string.accomplishlistin))) {
+            public void onEvent(ImageView button, boolean buttonState) {
+                if (buttonState) {
+                    accomplish_add();
+                    sb_bucket.setChecked(false);
+
+                } else {
                     new AlertDialog.Builder(LandmarkActivity.this)
                             .setTitle(getString(R.string.confirm))
                             .setMessage(getString(R.string.accomplishlistremove_confirmation_msg))
                             .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     accomplish_remove();
-                                    btn_accomplish.setText(R.string.Accomplished);
-                                    btn_accomplish.setCompoundDrawablesWithIntrinsicBounds(R.drawable.accomplished_add, 0, 0, 0);
-                                    btn_accomplish.setBackgroundResource(R.drawable.dialog_bg);
-                                    btn_accomplish.setTextColor(getResources().getColor(R.color.textItemMenu));
                                 }
                             })
-                            .setNegativeButton(android.R.string.no, null)
+                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    sb_accomplish.setChecked(true);
+                                }
+                            })
                             .setIcon(R.drawable.app_main_icon)
                             .show();
-                } else {
-                    accomplish_add();
-                    btn_accomplish.setText(R.string.accomplishlistin);
-                    btn_accomplish.setCompoundDrawablesWithIntrinsicBounds(R.drawable.accomplished_white, 0, 0, 0);
-                    btn_accomplish.setBackgroundResource(R.drawable.dialog_bg_colored_cyan);
-                    btn_accomplish.setTextColor(getResources().getColor(R.color.white));
 
-                    Button btn_bucket = findViewById(R.id.landmark_add_to_bucket);
-                    if (btn_bucket.getText().toString().equals(getString(R.string.wishlistin))) {
-                        btn_bucket.setText(R.string.BucketList);
-                        btn_bucket.setCompoundDrawablesWithIntrinsicBounds(R.drawable.bucketlistadd, 0, 0, 0);
-                        btn_bucket.setBackgroundResource(R.drawable.dialog_bg);
-                        btn_bucket.setTextColor(getResources().getColor(R.color.textItemMenu));
-                    }
                 }
             }
+
+            @Override
+            public void onEventAnimationEnd(ImageView button, boolean buttonState) {
+
+            }
+
+            @Override
+            public void onEventAnimationStart(ImageView button, boolean buttonState) {
+
+            }
         });
+
 
 
         back_pressed.setOnClickListener(new View.OnClickListener() {
@@ -481,6 +528,7 @@ public class LandmarkActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 v.startAnimation(new AlphaAnimation(1F, 0.7F));
+                /*
                 Dialog myDialog = new Dialog(LandmarkActivity.this);
                 myDialog.setContentView(R.layout.dialog_map_view);
                 Objects.requireNonNull(myDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -528,6 +576,12 @@ public class LandmarkActivity extends AppCompatActivity {
 
                 myDialog.show();
 
+                 */
+
+                String url = "http://maps.google.com/maps?daddr=" + landmark.getGeo_point().getLatitude() + "," + landmark.getGeo_point().getLongitude();
+                Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url));
+                intent.setPackage("com.google.android.apps.maps");
+                startActivity(intent);
 
             }
         });

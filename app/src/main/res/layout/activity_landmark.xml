@@ -1,312 +1,230 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/landmark_view_on_map"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/dialog_bg_colored"
-        android:text="@string/view_on_map"
-        android:textColor="@color/white"
-        android:textSize="15sp" />
 
-    <Button
-        android:id="@+id/landmark_go_back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/dialog_bg_colored"
-        android:text="@string/back"
-        android:textColor="@color/white"
-        android:textSize="15sp" />
-
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:weightSum="1">
+        android:layout_height="wrap_content">
 
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="0.75">
+            android:layout_height="wrap_content"
+            android:background="@color/background">
+
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:id="@+id/landmark_header"
+                android:layout_height="wrap_content">
 
                 <ImageView
                     android:id="@+id/landmark_photo_main"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="300dp"
                     android:src="@color/color8" />
-
-                <TextView
-                    android:id="@+id/landmark_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:layout_alignParentBottom="true"
-                    android:background="@color/background_blur"
-                    android:gravity="bottom"
-                    android:paddingLeft="10dp"
-                    android:text="@string/placename"
-                    android:textColor="@color/textItemMenu"
-                    android:textColorHighlight="@color/white"
-                    android:textColorLink="@color/white"
-                    android:textIsSelectable="true"
-                    android:textSize="25dp"
-                    android:textStyle="italic" />
-
-            </RelativeLayout>
-
-        </LinearLayout>
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="0.25">
-
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/background">
-
-
+                <!-- Category - distance from current -->
                 <RelativeLayout
-                    android:id="@+id/landmark_header_btns"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="10dp"
-                        android:orientation="horizontal"
-                        android:weightSum="1">
-
-                        <androidx.appcompat.widget.AppCompatButton
-                            android:id="@+id/landmark_add_to_bucket"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="10dp"
-                            android:layout_marginTop="15dp"
-                            android:layout_marginRight="10dp"
-                            android:layout_weight="0.5"
-                            android:background="@drawable/dialog_bg"
-                            android:drawableStart="@drawable/bucketlistadd"
-                            android:text="@string/BucketList"
-                            android:textColor="@color/textItemMenu"
-                            android:textSize="15sp" />
-
-                        <androidx.appcompat.widget.AppCompatButton
-                            android:id="@+id/landmark_add_to_accomplish"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="15dp"
-                            android:layout_marginEnd="10dp"
-                            android:layout_weight="0.5"
-                            android:background="@drawable/dialog_bg"
-                            android:drawableStart="@drawable/accomplished_add"
-                            android:text="@string/accomplished"
-                            android:textColor="@color/textItemMenu"
-                            android:textSize="15sp" />
-                    </LinearLayout>
-
-                </RelativeLayout>
-
-
-
-
-                <TextView
-                    android:id="@+id/landmark_type_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/landmark_header_btns"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="20dp"
-                    android:text="@string/category"
-                    android:textSize="15sp"
-                    android:textStyle="italic" />
-
-                <ImageView
-                    android:id="@+id/image_category"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/landmark_header_btns"
-                    android:layout_marginStart="30dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_toEndOf="@id/landmark_type_label"
-                    android:src="@drawable/add_icon" />
-
-
-                <TextView
-                    android:id="@+id/landmark_type"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/landmark_header_btns"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_toEndOf="@id/image_category"
-                    android:background="@drawable/dialog_bg"
-                    android:text="@string/type"
-                    android:textColor="@color/textItemMenu"
-                    android:textSize="15sp" />
-
-
-                <TextView
-                    android:id="@+id/landmark_city_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/landmark_type_label"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="30dp"
-                    android:text="@string/city"
-                    android:textSize="15sp"
-                    android:textStyle="italic" />
-
-
-                <TextView
-                    android:id="@+id/landmark_city"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/landmark_type_label"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_toRightOf="@id/landmark_city_label"
-                    android:background="@drawable/dialog_bg"
-                    android:text="@string/city"
-                    android:textColor="@color/textItemMenu"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:id="@+id/landmark_district_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/landmark_city_label"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="30dp"
-                    android:text="@string/district"
-                    android:textSize="15sp"
-                    android:textStyle="italic" />
-
-                <TextView
-                    android:id="@+id/landmark_district"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/landmark_city_label"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_toRightOf="@id/landmark_district_label"
-                    android:background="@drawable/dialog_bg"
-                    android:text="@string/district"
-                    android:textColor="@color/textItemMenu"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:id="@+id/landmark_state_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/landmark_district_label"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="30dp"
-                    android:text="@string/state"
-                    android:textSize="15sp"
-                    android:textStyle="italic" />
-
-                <TextView
-                    android:id="@+id/landmark_state"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/landmark_district_label"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_toRightOf="@id/landmark_district_label"
-                    android:background="@drawable/dialog_bg"
-                    android:text="@string/state"
-                    android:textColor="@color/textItemMenu"
-                    android:textSize="15sp" />
-
-                <RelativeLayout
-                    android:id="@+id/landmark_distance_layout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/landmark_state_label"
-                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/landmark_photo_main"
+                    android:layout_marginStart="20dp"
                     android:layout_marginTop="20dp">
+
+                    <ImageView
+                        android:id="@+id/image_category"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/add_icon" />
+
+                    <TextView
+                        android:id="@+id/landmark_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="10dp"
+                        android:layout_toEndOf="@id/image_category"
+                        android:text="@string/type"
+                        android:textColor="@color/textItemMenu"
+                        android:textSize="15sp" />
+
+                    <ImageView
+                        android:id="@+id/landmark_image_distance_from_current"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_toEndOf="@id/landmark_type"
+                        android:src="@drawable/ic_distance_from_current_location" />
 
                     <TextView
                         android:id="@+id/landmark_distance_val"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:background="@drawable/dialog_bg_colored"
-                        android:gravity="center"
-                        android:paddingStart="230sp"
-                        android:text="200Km"
-                        android:textColor="@color/white" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:background="@drawable/dialog_bg_light"
-                        android:gravity="center"
-                        android:text="@string/distancefromcurent"
-                        android:textColor="@color/textItemMenu" />
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="10dp"
+                        android:layout_toEndOf="@id/landmark_image_distance_from_current"
+                        android:text="@string/type"
+                        android:textColor="@color/textItemMenu"
+                        android:textSize="15sp" />
 
                 </RelativeLayout>
 
+                <!-- BucketList -->
+                <com.varunest.sparkbutton.SparkButton
+                    android:id="@+id/landmark_bucket"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/landmark_photo_main"
+                    android:layout_marginTop="-60dp"
+                    android:layout_marginEnd="-50dp"
+                    android:layout_toStartOf="@id/landmark_accomplish"
+                    app:sparkbutton_activeImage="@drawable/ic_bucket_selected"
+                    app:sparkbutton_iconSize="40dp"
+                    app:sparkbutton_inActiveImage="@drawable/ic_bucket_unselected"
+                    app:sparkbutton_primaryColor="@color/color1"
+                    app:sparkbutton_secondaryColor="@color/color6" />
+                <!-- AccomplishedList -->
+                <com.varunest.sparkbutton.SparkButton
+                    android:id="@+id/landmark_accomplish"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/landmark_photo_main"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="-60dp"
+                    app:sparkbutton_activeImage="@drawable/ic_accomplished_selected"
+                    app:sparkbutton_iconSize="40dp"
+                    app:sparkbutton_inActiveImage="@drawable/ic_accomplished_unselected"
+                    app:sparkbutton_primaryColor="@color/chart_accomplished"
+                    app:sparkbutton_secondaryColor="@color/color6" />
+
+
+            </RelativeLayout>
+
+
+            <!-- Name - city - district - state -->
+            <RelativeLayout
+                android:id="@+id/landmark_name_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/landmark_header"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="30dp">
+
+                <TextView
+                    android:id="@+id/landmark_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/placename"
+                    android:textColor="@color/textItemMenu"
+                    android:textColorHighlight="@color/white"
+                    android:textColorLink="@color/white"
+                    android:textIsSelectable="true"
+                    android:textSize="28sp" />
+
+                <TextView
+                    android:id="@+id/landmark_city"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/landmark_name"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/city"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/landmark_district"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/landmark_city"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/district"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/landmark_state"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/landmark_district"
+                    android:text="@string/state"
+                    android:textSize="15sp" />
+
+            </RelativeLayout>
+
+
+            <!-- BucketList and Accomplished list -->
+            <RelativeLayout
+                android:id="@+id/landmark_header_btns"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/landmark_header"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/landmark_add_to_bucket"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_weight="0.5"
+                        android:background="@drawable/dialog_bg"
+                        android:drawableStart="@drawable/bucketlistadd"
+                        android:text="@string/BucketList"
+                        android:textColor="@color/textItemMenu"
+                        android:textSize="15sp" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/landmark_add_to_accomplish"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_weight="0.5"
+                        android:background="@drawable/dialog_bg"
+                        android:drawableStart="@drawable/accomplished_add"
+                        android:text="@string/accomplished"
+                        android:textColor="@color/textItemMenu"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <!-- Body -->
+            <RelativeLayout
+                android:id="@+id/landmark_body"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/landmark_name_header"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="10dp">
 
                 <TextView
                     android:id="@+id/landmark_description_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/landmark_distance_layout"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="20dp"
                     android:text="@string/description"
                     android:textSize="20sp"
-                    android:textStyle="italic" />
+                    android:autoSizeTextType="uniform"
+                    android:textColor="@color/textItemMenu" />
 
                 <TextView
                     android:id="@+id/landmark_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/landmark_description_label"
-                    android:layout_marginLeft="30dp"
                     android:layout_marginTop="10dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginBottom="10dp"
-                    android:background="@drawable/dialog_bg"
                     android:text="@string/description"
-                    android:textColor="@color/textItemMenu"
+                    android:autoSizeTextType="uniform"
                     android:textSize="15sp" />
 
                 <TextView
@@ -314,24 +232,19 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/landmark_description"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="30dp"
                     android:text="@string/description_short"
                     android:textSize="20sp"
-                    android:textStyle="italic" />
+                    android:textColor="@color/textItemMenu" />
 
                 <TextView
                     android:id="@+id/landmark_description_shrt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/landmark_description_shrt_label"
-                    android:layout_marginLeft="30dp"
                     android:layout_marginTop="10dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginBottom="10dp"
-                    android:background="@drawable/dialog_bg"
                     android:text="@string/description_short"
-                    android:textColor="@color/textItemMenu"
+                    android:autoSizeTextType="uniform"
                     android:textSize="15sp" />
 
                 <TextView
@@ -339,123 +252,160 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/landmark_description_shrt"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="30dp"
                     android:text="@string/history"
                     android:textSize="20sp"
-                    android:textStyle="italic" />
+                    android:textColor="@color/textItemMenu" />
 
                 <TextView
                     android:id="@+id/landmark_history"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/landmark_history_label"
-                    android:layout_marginLeft="30dp"
                     android:layout_marginTop="10dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginBottom="10dp"
-                    android:background="@drawable/dialog_bg"
                     android:text="@string/history"
-                    android:textColor="@color/textItemMenu"
+                    android:autoSizeTextType="uniform"
                     android:textSize="15sp" />
-
-
-                <TextView
-                    android:id="@+id/landmark_images_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/landmark_history"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="20dp"
-                    android:text="@string/moments"
-                    android:textSize="20sp"
-                    android:textStyle="italic" />
-
-                <LinearLayout
-                    android:id="@+id/landmark_layout_img"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:layout_below="@id/landmark_images_label"
-                    android:layout_marginTop="10dp"
-                    android:orientation="horizontal"
-                    android:weightSum="1">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.4">
-
-                        <ImageView
-                            android:id="@+id/landmark_img_1"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_margin="2dp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.6"
-                        android:orientation="vertical"
-                        android:weightSum="1">
-
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="0.5">
-
-                            <ImageView
-                                android:id="@+id/landmark_img_2"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:layout_margin="2dp" />
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="0.5">
-
-                            <ImageView
-                                android:id="@+id/landmark_img_3"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:layout_margin="2dp" />
-
-                        </LinearLayout>
-
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/landmark_scroll_space"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:layout_below="@id/landmark_layout_img"
-                    android:orientation="horizontal" />
-
-                <Button
-                    android:id="@+id/landmark_view_more"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_above="@id/landmark_scroll_space"
-                    android:layout_alignParentRight="true"
-                    android:background="@drawable/dialog_bg"
-                    android:text="@string/viewmore"
-                    android:textSize="12sp" />
 
 
             </RelativeLayout>
 
 
-        </ScrollView>
+            <TextView
+                android:id="@+id/landmark_images_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/landmark_body"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/moments"
+                android:textColor="@color/textItemMenu"
+                android:textSize="20sp" />
 
-    </LinearLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/landmark_view_more"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/landmark_body"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="15dp"
+                android:backgroundTint="@color/background"
+                android:text="@string/viewmore"
+                android:textColor="@color/textItemMenu"
+                android:textSize="15sp"
+                app:icon="@drawable/ic_next"
+                app:iconGravity="textEnd"
+                app:iconPadding="10dp"
+                app:iconSize="10dp"
+                app:iconTint="@color/textItemMenu" />
+
+
+            <LinearLayout
+                android:id="@+id/landmark_layout_img"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_below="@id/landmark_images_label"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.4">
+
+                    <ImageView
+                        android:id="@+id/landmark_img_1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="2dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.6"
+                    android:orientation="vertical"
+                    android:weightSum="1">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.5">
+
+                        <ImageView
+                            android:id="@+id/landmark_img_2"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="2dp" />
+
+                    </LinearLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.5">
+
+                        <ImageView
+                            android:id="@+id/landmark_img_3"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="2dp" />
+
+
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+
+                </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/landmark_scroll_space"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_below="@id/landmark_layout_img"
+                android:orientation="horizontal" />
+
+
+        </RelativeLayout>
+
+
+    </ScrollView>
+
+
+    <!-- Back Button -->
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/landmark_go_back"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/ic_back" />
+
+    <!-- See Roadmap -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/landmark_view_on_map"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="10dp"
+        android:backgroundTint="@color/color6"
+        android:gravity="center"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:text="@string/see_roadmap"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        app:cornerRadius="10dp"
+        app:icon="@drawable/ic_roadmap"
+        app:iconGravity="textEnd"
+        app:iconPadding="15dp" />
 
 
 </RelativeLayout>

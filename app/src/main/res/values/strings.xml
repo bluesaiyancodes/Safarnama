@@ -222,7 +222,7 @@
 
 
     <string name="custom_search">Custom Search</string>
-    <string name="custom_search_body">Search the places near you based on the disance in between. \n Specify the details below -</string>
+    <string name="custom_search_body">Search the places near you based on the distance in between.</string>
     <string name="custom_search_min">Minimum Distance (KM)</string>
     <string name="custom_search_max">Maximum Distance (KM)</string>
 
@@ -323,6 +323,7 @@
     <string name="empty_location">Location cannot be Empty</string>
     <string name="collection_inspirations">Inspirations</string>
     <string name="invalid_img_url">Invalid image URL</string>
+    <string name="see_roadmap">See Roadmap</string>
 
 
 </resources>

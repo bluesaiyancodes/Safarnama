@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
-import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -14,7 +14,9 @@ import com.strongties.safarnama.adapters.RecylerViewAdapter_place_images;
 
 import java.util.Objects;
 
-public class placeImagesActivity extends AppCompatActivity{
+import de.hdodenhof.circleimageview.CircleImageView;
+
+public class placeImagesActivity extends AppCompatActivity {
 
     RecylerViewAdapter_place_images adapter_place_images;
     private Context mContext;
@@ -29,7 +31,8 @@ public class placeImagesActivity extends AppCompatActivity{
         mContext = getBaseContext();
 
 
-        Button btn_back = findViewById(R.id.dialog_place_back);
+        CircleImageView btn_back = findViewById(R.id.place_image_back);
+        TextView place_name = findViewById(R.id.place_image_name);
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -41,7 +44,7 @@ public class placeImagesActivity extends AppCompatActivity{
 
         String img_urls = Objects.requireNonNull(getIntent().getExtras()).getString("img_urls");
         String name = getIntent().getExtras().getString("name");
-        setTitle(name);
+        place_name.setText(name);
         assert img_urls != null;
         String [] imgs = img_urls.split(" ");
 

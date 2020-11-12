@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,12 +21,15 @@ import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.github.chrisbanes.photoview.PhotoView;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.Objects;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class imageViewActivity extends AppCompatActivity {
 
-    BroadcastReceiver onComplete=new BroadcastReceiver() {
+    BroadcastReceiver onComplete = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             Toast toast = Toast.makeText(context, "Image Saved in " + Environment.DIRECTORY_PICTURES, Toast.LENGTH_SHORT);
             toast.getView().setBackground(ContextCompat.getDrawable(imageViewActivity.this, R.drawable.dialog_bg_toast_colored));
@@ -42,18 +44,19 @@ public class imageViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_view);
 
-        String imageUrl= Objects.requireNonNull(getIntent().getExtras()).getString("imageUrl");
+        String imageUrl = Objects.requireNonNull(getIntent().getExtras()).getString("imageUrl");
         String name = getIntent().getExtras().getString("name");
-        Button back_btn = findViewById(R.id.image_view_back);
-        Button download_btn = findViewById(R.id.image_view_download);
-        setTitle(name);
+        CircleImageView back_btn = findViewById(R.id.image_view_back);
+        TextView place_name = findViewById(R.id.image_view_text);
+        MaterialButton download_btn = findViewById(R.id.image_view_download);
+        place_name.setText(name);
         assert name != null;
         name = name.replace(" ", "");
 
         PhotoView photoView = findViewById(R.id.photo_view);
         Glide.with(getBaseContext())
                 .load(imageUrl)
-               // .centerCrop()
+                // .centerCrop()
                 .placeholder(R.drawable.loading_image)
                 // .apply(RequestOptions.bitmapTransform(new CircleCrop()))
                 .into(photoView);

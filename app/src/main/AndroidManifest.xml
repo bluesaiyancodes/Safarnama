@@ -77,10 +77,12 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".placeImagesActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".imageViewActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".WalkThroughActivity"
             android:screenOrientation="portrait" />

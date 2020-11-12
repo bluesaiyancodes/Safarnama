@@ -2,7 +2,7 @@ package com.strongties.safarnama;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,6 +18,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class distanceViewMore extends AppCompatActivity {
     private static final String TAG = "ViewMore Activity";
     RecyclerViewAdaptor_distance_search recyclerAdapter;
@@ -29,14 +31,19 @@ public class distanceViewMore extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_distance_view_more);
 
+        TextView tv_min = findViewById(R.id.distanceViewmore_loc1);
+        TextView tv_max = findViewById(R.id.distanceViewmore_loc2);
+
+        tv_min.setText(Objects.requireNonNull(getIntent().getExtras()).getString("min"));
+        tv_max.setText(Objects.requireNonNull(getIntent().getExtras()).getString("max"));
 
         list_Distance = Objects.requireNonNull(getIntent().getExtras()).getParcelableArrayList("list");
         list_DistanceSearch = new ArrayList<>();
 
         String view_more_type = list_Distance.get(0).getMeta();
-        Objects.requireNonNull(this.getSupportActionBar()).setTitle(view_more_type);
+       
 
-        Button back = findViewById(R.id.distanceViewmore_go_back);
+        CircleImageView back = findViewById(R.id.distanceViewmore_go_back);
         back.setOnClickListener(view -> onBackPressed());
 
 

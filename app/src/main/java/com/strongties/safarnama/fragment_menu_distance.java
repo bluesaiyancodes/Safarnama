@@ -14,13 +14,13 @@ import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,10 +33,10 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.material.button.MaterialButton;
 import com.strongties.safarnama.adapters.RecyclerViewAdaptor_distance_places;
 import com.strongties.safarnama.adapters.RecyclerViewAdaptor_distance_places_large;
 import com.strongties.safarnama.user_classes.RV_Distance;
@@ -85,12 +85,20 @@ public class fragment_menu_distance extends Fragment {
         Log.d(TAG, "Fragment Started");
 
         //Set background
-        ImageView iv_background = root.findViewById(R.id.nearby_background_iv);
+        //  ImageView iv_background = root.findViewById(R.id.nearby_background_iv);
 
-        Glide.with(mContext)
-                .load(R.drawable.background_nearby)
-                .centerCrop()
-                .into(iv_background);
+        //   Glide.with(mContext)
+        //        .load(R.drawable.background_nearby)
+        //      .centerCrop()
+        //    .into(iv_background);
+
+
+        MaterialButton mb_view_morehot = root.findViewById(R.id.rv_viewmore_dist_hot);
+        MaterialButton mb_view_more1 = root.findViewById(R.id.rv_viewmore_dist_1);
+        MaterialButton mb_view_more2 = root.findViewById(R.id.rv_viewmore_dist_2);
+        MaterialButton mb_view_more3 = root.findViewById(R.id.rv_viewmore_dist_3);
+        MaterialButton mb_view_more4 = root.findViewById(R.id.rv_viewmore_dist_4);
+        MaterialButton mb_view_more5 = root.findViewById(R.id.rv_viewmore_dist_5);
 
 
         list_distance1 = new ArrayList<>();
@@ -165,6 +173,7 @@ public class fragment_menu_distance extends Fragment {
                         intent.putExtras(args);
                         startActivity(intent);
                         ((Activity) mContext).overridePendingTransition(R.anim.enter_from_bottom, R.anim.exit_to_top);
+                        myDialog.cancel();
 
                     }
                 });
@@ -173,6 +182,74 @@ public class fragment_menu_distance extends Fragment {
 
             }
         });
+
+
+        mb_view_morehot.setOnClickListener(view -> {
+            Intent intent = new Intent(mContext, distanceViewMore.class);
+            Bundle args = new Bundle();
+            args.putParcelableArrayList("list", (ArrayList<? extends Parcelable>) list_hot);
+            args.putString("min", "Hot");
+            args.putString("max", "Hot");
+            intent.putExtras(args);
+            mContext.startActivity(intent);
+            ((Activity) mContext).overridePendingTransition(R.anim.enter_from_top, R.anim.exit_to_bottom);
+        });
+
+        mb_view_more1.setOnClickListener(view -> {
+            Intent intent = new Intent(mContext, distanceViewMore.class);
+            Bundle args = new Bundle();
+            args.putParcelableArrayList("list", (ArrayList<? extends Parcelable>) list_distance1);
+            args.putString("min", "0KM");
+            args.putString("max", "5KM");
+            intent.putExtras(args);
+            mContext.startActivity(intent);
+            ((Activity) mContext).overridePendingTransition(R.anim.enter_from_top, R.anim.exit_to_bottom);
+        });
+
+        mb_view_more2.setOnClickListener(view -> {
+            Intent intent = new Intent(mContext, distanceViewMore.class);
+            Bundle args = new Bundle();
+            args.putParcelableArrayList("list", (ArrayList<? extends Parcelable>) list_distance2);
+            args.putString("min", "0KM");
+            args.putString("max", "40KM");
+            intent.putExtras(args);
+            mContext.startActivity(intent);
+            ((Activity) mContext).overridePendingTransition(R.anim.enter_from_top, R.anim.exit_to_bottom);
+        });
+
+        mb_view_more3.setOnClickListener(view -> {
+            Intent intent = new Intent(mContext, distanceViewMore.class);
+            Bundle args = new Bundle();
+            args.putParcelableArrayList("list", (ArrayList<? extends Parcelable>) list_distance3);
+            args.putString("min", "0KM");
+            args.putString("max", "100KM");
+            intent.putExtras(args);
+            mContext.startActivity(intent);
+            ((Activity) mContext).overridePendingTransition(R.anim.enter_from_top, R.anim.exit_to_bottom);
+        });
+
+        mb_view_more4.setOnClickListener(view -> {
+            Intent intent = new Intent(mContext, distanceViewMore.class);
+            Bundle args = new Bundle();
+            args.putParcelableArrayList("list", (ArrayList<? extends Parcelable>) list_distance4);
+            args.putString("min", "200KM");
+            args.putString("max", "200KM");
+            intent.putExtras(args);
+            mContext.startActivity(intent);
+            ((Activity) mContext).overridePendingTransition(R.anim.enter_from_top, R.anim.exit_to_bottom);
+        });
+
+        mb_view_more5.setOnClickListener(view -> {
+            Intent intent = new Intent(mContext, distanceViewMore.class);
+            Bundle args = new Bundle();
+            args.putParcelableArrayList("list", (ArrayList<? extends Parcelable>) list_distance5);
+            args.putString("min", "200KM");
+            args.putString("max", "-");
+            intent.putExtras(args);
+            mContext.startActivity(intent);
+            ((Activity) mContext).overridePendingTransition(R.anim.enter_from_top, R.anim.exit_to_bottom);
+        });
+
 
         return root;
     }

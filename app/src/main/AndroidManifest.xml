@@ -88,14 +88,16 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".distanceSearchActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".VersionCheckActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".distanceViewMore"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".DelicacyActivity"
             android:screenOrientation="portrait"

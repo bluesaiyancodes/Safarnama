@@ -324,6 +324,7 @@
     <string name="collection_inspirations">Inspirations</string>
     <string name="invalid_img_url">Invalid image URL</string>
     <string name="see_roadmap">See Roadmap</string>
+    <string name="places">Places</string>
 
 
 </resources>

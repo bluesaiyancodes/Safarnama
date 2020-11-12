@@ -41,7 +41,7 @@ public class distanceViewMore extends AppCompatActivity {
         list_DistanceSearch = new ArrayList<>();
 
         String view_more_type = list_Distance.get(0).getMeta();
-        Objects.requireNonNull(this.getSupportActionBar()).setTitle(view_more_type);
+       
 
         CircleImageView back = findViewById(R.id.distanceViewmore_go_back);
         back.setOnClickListener(view -> onBackPressed());

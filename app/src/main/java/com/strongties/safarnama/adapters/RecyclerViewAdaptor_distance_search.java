@@ -23,6 +23,7 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -151,6 +152,42 @@ public class RecyclerViewAdaptor_distance_search extends RecyclerView.Adapter<Re
                 break;
         }
 
+        holder.iv_wishlist.setVisibility(View.GONE);
+
+        DocumentReference documentRef = FirebaseFirestore.getInstance()
+                .collection(mContext.getString(R.string.collection_users))
+                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                .collection(mContext.getString(R.string.collection_bucket_list))
+                .document(mData.get(position).getId());
+
+        documentRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult().exists()) {
+                holder.iv_wishlist.setVisibility(View.VISIBLE);
+                Glide.with(mContext)
+                        .load(R.drawable.ic_bucket_selected)
+                        .placeholder(R.drawable.loading_image)
+                        .into(holder.iv_wishlist);
+
+            }
+        });
+
+        DocumentReference documentRef1 = FirebaseFirestore.getInstance()
+                .collection(mContext.getString(R.string.collection_users))
+                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                .collection(mContext.getString(R.string.collection_accomplished_list))
+                .document(mData.get(position).getId());
+
+        documentRef1.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult().exists()) {
+                holder.iv_wishlist.setVisibility(View.VISIBLE);
+                Glide.with(mContext)
+                        .load(R.drawable.ic_accomplished_selected)
+                        .placeholder(R.drawable.loading_image)
+                        .into(holder.iv_wishlist);
+
+            }
+        });
+
     }
 
     @Override
@@ -161,13 +198,15 @@ public class RecyclerViewAdaptor_distance_search extends RecyclerView.Adapter<Re
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
 
-        private LinearLayout item_card;
-        private TextView tv_placename;
-        private TextView tv_location;
-        private TextView tv_district;
-        private TextView tv_distance;
-        private ImageView img;
-        private ImageView img_type;
+        private final LinearLayout item_card;
+        private final TextView tv_placename;
+        private final TextView tv_location;
+        private final TextView tv_district;
+        private final TextView tv_distance;
+        private final ImageView img;
+        private final ImageView img_type;
+
+        private final ImageView iv_wishlist;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -179,6 +218,8 @@ public class RecyclerViewAdaptor_distance_search extends RecyclerView.Adapter<Re
             tv_distance = itemView.findViewById(R.id.distance_distancesearch);
             img = itemView.findViewById(R.id.img_distancesearch);
             img_type = itemView.findViewById(R.id.distacesearch_type);
+
+            iv_wishlist = itemView.findViewById(R.id.distacesearch_wishlist);
         }
     }
 }

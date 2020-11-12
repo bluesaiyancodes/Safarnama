@@ -44,20 +44,13 @@
                     android:textColor="@color/textItemMenu" />
 
                 <ImageView
-                    android:id="@+id/distacesearch_bucket"
+                    android:id="@+id/distacesearch_wishlist"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_alignParentEnd="true"
                     android:layout_marginEnd="10dp"
                     android:src="@drawable/ic_bucket_selected" />
 
-                <ImageView
-                    android:id="@+id/distacesearch_accomplish"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="10dp"
-                    android:src="@drawable/ic_accomplished_selected" />
 
             </RelativeLayout>
 

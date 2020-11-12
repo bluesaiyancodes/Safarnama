@@ -9,14 +9,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.strongties.safarnama.MainActivity.current_location;
 
@@ -70,10 +70,7 @@ public class distanceSearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_distance_search);
 
 
-        Objects.requireNonNull(this.getSupportActionBar()).setTitle("Distance Search");
-
-
-        Button back = findViewById(R.id.distancesearch_go_back);
+        CircleImageView back = findViewById(R.id.distancesearch_go_back);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -81,12 +78,14 @@ public class distanceSearchActivity extends AppCompatActivity {
             }
         });
 
+        TextView loc1 = findViewById(R.id.distanceSearch_loc1);
+        TextView loc2 = findViewById(R.id.distanceSearch_loc2);
+
 
         RecyclerView myrecyclerview = findViewById(R.id.distanceSearch_recyclerview);
         myrecyclerview.setHasFixedSize(true);
 
         myrecyclerview.setLayoutManager(new LinearLayoutManager(this));
-        myrecyclerview.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
 
         Log.d(TAG, "Activity Started");
@@ -98,6 +97,13 @@ public class distanceSearchActivity extends AppCompatActivity {
 
         Log.d(TAG, "Distance => Min -> " + minDist);
         Log.d(TAG, "Distance => Max -> " + maxDist);
+
+
+        //set UX
+        String str_loc1 = minDist / 1000 + "KM";
+        String str_loc2 = maxDist / 1000 + "KM";
+        loc1.setText(str_loc1);
+        loc2.setText(str_loc2);
 
         list_DistanceSearch = new ArrayList<>();
         recyclerAdapter = new RecyclerViewAdaptor_distance_search(this, list_DistanceSearch);

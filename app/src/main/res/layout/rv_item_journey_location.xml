@@ -96,24 +96,27 @@
 
                         <TextView
                             android:id="@+id/act_journey_rv_card_place_label"
-                            android:layout_width="wrap_content"
+                            android:layout_width="100dp"
                             android:layout_height="wrap_content"
+                            android:maxLines="1"
                             android:layout_marginTop="10dp"
                             android:text="@string/placenamecolon" />
 
 
                         <TextView
                             android:id="@+id/act_journey_rv_card_visiting_label"
-                            android:layout_width="wrap_content"
+                            android:layout_width="100dp"
                             android:layout_height="wrap_content"
+                            android:maxLines="1"
                             android:layout_below="@id/act_journey_rv_card_place"
                             android:layout_marginTop="10dp"
                             android:text="@string/visiting_hours" />
 
                         <TextView
                             android:id="@+id/act_journey_rv_card_fee_label"
-                            android:layout_width="wrap_content"
+                            android:layout_width="100dp"
                             android:layout_height="wrap_content"
+                            android:maxLines="1"
                             android:layout_below="@id/act_journey_rv_card_visiting"
                             android:layout_marginTop="10dp"
                             android:text="@string/entry_fee" />

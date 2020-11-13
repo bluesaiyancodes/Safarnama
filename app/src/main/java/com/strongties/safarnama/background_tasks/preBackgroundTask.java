@@ -96,14 +96,18 @@ public class preBackgroundTask extends AsyncTask<Void, Void, Boolean> {
                     String address = getaddres(location);
                     MainActivity.current_location = location;
 
-                    String[] tokens = address.split(",");
-                    String[] stateToken = tokens[tokens.length - 2].split(" ");
-                    String LocalState = stateToken[1];
                     String Locality = "";
+                    String LocalState = "";
+
                     try {
+                        String[] tokens = address.split(",");
+                        String[] stateToken = tokens[tokens.length - 2].split(" ");
+                        LocalState = stateToken[1];
+
                         Locality = tokens[tokens.length - 3];
                     } catch (ArrayIndexOutOfBoundsException e) {
                         Locality = "Unknown";
+                        LocalState = "Unknown";
                     }
 
 
@@ -113,8 +117,8 @@ public class preBackgroundTask extends AsyncTask<Void, Void, Boolean> {
                     editor.putString("locality", Locality);
                     editor.apply();
 
-                    Log.d(TAG, "local Testing-> " + stateToken[1]);
-                    Log.d(TAG, "local Testing-> " + tokens[tokens.length - 3]);
+                    //Log.d(TAG, "local Testing-> " + stateToken[1]);
+                    //Log.d(TAG, "local Testing-> " + tokens[tokens.length - 3]);
                 }
             });
         } catch (NullPointerException e) {
@@ -174,12 +178,16 @@ public class preBackgroundTask extends AsyncTask<Void, Void, Boolean> {
             e.printStackTrace();
         }
 
+        /*
         String[] tokens = address.toString().split(",");
+
         Log.d(TAG, "Address -> " + address.toString());
         Log.d(TAG, "Address Local -> " + tokens[1]);
         Log.d(TAG, "Address City -> " + tokens[2]);
         Log.d(TAG, "Address State -> " + tokens[3]);
         Log.d(TAG, "Address State -> " + tokens[tokens.length - 2]);
+
+         */
 
         return address.toString();
     }

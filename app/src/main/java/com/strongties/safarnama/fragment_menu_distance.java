@@ -4,10 +4,12 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -26,10 +28,13 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -278,56 +283,73 @@ public class fragment_menu_distance extends Fragment {
             toast.show();
         }
 
-        do {
-            assert cursor != null;
-            String name = cursor.getString(0);
-            double place_lat = cursor.getDouble(1);
-            double place_lon = cursor.getDouble(2);
-            String img_url = cursor.getString(3);
-            String type = cursor.getString(4);
-            String place_id = cursor.getString(5);
-            String district = cursor.getString(6);
-            String city = cursor.getString(7);
+        try {
+            do {
+                assert cursor != null;
+                String name = cursor.getString(0);
+                double place_lat = cursor.getDouble(1);
+                double place_lon = cursor.getDouble(2);
+                String img_url = cursor.getString(3);
+                String type = cursor.getString(4);
+                String place_id = cursor.getString(5);
+                String district = cursor.getString(6);
+                String city = cursor.getString(7);
 
-            // add landmarks in Nearby menu only if they have the same state
-            //    Log.d(TAG, "local -> "+ local);
-            //   Log.d(TAG, "state -> "+ state);
+                // add landmarks in Nearby menu only if they have the same state
+                //    Log.d(TAG, "local -> "+ local);
+                //   Log.d(TAG, "state -> "+ state);
 
-            double dist = distance(current_loc.latitude, current_loc.longitude, place_lat, place_lon, 0, 0);
-            Log.d(TAG, "placeName -> " + name + ", Nearby -> " + dist);
-            if (dist <= 1000) {
-
-
-            } else if (dist > 0 && dist <= 5000) {
-                Log.d(TAG, "newDebug -> \nPlace -> " + name);
-
-                list_distance1.add(new RV_Distance(place_id, name, img_url, type, local, district, city, dist, getString(R.string.inside_5)));
+                double dist = distance(current_loc.latitude, current_loc.longitude, place_lat, place_lon, 0, 0);
+                Log.d(TAG, "placeName -> " + name + ", Nearby -> " + dist);
+                if (dist <= 1000) {
 
 
-            } else if (dist > 5000 && dist <= 40000) {
+                } else if (dist > 0 && dist <= 5000) {
+                    Log.d(TAG, "newDebug -> \nPlace -> " + name);
 
-                list_distance2.add(new RV_Distance(place_id, name, img_url, type, local, district, city, dist, getString(R.string.inside_40)));
-
-
-            } else if (dist > 40000 && dist <= 100000) {
-
-                list_distance3.add(new RV_Distance(place_id, name, img_url, type, local, district, city, dist, getString(R.string.inside_100)));
+                    list_distance1.add(new RV_Distance(place_id, name, img_url, type, local, district, city, dist, getString(R.string.inside_5)));
 
 
-            } else if (dist > 100000 && dist <= 200000) {
+                } else if (dist > 5000 && dist <= 40000) {
 
-                list_distance4.add(new RV_Distance(place_id, name, img_url, type, local, district, city, dist, getString(R.string.inside_200)));
-
-            } else if (dist > 200000) {
-
-                Log.d(TAG, "above 200 -> " + name);
-
-                list_distance5.add(new RV_Distance(place_id, name, img_url, type, local, district, city, dist, getString(R.string.above_200)));
+                    list_distance2.add(new RV_Distance(place_id, name, img_url, type, local, district, city, dist, getString(R.string.inside_40)));
 
 
-            }
+                } else if (dist > 40000 && dist <= 100000) {
 
-        } while (cursor.moveToNext());
+                    list_distance3.add(new RV_Distance(place_id, name, img_url, type, local, district, city, dist, getString(R.string.inside_100)));
+
+
+                } else if (dist > 100000 && dist <= 200000) {
+
+                    list_distance4.add(new RV_Distance(place_id, name, img_url, type, local, district, city, dist, getString(R.string.inside_200)));
+
+                } else if (dist > 200000) {
+
+                    Log.d(TAG, "above 200 -> " + name);
+
+                    list_distance5.add(new RV_Distance(place_id, name, img_url, type, local, district, city, dist, getString(R.string.above_200)));
+
+
+                }
+
+            } while (cursor.moveToNext());
+        } catch (CursorIndexOutOfBoundsException e) {
+            new AlertDialog.Builder(mContext)
+                    .setTitle(getString(R.string.unsupported))
+                    .setMessage(getString(R.string.outside_state))
+                    .setPositiveButton(getString(R.string.okay), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            FragmentManager fragmentManager = getFragmentManager();
+                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                            fragmentTransaction.replace(R.id.fragment_container, new fragment_menu_googleMap(), "Wander fragment");
+                            fragmentTransaction.commit();
+                        }
+                    })
+                    .setIcon(R.drawable.app_main_icon)
+                    .show();
+        }
 
         cursor.close();
 

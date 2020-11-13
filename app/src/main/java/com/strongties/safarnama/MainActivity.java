@@ -30,8 +30,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -40,13 +38,14 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.motion.widget.MotionLayout;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -291,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 //Dialog Initiation
                                 Dialog myDialog = new Dialog(MainActivity.this);
-                                myDialog.setContentView(R.layout.rv_dialog_main_search);
+                                myDialog.setContentView(R.layout.dialog_main_search);
                                 Objects.requireNonNull(myDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                                 myDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
 
@@ -300,10 +299,8 @@ public class MainActivity extends AppCompatActivity {
                                 TextView dialog_description_tv = myDialog.findViewById(R.id.dialog_main_description);
                                 TextView dialog_type_tv = myDialog.findViewById(R.id.dialog_main_type);
                                 ImageView dialog_img = myDialog.findViewById(R.id.dialog_main_img);
-
-                                ImageButton btn_wish = myDialog.findViewById(R.id.dialog_main_addtowishlist);
-                                ImageButton btn_cmpl = myDialog.findViewById(R.id.dialog_main_addtocompletelist);
-                                Button btn_details = myDialog.findViewById(R.id.dialog_main_btn_details);
+                                ImageView dialog_type_iv = myDialog.findViewById(R.id.dialog_category_img);
+                                AppCompatButton btn_details = myDialog.findViewById(R.id.dialog_main_btn_details);
 
                                 assert landmarkMeta != null;
                                 dialog_placename_tv.setText(landmarkMeta.getLandmark().getName());
@@ -314,13 +311,47 @@ public class MainActivity extends AppCompatActivity {
                                 Glide.with(context)
                                         .load(landmarkMeta.getLandmark().getImg_url())
                                         .placeholder(R.drawable.loading_image)
-                                        .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
+                                        .transform(new CenterCrop(), new RoundedCorners(20))
                                         .into(dialog_img);
 
                                 //dialog_img.setImageResource(mData.get(vHolder.getAdapterPosition()).getPhoto());
 
-                                btn_wish.setVisibility(View.GONE);
-                                btn_cmpl.setVisibility(View.GONE);
+
+                                switch (landmarkMeta.getLandmark().getCategory()) {
+                                    case "Dams & Water Reservoirs":
+                                        dialog_type_iv.setImageResource(R.drawable.category_dams);
+                                        break;
+                                    case "Education & History":
+                                        dialog_type_iv.setImageResource(R.drawable.category_education_and_history);
+                                        break;
+                                    case "Garden & Parks":
+                                        dialog_type_iv.setImageResource(R.drawable.category_garden_and_parks);
+                                        break;
+                                    case "Hills & Caves":
+                                        dialog_type_iv.setImageResource(R.drawable.category_hills_and_caves);
+                                        break;
+                                    case "Iconic Places":
+                                        dialog_type_iv.setImageResource(R.drawable.category_historical_monuments);
+                                        break;
+                                    case "Nature & Wildlife":
+                                        dialog_type_iv.setImageResource(R.drawable.category_nature_and_wildlife);
+                                        break;
+                                    case "Port & Sea Beach":
+                                        dialog_type_iv.setImageResource(R.drawable.category_port_and_sea_beach);
+                                        break;
+                                    case "Religious Sites":
+                                        dialog_type_iv.setImageResource(R.drawable.category_religious);
+                                        break;
+                                    case "Waterbodies":
+                                        dialog_type_iv.setImageResource(R.drawable.category_waterfalls);
+                                        break;
+                                    case "Zoos & Reserves":
+                                        dialog_type_iv.setImageResource(R.drawable.category_zoo);
+                                        break;
+                                    default:
+                                        dialog_type_iv.setImageResource(R.drawable.loading_image);
+                                        break;
+                                }
 
 
                                 btn_details.setOnClickListener(new View.OnClickListener() {

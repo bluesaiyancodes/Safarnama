@@ -77,7 +77,7 @@ public class PagerAdapterIntroView extends PagerAdapter {
         } else if (position == 2) {
             title.setText(mListScreen.get(position).getTitle());
             description.setText(mListScreen.get(position).getDescription());
-            Glide.with(mContext).asGif().load(R.raw.list_intro)
+            Glide.with(mContext).load(R.raw.list_intro_img)
                     .transform(new FitCenter(), new RoundedCorners(30))
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(imgSlide);

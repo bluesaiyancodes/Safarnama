@@ -73,13 +73,13 @@
                     android:layout_centerVertical="true"
                     android:layout_marginTop="15dp"
                     android:backgroundTint="@color/background"
-                    android:text="@string/viewmore"
+                    android:text=""
                     android:textColor="@color/textItemMenu"
-                    android:textSize="15sp"
+                    android:textSize="12sp"
                     app:icon="@drawable/ic_next"
                     app:iconGravity="textEnd"
                     app:iconPadding="10dp"
-                    app:iconSize="10dp"
+                    app:iconSize="20dp"
                     app:iconTint="@color/textItemMenu" />
 
 
@@ -128,13 +128,13 @@
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="30dp"
                     android:backgroundTint="@color/background"
-                    android:text="@string/viewmore"
+                    android:text=""
                     android:textColor="@color/textItemMenu"
-                    android:textSize="15sp"
+                    android:textSize="12sp"
                     app:icon="@drawable/ic_next"
                     app:iconGravity="textEnd"
                     app:iconPadding="10dp"
-                    app:iconSize="10dp"
+                    app:iconSize="20dp"
                     app:iconTint="@color/textItemMenu" />
 
             </RelativeLayout>
@@ -184,13 +184,13 @@
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="30dp"
                     android:backgroundTint="@color/background"
-                    android:text="@string/viewmore"
+                    android:text=""
                     android:textColor="@color/textItemMenu"
-                    android:textSize="15sp"
+                    android:textSize="12sp"
                     app:icon="@drawable/ic_next"
                     app:iconGravity="textEnd"
                     app:iconPadding="10dp"
-                    app:iconSize="10dp"
+                    app:iconSize="20dp"
                     app:iconTint="@color/textItemMenu" />
 
             </RelativeLayout>
@@ -239,13 +239,13 @@
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="30dp"
                     android:backgroundTint="@color/background"
-                    android:text="@string/viewmore"
+                    android:text=""
                     android:textColor="@color/textItemMenu"
-                    android:textSize="15sp"
+                    android:textSize="12sp"
                     app:icon="@drawable/ic_next"
                     app:iconGravity="textEnd"
                     app:iconPadding="10dp"
-                    app:iconSize="10dp"
+                    app:iconSize="20dp"
                     app:iconTint="@color/textItemMenu" />
 
             </RelativeLayout>
@@ -295,13 +295,13 @@
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="30dp"
                     android:backgroundTint="@color/background"
-                    android:text="@string/viewmore"
+                    android:text=""
                     android:textColor="@color/textItemMenu"
-                    android:textSize="15sp"
+                    android:textSize="12sp"
                     app:icon="@drawable/ic_next"
                     app:iconGravity="textEnd"
                     app:iconPadding="10dp"
-                    app:iconSize="10dp"
+                    app:iconSize="20dp"
                     app:iconTint="@color/textItemMenu" />
 
             </RelativeLayout>
@@ -351,13 +351,13 @@
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="30dp"
                     android:backgroundTint="@color/background"
-                    android:text="@string/viewmore"
+                    android:text=""
                     android:textColor="@color/textItemMenu"
-                    android:textSize="15sp"
+                    android:textSize="12sp"
                     app:icon="@drawable/ic_next"
                     app:iconGravity="textEnd"
                     app:iconPadding="10dp"
-                    app:iconSize="10dp"
+                    app:iconSize="20dp"
                     app:iconTint="@color/textItemMenu" />
 
             </RelativeLayout>

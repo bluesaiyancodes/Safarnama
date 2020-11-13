@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="350dp"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/dialog_bg_narrow"
+    android:layout_gravity="center">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/dialog_main_img_card"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:elevation="0dp"
+        app:cardCornerRadius="20dp">
+
+        <ImageView
+            android:id="@+id/dialog_main_img"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/loading_image" />
+
+    </androidx.cardview.widget.CardView>
+
+
+    <ImageView
+        android:id="@+id/dialog_marker_location_img"
+        android:layout_width="10dp"
+        android:layout_height="30dp"
+        android:layout_below="@id/dialog_main_img_card"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/ic_location_red" />
+
+    <TextView
+        android:id="@+id/dialog_main_place_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/dialog_marker_location_img"
+        android:layout_below="@+id/dialog_main_img_card"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="10dp"
+        android:text="@string/placename" />
+
+    <ImageView
+        android:id="@+id/dialog_category_img"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="15dp"
+        android:layout_below="@id/dialog_marker_location_img"
+        android:src="@drawable/ic_location_red" />
+
+    <TextView
+        android:id="@+id/dialog_main_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/dialog_main_place_name"
+        android:layout_toRightOf="@+id/dialog_category_img"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:text="@string/type" />
+
+    <TextView
+        android:id="@+id/dialog_main_description_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_below="@+id/dialog_main_type"
+        android:layout_marginTop="15dp"
+        android:text="@string/description"
+        android:textColor="@color/textItemMenu" />
+
+    <TextView
+        android:id="@id/dialog_main_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_below="@+id/dialog_main_description_label"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="Long Description placeholder" />
+
+    <!-- BucketList -->
+    <com.varunest.sparkbutton.SparkButton
+        android:id="@+id/dialog_landmark_bucket"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/dialog_main_description"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="-20dp"
+        android:layout_marginTop="-30dp"
+        app:sparkbutton_activeImage="@drawable/ic_bucket_selected"
+        app:sparkbutton_iconSize="40dp"
+        app:sparkbutton_inActiveImage="@drawable/ic_bucket_unselected"
+        app:sparkbutton_primaryColor="@color/color1"
+        app:sparkbutton_secondaryColor="@color/color6" />
+    <!-- AccomplishedList -->
+    <com.varunest.sparkbutton.SparkButton
+        android:id="@+id/dialog_landmark_accomplish"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/dialog_main_description"
+        android:layout_marginStart="-40dp"
+        android:layout_marginTop="-30dp"
+        android:layout_toEndOf="@id/dialog_landmark_bucket"
+        app:sparkbutton_activeImage="@drawable/ic_accomplished_selected"
+        app:sparkbutton_iconSize="40dp"
+        app:sparkbutton_inActiveImage="@drawable/ic_accomplished_unselected"
+        app:sparkbutton_primaryColor="@color/chart_accomplished"
+        app:sparkbutton_secondaryColor="@color/color6" />
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/dialog_main_btn_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/dialog_main_description"
+        android:layout_alignParentEnd="true"
+        android:background="@color/transparent"
+        android:layout_marginTop="5dp"
+        android:text="@string/details"
+        android:textColor="@color/colorAccent"/>
+
+
+</RelativeLayout>

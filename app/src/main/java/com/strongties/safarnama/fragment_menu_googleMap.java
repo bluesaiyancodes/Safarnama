@@ -21,7 +21,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -32,6 +31,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -528,14 +528,51 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
                     TextView tv_name = myDialog.findViewById(R.id.dialog_marker_name);
                     TextView tv_type = myDialog.findViewById(R.id.dialog_marker_type);
                     TextView tv_desc = myDialog.findViewById(R.id.dialog_marker_desc);
+                    ImageView iv_type = myDialog.findViewById(R.id.dialog_category_img);
 
-                    Button btn = myDialog.findViewById(R.id.dialog_btn);
-                    Button details = myDialog.findViewById(R.id.dialog_btn_details);
+
+                    AppCompatButton details = myDialog.findViewById(R.id.dialog_btn_details);
 
 
                     tv_name.setText(name);
                     tv_type.setText(type);
                     tv_desc.setText(desc);
+
+                    switch (landmark.getCategory()) {
+                        case "Dams & Water Reservoirs":
+                            iv_type.setImageResource(R.drawable.category_dams);
+                            break;
+                        case "Education & History":
+                            iv_type.setImageResource(R.drawable.category_education_and_history);
+                            break;
+                        case "Garden & Parks":
+                            iv_type.setImageResource(R.drawable.category_garden_and_parks);
+                            break;
+                        case "Hills & Caves":
+                            iv_type.setImageResource(R.drawable.category_hills_and_caves);
+                            break;
+                        case "Iconic Places":
+                            iv_type.setImageResource(R.drawable.category_historical_monuments);
+                            break;
+                        case "Nature & Wildlife":
+                            iv_type.setImageResource(R.drawable.category_nature_and_wildlife);
+                            break;
+                        case "Port & Sea Beach":
+                            iv_type.setImageResource(R.drawable.category_port_and_sea_beach);
+                            break;
+                        case "Religious Sites":
+                            iv_type.setImageResource(R.drawable.category_religious);
+                            break;
+                        case "Waterbodies":
+                            iv_type.setImageResource(R.drawable.category_waterfalls);
+                            break;
+                        case "Zoos & Reserves":
+                            iv_type.setImageResource(R.drawable.category_zoo);
+                            break;
+                        default:
+                            iv_type.setImageResource(R.drawable.loading_image);
+                            break;
+                    }
 
 
                     Glide.with(mcontext).load(url)
@@ -554,13 +591,6 @@ public class fragment_menu_googleMap extends Fragment implements OnMapReadyCallb
                             })
                             .into(imageView);
 
-                    btn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            v.startAnimation(new AlphaAnimation(1F, 0.7F));
-                            myDialog.dismiss();
-                        }
-                    });
 
                     details.setOnClickListener(new View.OnClickListener() {
                         @Override

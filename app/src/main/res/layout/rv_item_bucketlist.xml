@@ -4,20 +4,20 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp"
     android:id="@+id/bucketlist_item_id">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         app:cardCornerRadius="10dp"
         app:cardMaxElevation="6dp"
-        app:cardElevation="4dp"
-        android:layout_centerInParent="true">
+        app:cardElevation="4dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <ImageView
                 android:layout_width="100dp"
                 android:layout_height="100dp"

@@ -233,9 +233,9 @@
     <string name="intro_buddy_head">Buddies</string>
     <string name="intro_buddies">Buddies are your close friends and your travel partners who are always connected with each other. To be buddies both the users should be registered in the application. <b>Beware</b> Buddies can access your location. Remove the user from your buddy list to deny the privileges.</string>
     <string name="intro_nearby_head">Nearby</string>
-    <string name="intro_nearby">Find your places of interest within a range. This menu provides you with locations that lie within a specific radius of your location. Click on the places to know more about it.</string>
+    <string name="intro_nearby">Find your place of interest within a range. This menu provides you with locations that lie within a specific radius of your location. Click on the places to know more about it.</string>
     <string name="intro_lists_head">Lists</string>
-    <string name="intro_lists">Find a place that you would like to visit? Add it to your bucket list. Also, you can add a place that you\'ve previously visited to your accomplished list. To view and manage your lists, click on the air balloon in the top right section</string>
+    <string name="intro_lists">Find a place that you would like to visit? Add it to your bucket list. Also, you can add a place that you\'ve previously visited to your accomplished list. To view and manage your lists, go to View Your Lists section.</string>
     <string name="intro_map_filter_head">Map Filters</string>
     <string name="intro_map_filter">Filter the markers in the map using the provided options. View all places, View new places that you have not visited, View places in your bucket list, or View places in your accomplished list.</string>
     <string name="intro_final_head">Enough Intro ?</string>
@@ -325,6 +325,7 @@
     <string name="invalid_img_url">Invalid image URL</string>
     <string name="see_roadmap">See Roadmap</string>
     <string name="places">Places</string>
+    <string name="outside_state">Safarnama isn\'t configured with your state. Please have patience, we\'re getting there.</string>
 
 
 </resources>

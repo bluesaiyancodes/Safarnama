@@ -354,7 +354,8 @@
                     <androidx.cardview.widget.CardView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="40dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="10dp"
                         android:layout_marginEnd="20dp"
                         android:layout_marginBottom="20dp"
                         android:elevation="20dp"
@@ -372,7 +373,7 @@
                                 android:background="@drawable/dialog_bg_colored_accent"
                                 android:backgroundTint="@color/chart_accomplished"
                                 android:gravity="center"
-                                android:paddingStart="130sp"
+                                android:paddingStart="140sp"
                                 android:paddingEnd="20dp"
                                 android:text="20"
                                 android:textColor="@color/white"

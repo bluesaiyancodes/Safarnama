@@ -12,17 +12,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
@@ -108,22 +108,19 @@ public class RecyclerViewAdapter_feed extends FirestoreRecyclerAdapter<UserFeed,
             if (model.getLandmarkIncluded()) {
                 holder.feed_img.setOnClickListener(v -> {
                     //Dialog Initiation
-                    myDialog = new Dialog(mContext);
-                    myDialog.setContentView(R.layout.rv_dialog_explore);
+                    Dialog myDialog = new Dialog(mContext);
+                    myDialog.setContentView(R.layout.dialog_main_search);
                     Objects.requireNonNull(myDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                     myDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
 
-                    TextView dialog_placename_tv = myDialog.findViewById(R.id.dialog_explore_place_name);
-                    TextView dialog_description_tv = myDialog.findViewById(R.id.dialog_explore_description);
-                    TextView dialog_type_tv = myDialog.findViewById(R.id.dialog_explore_type);
-                    ImageView dialog_img = myDialog.findViewById(R.id.dialog_explore_img);
 
-                    ImageButton btn_wish = myDialog.findViewById(R.id.dialog_explore_addtowishlist);
-                    ImageButton btn_cmpl = myDialog.findViewById(R.id.dialog_explore_addtocompletelist);
-                    Button btn_details = myDialog.findViewById(R.id.dialog_explore_btn_details);
+                    TextView dialog_placename_tv = myDialog.findViewById(R.id.dialog_main_place_name);
+                    TextView dialog_description_tv = myDialog.findViewById(R.id.dialog_main_description);
+                    TextView dialog_type_tv = myDialog.findViewById(R.id.dialog_main_type);
+                    ImageView dialog_img = myDialog.findViewById(R.id.dialog_main_img);
+                    ImageView dialog_type_iv = myDialog.findViewById(R.id.dialog_category_img);
+                    AppCompatButton btn_details = myDialog.findViewById(R.id.dialog_main_btn_details);
 
-                    btn_cmpl.setVisibility(View.GONE);
-                    btn_wish.setVisibility(View.GONE);
 
                     DocumentReference docRef = FirebaseFirestore.getInstance()
                             .collection(mContext.getString(R.string.collection_landmarks))
@@ -142,8 +139,45 @@ public class RecyclerViewAdapter_feed extends FirestoreRecyclerAdapter<UserFeed,
                             Glide.with(mContext)
                                     .load(landmarkMeta.getLandmark().getImg_url())
                                     .placeholder(R.drawable.loading_image)
-                                    .apply(RequestOptions.bitmapTransform(new RoundedCorners(20)))
+                                    .transform(new CenterCrop(), new RoundedCorners(20))
                                     .into(dialog_img);
+
+                            switch (landmarkMeta.getLandmark().getCategory()) {
+                                case "Dams & Water Reservoirs":
+                                    dialog_type_iv.setImageResource(R.drawable.category_dams);
+                                    break;
+                                case "Education & History":
+                                    dialog_type_iv.setImageResource(R.drawable.category_education_and_history);
+                                    break;
+                                case "Garden & Parks":
+                                    dialog_type_iv.setImageResource(R.drawable.category_garden_and_parks);
+                                    break;
+                                case "Hills & Caves":
+                                    dialog_type_iv.setImageResource(R.drawable.category_hills_and_caves);
+                                    break;
+                                case "Iconic Places":
+                                    dialog_type_iv.setImageResource(R.drawable.category_historical_monuments);
+                                    break;
+                                case "Nature & Wildlife":
+                                    dialog_type_iv.setImageResource(R.drawable.category_nature_and_wildlife);
+                                    break;
+                                case "Port & Sea Beach":
+                                    dialog_type_iv.setImageResource(R.drawable.category_port_and_sea_beach);
+                                    break;
+                                case "Religious Sites":
+                                    dialog_type_iv.setImageResource(R.drawable.category_religious);
+                                    break;
+                                case "Waterbodies":
+                                    dialog_type_iv.setImageResource(R.drawable.category_waterfalls);
+                                    break;
+                                case "Zoos & Reserves":
+                                    dialog_type_iv.setImageResource(R.drawable.category_zoo);
+                                    break;
+                                default:
+                                    dialog_type_iv.setImageResource(R.drawable.loading_image);
+                                    break;
+                            }
+
 
                             btn_details.setOnClickListener(view -> {
                                 Intent intent = new Intent(mContext, LandmarkActivity.class);
@@ -240,15 +274,15 @@ public class RecyclerViewAdapter_feed extends FirestoreRecyclerAdapter<UserFeed,
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView tv_feed_body;
-        private TextView tv_date;
-        private TextView tv_name;
-        private TextView tv_avatar_lvl;
-        private ImageView profile_img;
-        private ImageView feed_img;
+        private final TextView tv_feed_body;
+        private final TextView tv_date;
+        private final TextView tv_name;
+        private final TextView tv_avatar_lvl;
+        private final ImageView profile_img;
+        private final ImageView feed_img;
 
-        private LinearLayout itemlayout;
-        private RelativeLayout vspace;
+        private final LinearLayout itemlayout;
+        private final RelativeLayout vspace;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);

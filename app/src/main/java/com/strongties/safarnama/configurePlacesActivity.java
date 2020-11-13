@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,29 +20,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.GeoPoint;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
-import com.strongties.safarnama.user_classes.Landmark;
-import com.strongties.safarnama.user_classes.LandmarkMeta;
-import com.strongties.safarnama.user_classes.RV_Delicacy;
-import com.strongties.safarnama.user_classes.RV_Journey_Location;
-import com.strongties.safarnama.user_classes.RV_Journey_Tour;
 
 import org.imaginativeworld.whynotimagecarousel.CarouselItem;
 import org.imaginativeworld.whynotimagecarousel.ImageCarousel;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -143,6 +130,7 @@ public class configurePlacesActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 //Read from Landmarks csv file
+               /*
                 {
                     InputStream is = mContext.getResources().openRawResource(R.raw.landmarks_odisha);
                     BufferedReader reader = new BufferedReader(
@@ -162,24 +150,6 @@ public class configurePlacesActivity extends AppCompatActivity {
 
 
                             // String[] tokens = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
-/*
-                Log.d("Database: ", "token 0 -> "+tokens.get(0));
-                Log.d("Database: ", "token 1 -> "+tokens.get(1));
-                Log.d("Database: ", "token 2 -> "+tokens.get(2));
-                Log.d("Database: ", "token 3 -> "+tokens.get(3));
-                Log.d("Database: ", "token 4 -> "+tokens.get(4));
-                Log.d("Database: ", "token 5 -> "+tokens.get(5));
-                Log.d("Database: ", "token 6 -> "+tokens.get(6));
-                Log.d("Database: ", "token 7 -> "+tokens.get(7));
-                Log.d("Database: ", "token 8 -> "+tokens.get(8));
-                Log.d("Database: ", "token 9 -> "+tokens.get(9));
-                Log.d("Database: ", "token 10 -> "+tokens.get(10));
-                Log.d("Database: ", "token 11 -> "+tokens.get(11));
-                Log.d("Database: ", "token 12 -> "+tokens.get(12));
-                Log.d("Database: ", "token 13 -> "+tokens.get(13));
-                Log.d("Database: ", "token 14 -> "+tokens.get(14));
-
- */
 
 
                             //count lines
@@ -273,9 +243,11 @@ public class configurePlacesActivity extends AppCompatActivity {
                     toastmsg.setTextColor(Color.WHITE);
                     toast.show();
                 }
+                */
 
 
                 //For delicacy
+                /*
                 {
                     InputStream is2 = mContext.getResources().openRawResource(R.raw.delicacies_odisha);
                     BufferedReader reader2 = new BufferedReader(
@@ -343,10 +315,12 @@ public class configurePlacesActivity extends AppCompatActivity {
 
                     Toast.makeText(mContext, linecounter2 - 1 + " Delicacies Inserted.", Toast.LENGTH_SHORT).show();
                 }
+                 */
 
                 //For Journey
+                /*
                 {
-                    InputStream is3 = mContext.getResources().openRawResource(R.raw.journey_bbsr_t1);
+                    InputStream is3 = mContext.getResources().openRawResource(R.raw.journey_puri);
                     BufferedReader reader3 = new BufferedReader(
                             new InputStreamReader(is3, StandardCharsets.UTF_8));
                     String line3 = "";
@@ -457,6 +431,8 @@ public class configurePlacesActivity extends AppCompatActivity {
 
 
                 }
+
+                 */
 
             }
         });

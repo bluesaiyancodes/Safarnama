@@ -15,8 +15,8 @@ android {
         applicationId "com.strongties.safarnama"
         minSdkVersion 22
         targetSdkVersion 29
-        versionCode 17
-        versionName "Version 17"
+        versionCode 18
+        versionName "Version 18"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

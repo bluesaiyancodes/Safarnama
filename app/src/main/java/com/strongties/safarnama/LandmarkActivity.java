@@ -616,14 +616,19 @@ public class LandmarkActivity extends AppCompatActivity {
                     Location location = task.getResult();
                     assert location != null;
 
-                    calDistance = distance(location.getLatitude(), location.getLongitude(), geoPoint.getLatitude(), geoPoint.getLongitude(), 0, 0);
-
-                    DecimalFormat df = new DecimalFormat("0.00");
                     String dist_text = "0";
-                    if (calDistance != null) {
-                        dist_text = df.format(calDistance / 1000.0);
+                    try {
+                        calDistance = distance(location.getLatitude(), location.getLongitude(), geoPoint.getLatitude(), geoPoint.getLongitude(), 0, 0);
+
+                        DecimalFormat df = new DecimalFormat("0.00");
+
+                        if (calDistance != null) {
+                            dist_text = df.format(calDistance / 1000.0);
+                        }
+                        dist_text += "KM";
+                    } catch (NullPointerException e) {
+                        dist_text = "Unknown";
                     }
-                    dist_text += "KM";
                     dist.setText(dist_text);
                 }
             }

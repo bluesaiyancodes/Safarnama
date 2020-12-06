@@ -249,7 +249,7 @@ public class fragment_menu_distance extends Fragment {
             Bundle args = new Bundle();
             args.putParcelableArrayList("list", (ArrayList<? extends Parcelable>) list_distance5);
             args.putString("min", "200KM");
-            args.putString("max", "-");
+            args.putString("max", "Beyond");
             intent.putExtras(args);
             mContext.startActivity(intent);
             ((Activity) mContext).overridePendingTransition(R.anim.enter_from_top, R.anim.exit_to_bottom);

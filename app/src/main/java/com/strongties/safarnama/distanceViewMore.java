@@ -40,33 +40,40 @@ public class distanceViewMore extends AppCompatActivity {
         list_Distance = Objects.requireNonNull(getIntent().getExtras()).getParcelableArrayList("list");
         list_DistanceSearch = new ArrayList<>();
 
-        String view_more_type = list_Distance.get(0).getMeta();
-       
-
-        CircleImageView back = findViewById(R.id.distanceViewmore_go_back);
-        back.setOnClickListener(view -> onBackPressed());
-
-
         RecyclerView myrecyclerview = findViewById(R.id.distanceViewmore_recyclerview);
         myrecyclerview.setHasFixedSize(true);
-
-        myrecyclerview.setLayoutManager(new LinearLayoutManager(this));
         //myrecyclerview.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        //for Double Formatting
-        DecimalFormat df = new DecimalFormat("0.00");
+        myrecyclerview.setLayoutManager(new LinearLayoutManager(this));
 
-        for (RV_Distance distance : list_Distance) {
-            String dist_text = df.format(distance.getDistance() / 1000.0);
-            dist_text += "KM (Approx.)";
+        //if the list is not empty
+        if (list_Distance.size() != 0) {
 
-            list_DistanceSearch.add(new RV_DistanceSearch(distance.getId(), distance.getName(), distance.getDistrict(), distance.getCity(), distance.getCategory(), distance.getImg_url(), dist_text, distance.getDistance()));
-        }
 
-        // Sort the List except hot places
-        if (!view_more_type.equals(getString(R.string.hot_places)))
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                list_DistanceSearch.sort(Comparator.comparingDouble(RV_DistanceSearch::getDistance));
+            String view_more_type = list_Distance.get(0).getMeta();
+
+
+            CircleImageView back = findViewById(R.id.distanceViewmore_go_back);
+            back.setOnClickListener(view -> onBackPressed());
+
+            //for Double Formatting
+            DecimalFormat df = new DecimalFormat("0.00");
+
+            for (RV_Distance distance : list_Distance) {
+                String dist_text = df.format(distance.getDistance() / 1000.0);
+                dist_text += "KM (Approx.)";
+
+                list_DistanceSearch.add(new RV_DistanceSearch(distance.getId(), distance.getName(), distance.getDistrict(), distance.getCity(), distance.getCategory(), distance.getImg_url(), dist_text, distance.getDistance()));
             }
+
+            // Sort the List except hot places
+            if (!view_more_type.equals(getString(R.string.hot_places)))
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    list_DistanceSearch.sort(Comparator.comparingDouble(RV_DistanceSearch::getDistance));
+                }
+
+        } else {
+            //todo - Add provision for no places in list condition
+        }
 
         recyclerAdapter = new RecyclerViewAdaptor_distance_search(this, list_DistanceSearch);
         myrecyclerview.setAdapter(recyclerAdapter);

@@ -55,6 +55,7 @@ import com.google.android.play.core.review.ReviewInfo;
 import com.google.android.play.core.review.ReviewManager;
 import com.google.android.play.core.review.ReviewManagerFactory;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -147,6 +148,11 @@ public class MainActivity extends AppCompatActivity {
 
 
         context = getApplicationContext();
+
+        //For debug dont report
+        if (BuildConfig.DEBUG) {
+            FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false);
+        }
 
         //add places into places ArrayList
         OtherBackgroundTask otherBackgroundTask = new OtherBackgroundTask(context);
